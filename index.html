@@ -647,8 +647,10 @@ a.lname .lt{text-decoration:underline;font-weight:650;word-break:break-word}
    ========================================================================== */body{background:var(--bg)}
 h1,h2,h3,h4{color:var(--heading)}
 :focus-visible{outline-color:var(--roots-herb)}
-html[data-kb] :focus:not(input[type=checkbox]):not(.sr-only){outline:3px solid var(--roots-herb);outline-offset:2px}
-html[data-kb] .hdr :focus{outline-color:var(--roots-tea)}
+/* Focus ring stays on real controls, not on headings focused only to move screen readers
+   (sheet title, day headings; a11y w3c/wcag focus-appearance only covers interactive elements). */
+html[data-kb] :is(button,a,select,textarea,[tabindex]:not([tabindex^="-"])):not(input[type=checkbox]):not(.sr-only):focus{outline:3px solid var(--roots-herb);outline-offset:2px}
+html[data-kb] .hdr :is(button,a,[tabindex]:not([tabindex^="-"])):focus{outline-color:var(--roots-tea)}
 .hdr{border-top:none;background:var(--roots-green);box-shadow:none}
 .hdr .teamsw,.hdr .teamsw .tn b{color:var(--roots-white)}
 .hdr .teamsw .muted,.hdr .teamsw .tn span{color:var(--roots-tea)}
