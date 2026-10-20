@@ -746,6 +746,9 @@ button.icon{border-radius:50%}
 .rtile.compact .rt-name{font-size:13px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .rtile.compact .cal__tag{margin-top:2px;padding:1px 7px;gap:5px;font-size:12px}
 .rtile.compact .cal__dot{width:8px;height:8px}
+.rtile.compact .rt-loc{gap:3px;margin-top:0;font-size:12px;line-height:1.3}
+.rtile.compact .rt-loc .ic.sm{width:12px;height:12px;margin-top:1px}
+.rtile.compact .rt-loc-t{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* office hours + a person's tasks under the day's tiles (checkbox lines) */
 .rday .oh{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
 .ohl{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:3px 10px;border-radius:12px;line-height:1.3;background:var(--white);border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--ink)}
@@ -5093,13 +5096,14 @@ function calTile(s, fk, mode){
   var info = paInfo(s), gone = s.cal_status === 'gone', name = (s.program || '').trim() || 'Untitled event', compact = mode === 'compact';
   var tag = gone ? 'Cancelled' : info.short || 'No PA needed', tt = mode === 'week' ? tileTasks(s) : '';
   var p = mode === 'week' && weekReady(s) ? calPairs().byEv.get(s.id) : null;
-  var where = mode === 'week' ? locText(s.location) : '', shown = where ? tileTitle(name, where) : name;
+  /* v2.6: location on every calendar tile (week, phone month list, desktop month grid), never inside the title */
+  var where = locText(s.location), shown = where ? tileTitle(name, where) : name;
   return h('button', {type: 'button', class: 'rtile ' + (deptClass(s) || 'dept-other') + (compact ? ' compact' : '') + (gone ? ' gone' : '') + (info.miss && !gone ? ' needs' : ''),
-    'data-fk': fk + ':' + s.id, 'data-id': s.id, 'data-prog': p ? p.id : null, title: compact ? name : null,
+    'data-fk': fk + ':' + s.id, 'data-id': s.id, 'data-prog': p ? p.id : null, title: compact ? name + (where ? ' \u00b7 ' + where : '') : null,
     'aria-label': niceDate(s.date) + (shiftTime(s) ? ', ' + shiftTime(s) : '') + ': ' + shown + (deptOf(s) ? ' (' + deptOf(s) + ')' : '') + (where ? ', ' + where : '') + '. ' + (gone ? 'Cancelled on the calendar. ' : '') + info.full + '. ' + (tt ? tt + '. ' : '') + 'Open details',
     on: {click: function(e){ eventSheet(s.id, e.currentTarget); }}},
     h('span', {class: 'rt-time', text: (compact ? shortTime(s) : shiftTime(s)) || 'Time TBC'}),
-    h('span', {class: 'rt-name', text: compact ? shortProg(s) : shown}),
+    h('span', {class: 'rt-name', text: compact ? shortProg({program: shown}) : shown}),
     where ? h('span', {class: 'rt-loc'}, icon('pin', 'sm'), h('span', {class: 'rt-loc-t', text: where})) : null,
     h('span', {class: 'cal__tag' + (info.miss && !gone ? ' need' : '') + (!gone && !info.short ? ' none' : '')}, h('span', {class: 'cal__dot', 'aria-hidden': 'true'}), h('span', {class: 'tag-t', text: tag})),
     tt ? h('span', {class: 'rt-tasks', text: tt}) : null);
