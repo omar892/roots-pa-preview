@@ -1261,6 +1261,58 @@ h3{font-size:var(--fs);font-weight:600}
 .rep-gh{margin:6px 8px 4px}
 .rep-pop{max-height:min(480px,72vh)}   /* v2.5b: 8 options + the two group headings fit without an inner scroll box on a phone */
 
+/* ---------- shape layer (v2.6, Oct 20 2026) ----------
+   Omar: "review whether we really need to round corners this much. Use design best practices."
+   One rule per role, so shape tells you what a thing is:
+   - Buttons, toggle chips, segmented controls: pill (Roots brand, same as the website's .rt-btn / .rt-chip).
+   - Icon buttons, avatars, dots: circle.
+   - Inputs, textareas, form selects: 8px. A field is a box you type in, not a button.
+   - Cards, day cards, panels, sheets, popovers: 12px (Roots --radius-thumb).
+   - Rows/tiles inside a card, inline panels: 8px (smaller than the card they sit in).
+   - Status labels that aren't tappable ("Need 1", "Full", "Today", counts): 6px (Roots --radius-sm),
+     so they never look like buttons.
+   Loaded last by build.py; overrides radii set in style/extra/cal/comp23. */
+:root{ --r-card:var(--radius-thumb); --r-inner:8px; --r-field:8px; --r-tag:var(--radius-sm); }
+
+/* fields */
+input[type=text],input[type=password],input[type=email],input[type=search],input[type=url],input[type=date],input[type=number],input[type=tel],textarea,select,
+.su-sel,.ev-sec .addtask,form.addtask input{border-radius:var(--r-field)}
+.su-sel{border-radius:var(--r-field) !important}
+/* compact toolbar menus (e.g. "Everyone") act as buttons: keep them pill like the buttons beside them */
+select.pill-sel{border-radius:var(--radius-pill)}
+
+/* cards and containers */
+.login-card,.card,.banner,.loaderr,.empty,.day:not(.chip),.panel,.hist,.notes-card,.shift,.shifts,.tlist,.links,.pas-wrap,.lfolder,
+.ntw,.watch-list,.whodo,.rday,.ag-day,.a2hs,.rep-pop,.ntw-list.c25,.sw25,.toast,.skel-card,
+#v-shifts .sday .shifts,#v-shifts.v26 .sday{border-radius:var(--r-card)}
+#v-shifts.v26 .sday-h{border-radius:calc(var(--r-card) - 1px) calc(var(--r-card) - 1px) 0 0}
+dialog{border-radius:var(--r-card)}
+@media (max-width:767px){ dialog.sheet{border-radius:var(--r-card) var(--r-card) 0 0} }
+
+/* things inside cards */
+.rtile,.whodo-row,.wklabel,.mday,.ohl,.rtasks.wide,.hrs-line,.ev-sec .tasks,.est-line,.pp-notes li,.wother .pv-list,
+.who-grid button,.team-pick label,.pv-add{border-radius:var(--r-inner)}
+.rtile.compact,.pm-day,.mtiles .more{border-radius:var(--r-tag)}
+
+/* status labels (not tappable) */
+.cal__tag,.dpill,.rd-today,.mk,.mk.waiting,.mk.overbook{border-radius:var(--r-tag)}
+
+/* the day chips in the task sheet are toggles like the other chips (they had picked up the .day card radius) */
+.chip.day,.tchip{border-radius:var(--radius-pill)}
+
+/* ---------- header save status: quiet text when all is well ----------
+   Was a filled pill (looked like a button, 9px left vs 6px right padding, thin check).
+   Saved = check + "Saved" in light text, no container. Offline / not saved = tinted tag. */
+.hdr .save{min-height:32px;padding:0 var(--space-2);border-radius:var(--r-tag);gap:6px;font-weight:500}
+.hdr .save.ok{background:none;color:var(--wash-75)}
+.hdr .save.ok .ic{color:var(--roots-tea)}
+.hdr .save .ic{width:18px;height:18px;stroke-width:2.25}
+.hdr .save.saving{background:var(--wash-10);color:var(--roots-white)}
+.save.offline,.save.error{border-radius:var(--r-tag)}
+
+/* leading icon on a filled button: pull it 4px toward the edge so the gap looks even with the text side */
+.view-head > button > .ic:first-child,.su-me > .ic:first-child{margin-left:-4px}
+
 </style>
 </head>
 <body>
