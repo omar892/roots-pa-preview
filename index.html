@@ -714,7 +714,7 @@ button.icon{border-radius:50%}
 .rday{min-width:0;display:flex;flex-direction:column;gap:12px;min-height:13rem;padding:16px 14px;border:1px solid var(--line);border-radius:16px;background:var(--white);scroll-margin-top:150px}
 .rday.is-today{border:2px solid var(--heading);padding:15px 13px}
 .rd-name{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin:0;color:var(--heading);font:600 16px/1.3 var(--font)}
-.rd-pick{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:0;padding:0;border:0;border-radius:6px;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.rd-pick{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:44px;padding:0;border:0;border-radius:6px;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer}
 .rd-pick:hover{background:none}
 .rd-pick:hover .rd-day{text-decoration:underline;text-underline-offset:4px}
 .rd-day{font-weight:650}
@@ -1155,6 +1155,23 @@ h3{font-size:var(--fs);font-weight:600}
 .rtask .rt-open .rt-meta .mk .ic{width:13px;height:13px}
 .rtask .rt-open .rt-meta .est{vertical-align:middle;margin-left:4px}
 .rtask.v25.done .rt-tx{text-decoration:line-through;color:var(--muted)}
+/* v2.6.3 (audit F-09): the tick box input fills its 44px label (axe target-size), the 18px box is drawn under it; rows keep clear of the sticky header */
+.rtask.v25,.rtask.v25 .rt-cb input,.rtask.v25 .rt-open{scroll-margin-top:calc(var(--stick,124px) + 8px)}
+.rtask.v25 .rt-cb{position:relative}
+.rtask.v25 .rt-cb input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.rt-box{position:relative;flex:none;width:18px;height:18px;border:1.5px solid color-mix(in srgb,var(--muted) 65%,#fff);border-radius:4px;background:var(--white);pointer-events:none;transition:background-color .12s ease,border-color .12s ease}
+.rt-box::after{content:"";position:absolute;left:5px;top:1.5px;width:4px;height:9px;border:solid var(--white);border-width:0 2px 2px 0;transform:rotate(45deg);opacity:0}
+.rtask.v25 .rt-cb input:checked+.rt-box{background:var(--roots-herb);border-color:var(--roots-herb)}
+.rtask.v25 .rt-cb input:checked+.rt-box::after{opacity:1}
+.rtask.v25 .rt-cb:hover .rt-box{border-color:var(--ink)}
+.rtask.v25 .rt-cb input:focus-visible+.rt-box{outline:2px solid var(--focus);outline-offset:2px}
+@media (forced-colors:active){ .rt-box{border-color:CanvasText} .rtask.v25 .rt-cb input:checked+.rt-box{background:Highlight;border-color:Highlight} }
+/* v2.6.3 (audit F-01): Move to another program lists the week's programs: name, then day and time */
+.mv-opt{align-items:flex-start;padding-top:8px;padding-bottom:8px}
+.mv-opt:hover{color:var(--ink)}   /* the global button:hover turns text white; this row's hover is the light --hover fill */
+.mv-opt .cal__dot,.mv-opt .tdot{margin-top:5px}
+.mv-txt{display:flex;flex-direction:column;gap:1px;min-width:0;overflow-wrap:anywhere}
+.mv-when{font-size:var(--fs-s);font-weight:500;color:var(--muted)}
 .rd-done{display:inline-flex;align-items:center;gap:4px;min-height:var(--tap);padding:0 4px;font-size:var(--fs-s);font-weight:600;text-decoration:none;color:var(--muted)}
 .rd-done:hover{color:var(--ink)}
 .rtasks.done-list{border-top:none;padding-top:0}
@@ -1510,7 +1527,7 @@ dialog{border-radius:var(--r-card)}
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.6.2';   // v2.6: PA shifts overhaul (read-first rows, Shift sheet, All · Need a PA · Mine)
+var BUILD = '2.6.3';   // v2.6.3: audit fix batch (Move lists the week's programs, Sign me up asks who you are, Back closes sheets, ...)
 var TZ = 'America/Chicago';   // Roots' clock: "today", "overdue" and "this week" follow Central time on every device
 var ICON192 = 'data:image/png;base64,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';
 var ICON512 = 'data:image/png;base64,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';
@@ -1570,7 +1587,7 @@ var TABS = [
   {id:'board', label:'Weekly board', menu:true},
   {id:'history', label:'History', admin:true, adminTop:true}, {id:'settings', label:'Team settings', menu:true, admin:true}
 ];
-var PHONE_TABS = ['cal', 'person', 'links'];      // bottom bar on phones, plus "More"
+var PHONE_TABS = ['cal', 'person', 'shifts'];     // bottom bar on phones, plus "More" (v2.6.3, audit F-02: PA shifts takes Links' slot; Links is under More)
 var TAB_ALIAS = {templates: 'master', team: 'settings', notes: 'cal', calendar: 'cal', mine: 'person'};
 var WEEK_TABS = {board:1, person:1};
 /* Roots brand (Roots Brand & Website Design System v3). Department colours follow the Roots calendar:
@@ -3185,23 +3202,31 @@ function taskMenu(id, btn){
   ], btn);
 }
 function moveTaskSheet(id){
+  /* v2.6.3 (audit F-01): the same list as the Add task sheet: every program on the calendar this week (a card is made on
+     the first pick, the next pick reuses it), then hand-made cards. The task's own program is left out. */
   var t = D.tasks.get(id); if (!t) return;
-  var from = D.programs.get(t.program_id), fromSnap = from ? Object.assign({}, from) : null, fromProg = t.program_id, fromSort = t.sort;
-  var opts = boardPrograms().filter(function(p){ return p.id !== t.program_id; });
-  openSheet({title: 'Move ' + quote(t.task) + ' to\u2026', body: h('div', {class: 'optlist'}, opts.length ? opts.map(function(p){
-    return h('button', {type: 'button', class: 'opt', on: {click: function(){
-      closeSheet();
-      var archivedFrom = false;
-      setFields('tasks', id, {program_id: p.id, sort: nextSort(tasksOf(p.id))}, taskLabel(t));
-      if (from && from.personal && !tasksOf(from.id).filter(function(x){ return x.id !== id; }).length){ setFields('programs', from.id, {deleted_at: nowIso()}, progLabel(from)); archivedFrom = true; }
-      invalidate('board', 'person');
-      toast('Moved to ' + quote(progLabel(p)) + '.', {action: {label: 'Undo', fn: function(){
-        if (archivedFrom && fromSnap) unarchive('programs', fromSnap, progLabel(fromSnap));
-        // back to the same card and the same spot (review L9)
-        if (D.tasks.has(id)) setFields('tasks', id, {program_id: fromProg, sort: fromSort}, taskLabel(t)); invalidate('board', 'person');
-      }}});
-    }}}, h('span', {class: 'tdot', style: {'--tc': pastelFor(p)}, 'aria-hidden': 'true'}), h('span', {text: progLabel(p)}));
-  }) : h('p', {class: 'muted', text: 'There are no other programs this week.'}))});
+  var box = h('div', {class: 'optlist mv-list'}), tm = null, tries = 0;
+  function opt(x){
+    var dot = x.s ? h('span', {class: 'cal__dot ' + (deptClass(x.s) || 'dept-other'), 'aria-hidden': 'true'}) : h('span', {class: 'tdot', style: {'--tc': pastelFor(x.p)}, 'aria-hidden': 'true'});
+    return h('button', {type: 'button', class: 'opt mv-opt', 'data-v': x.v, 'aria-label': x.label, on: {click: function(){ if (tm) clearInterval(tm); closeSheet(); moveTaskTo(id, x.v); }}},
+      dot, h('span', {class: 'mv-txt'}, h('span', {class: 'mv-name', text: x.name}), x.when ? h('span', {class: 'mv-when', text: x.when}) : null));
+  }
+  function draw(){
+    var cur = D.tasks.get(id); if (!cur) return true;
+    var c = weekProgChoices(), list = c.list.filter(function(x){ return !(x.p && x.p.id === cur.program_id); });
+    var cal = list.filter(function(x){ return x.s; }), other = list.filter(function(x){ return !x.s; });
+    box.replaceChildren.apply(box, [].concat(
+      cal.length ? h('div', {class: 'optgroup-h', text: 'On the calendar this week'}) : [], cal.map(opt),
+      other.length ? h('div', {class: 'optgroup-h', text: 'Other programs this week'}) : [], other.map(opt),
+      !c.ready ? h('p', {class: 'muted', role: 'status', text: 'Loading the calendar\u2026'}) : !list.length ? h('p', {class: 'muted', text: 'There are no other programs this week.'}) : []));
+    return c.ready;
+  }
+  var ready = draw();
+  openSheet({title: 'Move ' + quote(taskLabel(t)) + ' to\u2026', body: box});
+  if (!ready){   // the calendar may still be loading: fill the list in as soon as it's here
+    if (hasShifts()) ensureShifts();
+    tm = setInterval(function(){ if (!document.contains(box) || ++tries > 60){ clearInterval(tm); return; } if (shiftsReady(monthsOfRange(S.week, addDays(S.week, 6))) && draw()) clearInterval(tm); }, 500);
+  }
 }
 
 /* ---------- the card's date / place / lead sheet ---------- */
@@ -3522,6 +3547,31 @@ async function copyLastWeek(){
 /* By person opens to whoever was last picked on this phone or computer */
 function myId(){ var id = lsGet('me:' + S.team, null); return id && D.people.has(id) && !D.people.get(id).deleted_at ? id : null; }
 function setMe(pid){ lsSet('me:' + S.team, pid || null); S.person = pid || null; invalidate('person'); }
+/* one name card of the "Who are you?" grid (My tasks, and Sign me up before a name is picked) */
+function whoCard(p, fk, onPick){
+  var n = tasksFor(p.id).filter(function(t){ return !personDone(t, p.id); }).length;
+  return h('button', {type: 'button', 'data-fk': fk + p.id, 'aria-label': p.name + ', ' + (n ? n + ' open' : 'nothing open'), on: {click: onPick}},
+    avatar(p), h('span', {class: 'who-txt'}, h('b', {text: p.name}), h('span', {class: 'sub' + (n ? ' has' : ''), text: n ? n + ' open' : 'Nothing open'})));
+}
+/* v2.6.3 (audit F-03): a PA who hasn't picked her name yet taps "Sign me up": ask who she is (the My tasks name grid,
+   PAs only since staff never sign up as PAs), remember it on this device the same way My tasks does, then sign her up. */
+function whoAmISheet(s, ret){
+  var lbl = shiftLabel(s), pas = paPeople();
+  var pick = function(p){
+    setMe(p.id);
+    var cur = D.shifts.get(s.id) || s;
+    if (D.sp.has(cur.id + '|' + p.id)) toast('You\u2019re already on ' + lbl + '.');
+    else { signUp(cur, p.id); toast('Signed up for ' + lbl + '. This device will remember you\u2019re ' + p.name + '.'); }
+    invalidate('shifts', 'cal', 'person', 'pas');
+    closeSheet();
+    // from a PA shifts row (no sheet behind): focus goes back to that row
+    setTimeout(function(){ if ($('#sheet').open) return; var el = fkEl('sho:' + s.id); if (el) el.focus({preventScroll: true}); }, 120);
+  };
+  openSheet({title: 'Who are you?', returnTo: ret, body: h('div', {class: 'pv-pick wh-pick'},
+      h('p', {class: 'muted', text: 'Tap your name to sign up for ' + lbl + '. This device remembers it.'}),
+      pas.length ? h('div', {class: 'who-grid'}, pas.map(function(p){ return whoCard(p, 'swho:', function(){ pick(p); }); })) : h('p', {class: 'muted', text: 'No PAs on this team yet. Ask Anisha to add you.'})),
+    foot: [h('button', {type: 'button', 'data-fk': 'swhocancel', on: {click: closeSheet}}, 'Cancel')]});
+}
 function tasksFor(pid){
   var out = [];
   D.tasks.forEach(function(t){
@@ -3703,9 +3753,12 @@ function weekProgChoices(){
   if (hasShifts() && ready) eventsIn(S.week, addDays(S.week, 6)).forEach(function(s){
     if (s.cal_status === 'gone') return;
     var p = pairs.byEv.get(s.id) || null; if (p) used.add(p.id);
-    out.push({v: 'ev:' + s.id, s: s, p: p, date: s.date, label: niceDate(s.date) + (shiftTime(s) ? ' \u00b7 ' + shiftTime(s) : '') + ' \u00b7 ' + ((s.program || '').trim() || 'Untitled event')});
+    // v2.6.3 (audit F-08): the same title as the calendar tile (a trailing "(room)" that repeats the location is dropped)
+    var nm = (s.program || '').trim() || 'Untitled event', where = locText(s.location), name = where ? tileTitle(nm, where) : nm;
+    var when = (niceDate(s.date) + (shiftTime(s) ? ' \u00b7 ' + shiftTime(s) : '')).replace(/\s+/g, ' ');
+    out.push({v: 'ev:' + s.id, s: s, p: p, date: s.date, name: name, when: when, label: when + ' \u00b7 ' + name});
   });
-  boardPrograms().forEach(function(p){ if (!used.has(p.id)) out.push({v: 'p:' + p.id, p: p, date: validIso(p.date) ? p.date : '', label: progLabel(p)}); });
+  boardPrograms().forEach(function(p){ if (!used.has(p.id)) out.push({v: 'p:' + p.id, p: p, date: validIso(p.date) ? p.date : '', name: progLabel(p), when: validIso(p.date) ? niceDate(p.date) : '', label: progLabel(p)}); });
   return {list: out, ready: ready};
 }
 function progValueOf(t){
@@ -3715,6 +3768,8 @@ function progValueOf(t){
 function progSelect(id, cur, onChange){
   var c = null;
   var sel = h('select', {id: id, 'data-fk': id, on: {change: function(){ onChange(sel.value, c.list.find(function(x){ return x.v === sel.value; }) || null); }}});
+  var hint = h('p', {class: 'small muted ps-none', id: id + 'None', hidden: true, text: 'No calendar programs this week.'});
+  sel.hint = hint;   // the caller puts it under the select
   function fill(v){
     c = weekProgChoices();
     var cal = c.list.filter(function(x){ return x.s; }), other = c.list.filter(function(x){ return !x.s; });
@@ -3723,6 +3778,9 @@ function progSelect(id, cur, onChange){
       cal.length ? h('optgroup', {label: 'On the calendar this week'}, cal.map(o)) : null,
       other.length ? h('optgroup', {label: 'Other programs this week'}, other.map(o)) : null,
       !c.ready ? h('option', {value: '-', disabled: true, text: 'Loading the calendar\u2026'}) : null].filter(Boolean));
+    // v2.6.3 (audit F-06): say why the list is short in a week with nothing on the calendar
+    var none = c.ready && hasShifts() && !cal.length;
+    hint.hidden = !none; if (none) sel.setAttribute('aria-describedby', id + 'None'); else sel.removeAttribute('aria-describedby');
     if (v && !c.list.some(function(x){ return x.v === v; })){
       var p = v.indexOf('p:') === 0 ? D.programs.get(v.slice(2)) : calPairs().byEv.get(v.slice(3));
       sel.append(h('option', {value: v, text: p ? progLabel(p) : 'This program'}));
@@ -3839,7 +3897,7 @@ function addTaskSheet(o){
   var form = h('form', {class: 'stack at25', novalidate: true, on: {submit: function(e){ e.preventDefault(); save(); }}},
     h('div', {class: 'pv-add at-text'}, h('label', {class: 'field', for: 'atText', text: 'Task'}), txt, combo.el),
     who.el,
-    h('div', null, h('label', {class: 'field', for: 'atProg', text: 'Program'}), prog),
+    h('div', null, h('label', {class: 'field', for: 'atProg', text: 'Program'}), prog, prog.hint),
     dayBox,
     h('div', null, h('label', {class: 'field', for: 'atNote', text: 'Note'}), note),
     watch, more, err);
@@ -3918,7 +3976,7 @@ function taskSheet(id, pid, ret){
       h('div', null, h('label', {class: 'field', for: 'tdTitle', text: 'Task'}), title, flags.length ? h('p', {class: 'small muted td-flags', text: flags.join(' \u00b7 ')}) : null),
       h('div', null, h('label', {class: 'field', for: 'tdNote', text: 'Note'}), note),
       who.el, wat.el,
-      h('div', null, h('label', {class: 'field', for: 'tdProg', text: 'Program'}), prog, board),
+      h('div', null, h('label', {class: 'field', for: 'tdProg', text: 'Program'}), prog, prog.hint, board),
       days,
       h('div', null, h('label', {class: 'field', for: 'tdWait', text: 'Waiting on'}), wait,
         h('p', {class: 'small muted', text: 'For a task stuck on someone else. It shows \u201cWaiting\u201d until it\u2019s checked off.'})),
@@ -3987,11 +4045,7 @@ RENDER.person = function(){
   if (!pid){
     /* Oct 20 UX: one way to pick (name cards only, no duplicate dropdown), status stacked under the name,
        PAs first and staff in their own small group. The switcher dropdown appears once someone is picked. */
-    var card = function(p){
-      var n = tasksFor(p.id).filter(function(t){ return !personDone(t, p.id); }).length;
-      return h('button', {type: 'button', 'data-fk': 'who:' + p.id, 'aria-label': p.name + ', ' + (n ? n + ' open' : 'nothing open'), on: {click: function(){ setMe(p.id); }}},
-        avatar(p), h('span', {class: 'who-txt'}, h('b', {text: p.name}), h('span', {class: 'sub' + (n ? ' has' : ''), text: n ? n + ' open' : 'Nothing open'})));
-    };
+    var card = function(p){ return whoCard(p, 'who:', function(){ setMe(p.id); }); };
     var pas = ppl.filter(function(p){ return !isStaffPerson(p); }), st = ppl.filter(function(p){ return isStaffPerson(p); });
     var paLogin = isTeamLogin() && !isAdmin();
     setKids(sec, [h('div', {class: 'pv-pick'},
@@ -4213,18 +4267,22 @@ function signupBox(s, lbl, base, pre, opt){
   var me = isTeamLogin() && !isAdmin() ? myId() : null;                 // PA UX (Oct 19): one-tap self sign-up
   var free2 = me && free.some(function(p){ return p.id === me; }) ? [D.people.get(me)].concat(free.filter(function(p){ return p.id !== me; })) : free;
   var meOpen = !!me && !gone && free.some(function(p){ return p.id === me; }) && (need ? on.length < need : !on.length);   // open slot for them
+  var askWho = noNameYet() && !gone && !!free.length && (need ? on.length < need : !on.length);   // v2.6.3 (F-03): no name picked yet
   var sel = gone ? null : h('select', {class: 'su-sel', id: base + '_su', 'data-fk': pre + 'ssu:' + s.id, 'aria-label': 'Sign up a PA for ' + lbl, on: {change: function(e){
       var pid = e.target.value; if (!pid) return;
       e.target.blur();
       signUp(D.shifts.get(s.id) || s, pid);
       setTimeout(function(){ var el = fkEl(pre + 'ssu:' + s.id); if (el) el.focus({preventScroll: true}); }, 80);
     }}},
-    h('option', {value: '', text: meOpen ? 'Someone else\u2026' : on.length ? (need && on.length >= need ? 'Add another\u2026' : 'Add someone\u2026') : 'Sign up\u2026'}),
+    h('option', {value: '', text: meOpen || askWho ? 'Someone else\u2026' : on.length ? (need && on.length >= need ? 'Add another\u2026' : 'Add someone\u2026') : 'Sign up\u2026'}),
     free2.map(function(p){ return h('option', {value: p.id, text: p.id === me ? p.name + ' (me)' : p.name}); }));
   var meBtn = meOpen ?   // one tap signs the PA up
     h('button', {type: 'button', class: 'primary su-me', 'data-fk': pre + 'sume:' + s.id, 'aria-label': 'Sign me up for ' + lbl, on: {click: function(){
       signUp(D.shifts.get(s.id) || s, me);
       setTimeout(function(){ var el = fkEl(pre + 'ssu:' + s.id); if (el) el.focus({preventScroll: true}); }, 80);
+    }}}, icon('plus', 'sm'), 'Sign me up') : askWho ?   // asks "Who are you?" first, then signs up
+    h('button', {type: 'button', class: 'primary su-me su-ask', 'data-fk': pre + 'sume:' + s.id, 'aria-haspopup': 'dialog', 'aria-label': 'Sign me up for ' + lbl, on: {click: function(e){
+      whoAmISheet(D.shifts.get(s.id) || s, e.currentTarget);
     }}}, icon('plus', 'sm'), 'Sign me up') : null;
   var step = isAdmin() && !gone && opt.step !== false ? h('span', {class: 'need-step', role: 'group', 'aria-label': 'PAs needed for ' + lbl}, h('span', {class: 'nl', 'aria-hidden': 'true', text: 'Needed'}),
     h('button', {type: 'button', class: 'icon', 'data-fk': pre + 'snm:' + s.id, 'aria-label': 'One fewer PA needed for ' + lbl, disabled: need <= 0, on: {click: function(){ var c = D.shifts.get(s.id) || s; setNeeded(c, (+c.pa_needed || 0) - 1); }}}, icon('minus', 'sm')),
@@ -4246,13 +4304,16 @@ function startTime(s){
 function firstName(pid){ return (personName(pid) || '').trim().split(/\s+/)[0] || ''; }
 function shiftOpen(s){ return s.cal_status !== 'gone' && (+s.pa_needed || 0) > livePAs(s).length; }
 function shiftMe(){ return isTeamLogin() && !isAdmin() ? myId() : null; }
+/* v2.6.3 (F-03): a PA login on a device where nobody has picked their name yet */
+function noNameYet(){ return isTeamLogin() && !isAdmin() && !myId(); }
 /* the row's one status: signup (PA with a name picked, open slot) | mine | open | partial | covered | none | gone */
 function shiftState(s){
   var on = livePAs(s), need = +s.pa_needed || 0, miss = Math.max(0, need - on.length), gone = s.cal_status === 'gone';
   var me = shiftMe(), mine = !!me && D.sp.has(s.id + '|' + me), past = !!s.date && s.date < todayIso();
   var canMe = !!me && !gone && !past && miss > 0 && !mine && paPeople().some(function(p){ return p.id === me; });
-  var st = gone ? 'gone' : !isCalRow(s) && s.done ? 'done' : mine ? 'mine' : canMe ? 'signup' : miss ? (on.length ? 'partial' : 'open') : on.length ? 'covered' : 'none';
-  return {on: on, need: need, miss: miss, me: me, st: st};
+  var ask = !me && noNameYet() && !gone && !past && miss > 0 && (isCalRow(s) || !s.done) && paPeople().some(function(p){ return on.indexOf(p.id) < 0; });   // v2.6.3 (F-03)
+  var st = gone ? 'gone' : !isCalRow(s) && s.done ? 'done' : mine ? 'mine' : canMe || ask ? 'signup' : miss ? (on.length ? 'partial' : 'open') : on.length ? 'covered' : 'none';
+  return {on: on, need: need, miss: miss, me: me, ask: ask, st: st};
 }
 function shiftRowEl(s){
   var lbl = shiftLabel(s), st = shiftState(s), cal = isCalRow(s), gone = s.cal_status === 'gone', past = !!s.date && s.date < todayIso();
@@ -4262,7 +4323,8 @@ function shiftRowEl(s){
     h('span', {class: 's-avs', 'aria-hidden': 'true'}, st.on.slice(0, 2).map(function(pid){ return avatar(D.people.get(pid)); })),
     h('span', {class: 's-names', text: firstName(st.on[0]) + (st.on.length > 1 ? ' +' + (st.on.length - 1) : '')})) : null;
   var act;
-  if (st.st === 'signup') act = h('button', {type: 'button', class: 'primary su-me s-signup', 'data-fk': 'sume:' + s.id, 'aria-label': 'Sign me up for ' + lbl, on: {click: function(){
+  if (st.st === 'signup') act = h('button', {type: 'button', class: 'primary su-me s-signup', 'data-fk': 'sume:' + s.id, 'aria-label': 'Sign me up for ' + lbl, 'aria-haspopup': st.ask ? 'dialog' : null, on: {click: function(e){
+    if (st.ask){ whoAmISheet(D.shifts.get(s.id) || s, e.currentTarget); return; }   // v2.6.3 (F-03): no name picked yet
     signUp(D.shifts.get(s.id) || s, st.me);
     setTimeout(function(){ var el = fkEl('sho:' + s.id); if (el) el.focus({preventScroll: true}); }, 80);
   }}}, 'Sign up');
@@ -4310,6 +4372,7 @@ function shiftSheet(id, ret, focusFk){
     var free = paPeople().filter(function(p){ return onIds.indexOf(p.id) < 0; });
     var free2 = me && free.some(function(p){ return p.id === me; }) ? [D.people.get(me)].concat(free.filter(function(p){ return p.id !== me; })) : free;
     var meOpen = !!me && !gone && free.some(function(p){ return p.id === me; }) && (need ? on.length < need : !on.length);
+    var askWho = noNameYet() && !gone && !!free.length && (need ? on.length < need : !on.length) && !(s.date && s.date < todayIso());   // v2.6.3 (F-03)
     var people = on.length ? h('ul', {class: 'sh-people', 'aria-label': 'Who\u2019s on ' + lbl}, on.map(function(x){
       var per = D.people.get(x.person_id);
       return h('li', {class: 'chip su sh-person' + (per.deleted_at ? ' gone' : '')}, avatar(per),
@@ -4322,6 +4385,8 @@ function shiftSheet(id, ret, focusFk){
     var meBtn = meOpen ? h('button', {type: 'button', class: 'primary su-me', 'data-fk': 'sume:' + s.id, 'aria-label': 'Sign me up for ' + lbl, on: {click: function(){
       signUp(D.shifts.get(s.id) || s, me);
       setTimeout(function(){ var el = fkEl('ssu:' + s.id) || $('#sheetTitle'); if (el) el.focus({preventScroll: true}); }, 90);
+    }}}, icon('plus', 'sm'), 'Sign me up') : askWho ? h('button', {type: 'button', class: 'primary su-me su-ask', 'data-fk': 'sume:' + s.id, 'aria-haspopup': 'dialog', 'aria-label': 'Sign me up for ' + lbl, on: {click: function(e){
+      whoAmISheet(D.shifts.get(s.id) || s, e.currentTarget);
     }}}, icon('plus', 'sm'), 'Sign me up') : null;
     var sel = gone ? null : h('select', {class: 'su-sel', id: base + '_su', 'data-fk': 'ssu:' + s.id, 'aria-label': 'Add someone to ' + lbl, on: {change: function(e){
       var pid = e.target.value; if (!pid) return;
@@ -4373,7 +4438,8 @@ function shiftSheet(id, ret, focusFk){
   openSheet({title: (s.program || '').trim() || (isCalRow(s) ? 'Untitled event' : 'New shift'), returnTo: ret, body: body,
     onClose: function(){ if (!isCalRow(s)) commitPendFor('shifts', id); if (S.sheetLive && S.sheetLive.shift === id) S.sheetLive = null; },
     foot: [wk, h('button', {type: 'button', class: 'primary', on: {click: closeSheet}}, 'Done')].filter(Boolean)});
-  S.sheetLive = {id: 'shift:' + id, shift: id, ret: ret, views: ['shifts'], render: render};
+  S.sheetLive = {id: 'shift:' + id, shift: id, ret: ret, views: ['shifts'], render: render,
+    reopen: function(fk){ if (D.shifts.has(id) && !D.shifts.get(id).deleted_at) shiftSheet(id, ret, fk); }};   // v2.6.3: "Who are you?" comes back here
   $('#sheet').classList.add('evsheet');
   if (focusFk){ var fe = $('#sheet').querySelector('[data-fk="' + cssEsc(focusFk) + '"]'); if (fe) fe.focus({preventScroll: false}); }
 }
@@ -5376,7 +5442,7 @@ function taskLine(t, pid, fk, opts){
   var ec = estChip(t); if (ec) mk.push(ec);
   return h('li', {class: 'rtask v25' + (on ? ' done' : ''), 'data-id': t.id},
     h('label', {class: 'rt-cb'}, h('input', {type: 'checkbox', checked: on, 'data-fk': fk + 'd:' + t.id, 'aria-label': personName(pid) + '\u2019s part done: ' + lbl,
-      on: {change: function(e){ setPersonDone(t.id, pid, e.target.checked); }}})),
+      on: {change: function(e){ setPersonDone(t.id, pid, e.target.checked); }}}), h('span', {class: 'rt-box', 'aria-hidden': 'true'})),   // v2.6.3 (F-09): the input fills the 44px label; this draws the box
     h('button', {type: 'button', class: 'rt-open', 'data-fk': fk + 'o:' + t.id, 'aria-haspopup': 'dialog', on: {click: function(e){ taskSheet(t.id, pid, e.currentTarget); }}},
       h('span', {class: 'rt-tx', text: lbl}),
       note ? h('span', {class: 'rt-note'}, h('span', {class: 'sr-only', text: 'Note: '}), note) : null,
@@ -6021,11 +6087,11 @@ function tabLink(t, cls){
 function buildTabs(){
   // desktop: one row with the six sections (old app's names and order)
   $('#tabs').replaceChildren.apply($('#tabs'), TABS.filter(topTab).map(function(t){ return tabLink(t); }));
-  // phone: Calendar, My tasks, Links, More
+  // phone: Calendar, My tasks, PA shifts, More (teams without PA shifts: Weekly board, My tasks, Links, More)
   var bt = $('#btabs');
   bt.replaceChildren.apply(bt, phoneTabs().filter(tabOk).map(function(id){ return tabLink(TABS.find(function(t){ return t.id === id; }), 'bt'); }).concat([
     h('button', {type: 'button', class: 'bt', id: 'moreBtn', 'data-fk': 'bt:more', 'aria-haspopup': 'dialog', on: {click: function(e){ openMenu(e.currentTarget, true); }}}, icon('menu'), h('span', {text: 'More'}))]));
-  $$('#btabs a').forEach(function(a){ a.prepend(icon({cal: 'cal', board: 'grid', person: 'user', links: 'ext'}[a.dataset.tab])); });
+  $$('#btabs a').forEach(function(a){ a.prepend(icon({cal: 'cal', board: 'grid', person: 'user', links: 'ext', shifts: 'clock'}[a.dataset.tab])); });
 }
 function updateTabs(){
   $$('#tabs a, #btabs a').forEach(function(a){
@@ -6040,6 +6106,9 @@ function updateTabs(){
     more.setAttribute('aria-label', inMore ? 'More (showing ' + lab + ')' : 'More');
   }
 }
+/* v2.6.3 (audit F-09): --stick = the sticky header's height, so a task row scrolled or tabbed to stops clear of it */
+function stickVar(){ var hb = $('.hdr'); if (hb && hb.offsetHeight) document.documentElement.style.setProperty('--stick', hb.offsetHeight + 'px'); }
+window.addEventListener('resize', function(){ if (S.team) stickVar(); });
 function renderHeader(){
   if (!S.team) return;
   var multi = S.teams.length > 1;
@@ -6066,6 +6135,7 @@ function renderHeader(){
   }
   var tabLabel = (TABS.find(function(t){ return t.id === S.tab; }) || {}).label;
   $('#appTitle').textContent = 'Roots PA Tasks: ' + S.teamName + ', ' + tabLabel;
+  stickVar();
   document.title = tabLabel + ' \u00b7 ' + S.teamName + ' \u00b7 ' + (isMonth ? monthLabel(S.month) : weekLabel(S.week)) + ' \u00b7 Roots PA Tasks';
   updateSaveState();
 }
@@ -6142,6 +6212,9 @@ function onHashChange(){
   if (r.week && r.week !== S.week) o.week = r.week;
   if (r.month && r.month !== S.month) o.month = r.month;
   if (r.mode && r.mode !== S.calMode && (r.tab || S.tab) === 'cal') o.mode = r.mode;
+  // v2.6.3 (audit F-05): Back / Forward to another tab or week closes an open sheet first, so it never floats over a page
+  // it doesn't belong to. Its own close steps still run (typed text is saved); focus goes to the new page, not the old opener.
+  if (Object.keys(o).length && $('#sheet').open){ sheetState.back = null; sheetState.ret = null; S.sheetLive = null; closeSheet(); }
   if (Object.keys(o).length) go(o, true);
   if (r.bad || location.hash !== hashFor()) writeHash(true);
 }
@@ -6317,6 +6390,7 @@ function wireDrag(root){
    ========================================================================== */
 function showLogin(msg){
   $('#shell').hidden = true; $('#login').hidden = false;
+  var stg = $('#stgTeam'); if (stg) stg.textContent = 'Sandbox or QA';   // signed out: either practice team (STAGING_TEAMS)
   S.accent = '#2f6b4f'; applyTheme();
   document.title = 'Sign in \u00b7 Roots PA Tasks';
   var pick = $('#teamPick'), last = lsGet('pickTeam', null), user = $('#signinUser');
@@ -6434,6 +6508,7 @@ async function enterTeam(team, route){
   if (S.channel){ try { sb.removeChannel(S.channel); } catch (e){} S.channel = null; }
   var m = S.teams.find(function(t){ return t.team === team; });
   S.team = team; S.role = m.role; S.teamName = m.team_name; S.accent = m.accent || teamMeta(team).accent;
+  var stg = $('#stgTeam'); if (stg) stg.textContent = S.teamName;   // v2.6.3 (audit F-04): the staging bar names the signed-in team
   lsSet('lastTeam:' + S.uid, team);
   resetData();
   Q.items = []; Q.paused = false; Q.failed = false; Q.backoff = 1000; Q.authTries = 0; loadQueue();
