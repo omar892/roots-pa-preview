@@ -1321,11 +1321,15 @@ h3{font-size:var(--fs);font-weight:600}
 @media (max-width:767px){
   #v-shifts.v26 .shift.v26{margin:0 12px;gap:0 8px}
   #v-shifts.v26 .s-open{grid-template-columns:3.75rem minmax(0,1fr) auto;gap:0 8px}
-  #v-shifts.v26 .s-prog{font-size:15px}
+  #v-shifts.v26 .s-prog{font-size:15px;white-space:normal;text-overflow:clip;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:break-word}   /* v2.6.1: names wrap to 2 lines on phones (1 line cut 8/30 on iPhone 15, 17/30 on SE) */
+  #v-shifts.v26 .shift.v26{column-gap:0}
+  #v-shifts.v26 .s-act:not(:empty){padding-left:8px}   /* no empty 8px gap when a row has no action, so every row ends on the same right edge */
   #v-shifts.v26 .s-who{max-width:6.5rem}
   #v-shifts.v26 .sday-h{padding:12px 12px 4px}
   #v-shifts.v26 .st-covered .s-act{display:none}
   #v-shifts.v26 .st-partial .s-names{display:none}
+  #v-shifts.v26 .st-partial .s-avs > :nth-child(n+2){display:none}   /* v2.6.1: phones show one avatar + "Need 1"; full list is in the Shift sheet */
+  #v-shifts.v26 .s-more{display:none}
   #v-shifts.v26 :is(.st-signup,.st-mine,.st-gone,.st-none,.st-done) .s-who{display:none}
   #v-shifts.v26 .s-signup{min-height:44px;padding:0 14px;font-size:15px}
   #v-shifts.v26 .shifts-head .pill-sel,#v-shifts.v26 .sh-add,#v-shifts.v26 .sh-seg button{min-height:44px}
@@ -4264,7 +4268,7 @@ function shiftRowEl(s){
   }}}, 'Sign up');
   else if (st.st === 'mine') act = h('span', {class: 's-pill mine'}, icon('check', 'sm'), 'You\u2019re on');
   else if (st.st === 'open') act = h('span', {class: 'cal__tag need s-pill'}, 'Need ' + st.miss);
-  else if (st.st === 'partial') act = h('span', {class: 'cal__tag need s-pill'}, 'Need ' + st.miss + ' more');
+  else if (st.st === 'partial') act = h('span', {class: 'cal__tag need s-pill'}, 'Need ' + st.miss, h('span', {class: 's-more'}, ' more'));   // v2.6.1: ' more' hides on phones
   else if (st.st === 'gone') act = h('span', {class: 's-pill quiet'}, 'Cancelled');
   else if (st.st === 'done') act = h('span', {class: 's-pill quiet'}, icon('check', 'sm'), 'Done');
   else if (st.st === 'covered') act = h('span', {class: 's-pill full'}, icon('check', 'sm'), 'Full');
