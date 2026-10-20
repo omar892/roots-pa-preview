@@ -1264,6 +1264,114 @@ h3{font-size:var(--fs);font-weight:600}
 .rep-gh{margin:6px 8px 4px}
 .rep-pop{max-height:min(480px,72vh)}   /* v2.5b: 8 options + the two group headings fit without an inner scroll box on a phone */
 
+/* ---- v2.6 (Addendum 1, "looks a little bit busy"): PA shifts, read-first. One white card per day (the calendar's "Every week"
+   day card: white, 1px line, 16px radius, today = 2px heading border), rows split by hairlines. A row is time | program +
+   dot/location | who's on | ONE status. Everything else lives in the Shift sheet. Roots tokens only. ---- */
+#v-shifts.v26{max-width:960px;margin-inline:auto}
+#v-shifts.v26 .shifts-head{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2);margin:0 0 var(--space-4)}
+#v-shifts.v26 .sh-seg{flex:none;min-width:0}
+#v-shifts.v26 .sh-seg button{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;white-space:nowrap}
+#v-shifts.v26 .sh-seg button:not([aria-pressed=true]):hover{background:var(--hover);color:var(--ink)}
+#v-shifts.v26 .seg-n{font-size:var(--fs-s);font-weight:700;font-variant-numeric:tabular-nums}
+#v-shifts.v26 .shifts-head .pill-sel{min-width:0;width:auto;max-width:12rem;min-height:36px}
+#v-shifts.v26 .sh-add{display:inline-flex;align-items:center;gap:6px;margin-left:auto;min-height:36px;padding:0 14px;border:1px solid var(--line);border-radius:var(--radius-pill);background:transparent;color:var(--heading);font-weight:600;font-size:15px}
+#v-shifts.v26 .sh-add:hover{background:var(--hover);color:var(--heading)}
+#v-shifts.v26 .sh-earlier{display:inline-flex;align-items:center;gap:6px;min-height:var(--tap);margin:0 0 var(--space-2);padding:0 4px;font-size:var(--fs-s);font-weight:600;color:var(--muted);text-decoration:none}
+#v-shifts.v26 .sh-earlier:hover{color:var(--ink);text-decoration:underline}
+#v-shifts.v26 .sh-empty{margin:0 0 var(--space-3);padding:var(--space-4);text-align:left}
+#v-shifts.v26 .sh-empty p{margin:0;color:var(--ink)}
+#v-shifts.v26 .sh-empty button{margin-top:var(--space-3)}
+#v-shifts.v26 .sgroup{margin:0}
+#v-shifts.v26 .sgroup+.sgroup{margin-top:var(--space-3)}
+#v-shifts.v26 .sdays{display:grid;gap:var(--space-3)}
+#v-shifts.v26 .sday{margin:0;background:var(--white);border:1px solid var(--line);border-radius:var(--r-card,12px)}
+#v-shifts.v26 .sday+.sday{margin-top:0}
+#v-shifts.v26 .sday.is-today{border-color:var(--heading);box-shadow:0 0 0 1px var(--heading)}   /* 2px look, no 1px shift of the columns */
+#v-shifts.v26 .sday-h{position:sticky;top:var(--sh-top,0px);z-index:3;display:flex;align-items:center;gap:8px;margin:0;padding:12px 16px 6px;background:var(--white);border-radius:calc(var(--r-card,12px) - 2px) calc(var(--r-card,12px) - 2px) 0 0;font:600 15px/1.3 var(--font);color:var(--heading)}
+#v-shifts.v26 .sday.is-past .sday-h{color:var(--muted)}
+#v-shifts.v26 .sday-h .rd-today{font-size:12px;padding:1px 8px}
+#v-shifts.v26 .sday .shifts{display:block;margin:0;padding:0 0 4px;list-style:none;background:none;border:0;border-radius:0;box-shadow:none;overflow:visible}
+#v-shifts.v26 .shift.v26{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:0 10px;min-width:0;min-height:56px;margin:0 16px;padding:0;border:0;border-top:1px solid var(--line2);border-radius:0;background:transparent;box-shadow:none;cursor:pointer}
+#v-shifts.v26 .shift.v26:first-child{border-top:0}
+#v-shifts.v26 .shift.v26.past{background:transparent !important}
+#v-shifts.v26 .s-open{display:grid;grid-template-columns:4.5rem minmax(0,1fr) auto;align-items:center;gap:0 10px;width:100%;min-width:0;min-height:56px;margin:0;padding:8px 0;border:0;border-radius:var(--r-inner,8px);background:transparent;color:var(--ink);font:inherit;text-align:left;box-shadow:none;cursor:pointer}
+#v-shifts.v26 .s-open:hover{background:transparent;color:var(--ink)}
+@media (hover:hover){ #v-shifts.v26 .s-open:hover .s-prog{text-decoration:underline;text-underline-offset:3px} }   /* no sticky underline after a tap */
+#v-shifts.v26 .s-open:focus-visible{border-radius:var(--r-inner,8px)}
+#v-shifts.v26 .s-time{align-self:start;padding-top:2px;font:500 13px/1.3 var(--font);color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+#v-shifts.v26 .s-main{display:grid;grid-template-columns:minmax(0,1fr);gap:2px;min-width:0}
+#v-shifts.v26 .s-prog{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:600 16px/1.3 var(--font);color:var(--heading)}
+#v-shifts.v26 .s-meta{position:relative;display:flex;align-items:center;gap:7px;min-width:0;min-height:17px;overflow:hidden;white-space:nowrap;font:400 13px/1.3 var(--font);color:var(--muted)}
+#v-shifts.v26 .s-dept{position:relative;display:inline-flex;align-items:center;flex:none}
+#v-shifts.v26 .s-ddot{display:block;width:8px;height:8px;border-radius:50%;background:var(--dc,var(--d-other))}
+#v-shifts.v26 .s-where{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#v-shifts.v26 .s-who{display:inline-flex;align-items:center;gap:6px;min-width:0;max-width:9.5rem;font:500 13px/1.3 var(--font);color:var(--muted);white-space:nowrap}
+#v-shifts.v26 .s-avs{display:inline-flex;flex:none}
+#v-shifts.v26 .s-avs .av{width:24px;height:24px;font-size:10px;box-shadow:0 0 0 2px var(--white)}
+#v-shifts.v26 .s-avs .av+.av{margin-left:-6px}
+#v-shifts.v26 .s-names{min-width:0;overflow:hidden;text-overflow:ellipsis}
+#v-shifts.v26 .s-act{display:flex;align-items:center;justify-content:flex-end;min-width:0}
+#v-shifts.v26 .s-pill{display:inline-flex;align-items:center;gap:4px;margin:0;padding:3px 10px;border-radius:var(--r-tag,6px);white-space:nowrap;font:600 13px/1.3 var(--font)}
+#v-shifts.v26 .s-pill .ic{width:14px;height:14px;flex:none}
+#v-shifts.v26 .s-pill.mine{background:var(--ok-bg);border:1px solid var(--line-accent);color:var(--ok)}
+#v-shifts.v26 .s-pill.full,#v-shifts.v26 .s-pill.quiet{padding-inline:2px;font-weight:500;color:var(--muted)}
+#v-shifts.v26 .s-signup{min-height:40px;padding:0 18px;white-space:nowrap}
+#v-shifts.v26 .shift.v26.past .s-prog{color:var(--muted)}
+#v-shifts.v26 .shift.v26.gone .s-prog,#v-shifts.v26 .shift.v26.done .s-prog{text-decoration:line-through;color:var(--muted)}
+@media (max-width:767px){
+  #v-shifts.v26 .shift.v26{margin:0 12px;gap:0 8px}
+  #v-shifts.v26 .s-open{grid-template-columns:3.75rem minmax(0,1fr) auto;gap:0 8px}
+  #v-shifts.v26 .s-prog{font-size:15px}
+  #v-shifts.v26 .s-who{max-width:6.5rem}
+  #v-shifts.v26 .sday-h{padding:12px 12px 4px}
+  #v-shifts.v26 .st-covered .s-act{display:none}
+  #v-shifts.v26 .st-partial .s-names{display:none}
+  #v-shifts.v26 :is(.st-signup,.st-mine,.st-gone,.st-none,.st-done) .s-who{display:none}
+  #v-shifts.v26 .s-signup{min-height:44px;padding:0 14px;font-size:15px}
+  #v-shifts.v26 .shifts-head .pill-sel,#v-shifts.v26 .sh-add,#v-shifts.v26 .sh-seg button{min-height:44px}
+}
+@media (max-width:380px){
+  #v-shifts.v26 .sh-seg button{padding:0 11px}
+  #v-shifts.v26 .s-open{grid-template-columns:3.6rem minmax(0,1fr) auto}
+  #v-shifts.v26 .s-time{font-size:12.5px}
+  #v-shifts.v26 .shift.v26{margin:0 10px}
+}
+@media (min-width:768px){
+  #v-shifts.v26 .shift.v26{grid-template-columns:minmax(0,1fr) 8.75rem;gap:0 16px}
+  #v-shifts.v26 .s-open{grid-template-columns:5rem minmax(0,1fr) minmax(0,10rem);gap:0 16px;min-height:60px}
+  #v-shifts.v26 .s-who{max-width:none}
+}
+/* the Shift sheet */
+#sheet .sh-sheet{display:grid;gap:var(--space-4)}
+#sheet .sh-sheet .ev-src{margin:0}
+#sheet .sh-sheet .sh-dept{display:inline-flex;align-items:center;gap:8px}
+#sheet .sh-sheet .sh-who-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 var(--space-2)}
+#sheet .sh-sheet .sh-who-h h3{margin:0}
+#sheet .sh-sheet .s-pa{display:grid;gap:var(--space-2);justify-items:stretch}
+#sheet .sh-sheet .sh-people{list-style:none;margin:0;padding:0;border:1px solid var(--line2);border-radius:var(--r-inner,8px)}
+#sheet .sh-sheet .sh-person.chip.su{display:flex;align-items:center;gap:10px;width:auto;min-height:52px;margin:0;padding:4px 4px 4px 12px;border:0;border-radius:0;background:transparent;font-size:15px;font-weight:600;color:var(--ink)}
+#sheet .sh-sheet .sh-person+.sh-person{border-top:1px solid var(--line2)}
+#sheet .sh-sheet .sh-person .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#sheet .sh-sheet .sh-person .sub{font-size:var(--fs-s);font-weight:500;color:var(--muted)}
+#sheet .sh-sheet .sh-rm.chip-x{width:auto !important;min-width:var(--tap) !important;height:auto;min-height:var(--tap);padding:0 12px;border:0;border-radius:var(--radius-pill);background:transparent;color:var(--err);font-size:15px;font-weight:600}
+#sheet .sh-sheet .sh-rm.chip-x:hover{background:var(--err-bg);color:var(--err)}
+#sheet .sh-sheet .sh-nobody{margin:0}
+#sheet .sh-sheet .su-me{justify-self:start}
+#sheet .sh-sheet .s-pa select.su-sel{width:100%;max-width:none;min-height:var(--control-md);border-radius:var(--r-field,8px)}
+#sheet .sh-sheet .sh-fld :is(input,select){border-radius:var(--r-field,8px)}
+#sheet .sh-sheet .sh-need{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:var(--space-3);padding-top:var(--space-3);border-top:1px solid var(--line2)}
+#sheet .sh-sheet .sh-need-l{font-weight:600;color:var(--heading)}
+#sheet .sh-sheet .sh-fld{display:grid;gap:4px;margin:0 0 var(--space-3)}
+#sheet .sh-sheet .sh-edit-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+#sheet .sh-sheet .sh-done{display:inline-flex;align-items:center;gap:8px;min-height:var(--tap);font-weight:600}
+#sheet .sh-sheet .sh-arch{display:inline-flex;align-items:center;gap:6px}
+#sheet.evsheet .sh-foot .sh-wk{display:inline-flex;align-items:center;gap:6px;min-width:0;margin-right:auto;padding:0 6px;font-weight:600;text-decoration:none}
+#sheet.evsheet .sh-foot .sh-wk:hover{text-decoration:underline}
+@media (max-width:767px),(pointer:coarse){
+  #sheet .sh-sheet .s-pa select.su-sel{min-height:44px;font-size:16px}
+  #sheet .sh-sheet .sh-fld :is(input,select){font-size:16px;min-height:44px}
+}
+
 /* ---------- shape layer (v2.6, Oct 20 2026) ----------
    Omar: "review whether we really need to round corners this much. Use design best practices."
    One rule per role, so shape tells you what a thing is:
@@ -1398,7 +1506,7 @@ dialog{border-radius:var(--r-card)}
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.5.1';   // v2.5b: items 5-8 (one sign-in form, location line, calmer PA shifts, Common repeated tasks)
+var BUILD = '2.6';   // v2.6: PA shifts overhaul (read-first rows, Shift sheet, All · Need a PA · Mine)
 var TZ = 'America/Chicago';   // Roots' clock: "today", "overdue" and "this week" follow Central time on every device
 var ICON192 = 'data:image/png;base64,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';
 var ICON512 = 'data:image/png;base64,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';
@@ -4067,8 +4175,8 @@ function addShift(){
   var month = S.tab === 'cal' && S.calMode === 'week' ? monthOf(addDays(S.week, 3)) : S.month;
   var s = insertRow('shifts', {id: newId('s_'), team: S.team, month: month, date: null, date_text: '', start_time: '', end_time: '', time_text: '', program: '', location: '',
     dept: teamDept(), pa_needed: 1, done: false, sort: nextSort(Array.from(D.shifts.values()))}, 'New shift');
-  invalidate('shifts'); announce('Added a shift row');
-  setTimeout(function(){ var el = fkEl('sp:' + s.id); if (el){ el.scrollIntoView({block: 'center'}); el.focus({preventScroll: true}); } }, 80);
+  S.shiftSeg = 'all'; S.shiftPerson = ''; invalidate('shifts'); announce('Added a shift row');
+  setTimeout(function(){ shiftSheet(s.id, fkEl('addshift'), 'sp:' + s.id); }, 80);   // v2.6: its fields are in the Shift sheet
 }
 function sField(cls, label, id, control){
   return h('div', {class: 's-f ' + cls}, h('label', {for: id, text: label}), control);
@@ -4083,7 +4191,7 @@ function deptPill(s){
 var shiftPeopleKey = '';
 function shiftSig(s){
   return [s.date, s.date_text, s.start_time, s.end_time, s.time_text, s.program, s.location, s.dept, s.pa_needed, s.done ? 1 : 0, s.month, s.cal_event_id || '', s.cal_status || '',
-    isAdmin() ? 'a' : '', shiftPeopleKey, todayIso() > (s.date || '9') ? 'p' : '', isTeamLogin() && !isAdmin() ? myId() || '' : '',   // v2.5b: "Sign me up" follows who "me" is
+    isAdmin() ? 'a' : '', 'v26', shiftPeopleKey, todayIso() > (s.date || '9') ? 'p' : '', isTeamLogin() && !isAdmin() ? myId() || '' : '',   // v2.5b: "Sign me up" follows who "me" is
     shiftPAs(s.id).map(function(x){ return x.person_id + personName(x.person_id) + (isArchivedPerson(x.person_id) ? '~' : ''); }).join(',')].join('\u0001');
 }
 /* who's on it: chips with a remove x, and a "Sign up" list of the team's people (anyone signed in can use it) */
@@ -4120,63 +4228,150 @@ function signupBox(s, lbl, base, pre, opt){
     h('button', {type: 'button', class: 'icon', 'data-fk': pre + 'snp:' + s.id, 'aria-label': 'One more PA needed for ' + lbl, disabled: need >= 9, on: {click: function(){ var c = D.shifts.get(s.id) || s; setNeeded(c, (+c.pa_needed || 0) + 1); }}}, icon('plus', 'sm'))) : null;
   return h('div', {class: 's-pa', role: 'group', 'aria-labelledby': base + '_pal'}, shiftStatus(s), chips, meBtn, sel, step);
 }
-/* a row from the Roots calendar: plain text for everyone; only who's signed up (and, for admins, how many are needed) changes here.
-   v2.5b (item 7, "looks a little bit busy"): the day is the group heading, so a row is just the time, the program (bold) with ONE quiet
-   line for where + department, then PA support. No visible field labels (they stay for screen readers). */
-function calShiftEl(s){
-  var lbl = shiftLabel(s), base = 'sh_' + s.id, gone = s.cal_status === 'gone';
-  var past = s.date && s.date < todayIso(), where = (s.location || '').trim(), d = deptOf(s);
-  return h('li', {class: 'shift cal v25b ' + (deptClass(s) || 'dept-other') + (gone ? ' gone' : '') + (past ? ' past' : ''), 'data-id': s.id, 'data-cal': '1', 'aria-label': lbl},
-    h('span', {class: 's-side', 'aria-hidden': 'true'}),
-    h('div', {class: 's-fields'},
-      h('div', {class: 's-f f-time'}, h('span', {class: 's-lab', text: 'Date and time'}),
-        h('span', {class: 's-val s-time'}, h('span', {class: 'sr-only', text: (s.date ? niceDate(s.date) : (s.date_text || 'No date')) + ', '}), shiftTime(s) || 'Time TBC')),
-      h('div', {class: 's-f f-prog'}, h('span', {class: 's-lab', text: 'Program'}), h('span', {class: 's-val s-prog', text: (s.program || '').trim() || 'Untitled event'}),
-        gone ? h('span', {class: 'mk gonemk'}, icon('warn'), 'Cancelled on the calendar') : null,
-        where || d ? h('span', {class: 's-meta'},
-          where ? h('span', {class: 's-where'}, icon('pin', 'sm'), h('span', {class: 'sr-only', text: 'Location: '}), where) : null,
-          d ? h('span', {class: 's-dept'}, h('span', {class: 's-ddot', 'aria-hidden': 'true'}), h('span', {class: 'sr-only', text: 'Department: '}), d) : null) : null),
-      h('div', {class: 's-f f-pa'}, h('span', {class: 's-lab', id: base + '_pal', text: 'PA support'}), signupBox(s, lbl, base))),
-    h('span', {class: 's-side', 'aria-hidden': 'true'}));
+/* v2.6 (Addendum 1: Anisha, "looks a little bit busy"): a read-first row. It answers when, what/where and who's on (or the
+   one action); everything else (who's on with Remove, Add someone, Sign me up, PAs needed, editing a hand-typed row, the
+   week link) lives in the Shift sheet, opened by tapping the row. Calendar rows stay read-only (the calendar owns them). */
+function startTime(s){
+  if (s.start_time){ var p = String(s.start_time).split(':'), hr = parseInt(p[0], 10), m = (p[1] || '00').slice(0, 2); if (!isNaN(hr)) return ((hr % 12) || 12) + ':' + m + ' ' + (hr >= 12 ? 'PM' : 'AM'); }
+  var t = (s.time_text || '').trim(); if (!t) return '';
+  var a = /^(\d{1,2})(?::(\d{2}))?\s*([ap])?\.?\s*m?\.?/i.exec(t), any = /\d\s*([ap])\.?m/i.exec(t);
+  if (!a) return t;
+  var ap = a[3] || (any ? any[1] : '');
+  return (+a[1]) + ':' + (a[2] || '00') + (ap ? ' ' + ap.toUpperCase() + 'M' : '');
 }
-/* a row typed in by hand (the old app's rows): editable as before */
-function shiftEl(s){
-  if (isCalRow(s)) return calShiftEl(s);
-  var lbl = shiftLabel(s), base = 'sh_' + s.id;
-  var date = h('input', {type: 'date', id: base + '_d', value: s.date || '', 'data-fk': 'sd:' + s.id, on: {change: function(e){
-    var v = e.target.value || null, patch = {date: v, date_text: ''};
-    if (v && monthOf(v) !== s.month){ patch.month = monthOf(v); toast('Moved to ' + monthLabel(patch.month) + '.'); }
-    setFields('shifts', s.id, patch, lbl); ensureShifts(); invalidate('shifts', 'person', 'cal', 'pas');
-    setTimeout(function(){ var el = fkEl('sd:' + s.id); if (el && document.activeElement !== el) el.focus({preventScroll: true}); }, 80);   // v2.5b: the row may move to another day
-  }}});
-  var dateBox = h('div', null, date,
-    !s.date && s.date_text ? h('div', {class: 's-hint', text: 'Was typed as \u201c' + s.date_text + '\u201d. Pick the date.'}) : null,
-    s.date ? h('div', {class: 's-nice', text: niceDate(s.date)}) : null);
-  var time = h('input', {type: 'text', id: base + '_t', value: shiftTime(s), placeholder: 'e.g. 7\u20139:30 PM', 'data-fk': 'st:' + s.id, autocomplete: 'off', on: {input: function(e){
-    var cur = D.shifts.get(s.id);
-    if (cur && (cur.start_time || cur.end_time)) setFields('shifts', s.id, {start_time: '', end_time: ''}, lbl);
-    editField('shifts', s.id, 'time_text', e.target.value, lbl);
-  }}});
-  var prog = h('input', {type: 'text', id: base + '_p', class: 's-prog', value: s.program || '', placeholder: 'Program name', 'data-fk': 'sp:' + s.id, autocomplete: 'off', on: {input: function(e){ editField('shifts', s.id, 'program', e.target.value, e.target.value); }}});
-  var loc = h('input', {type: 'text', id: base + '_l', value: s.location || '', placeholder: 'Location', list: 'locNames', 'data-fk': 'sl:' + s.id, autocomplete: 'off', on: {input: function(e){ editField('shifts', s.id, 'location', e.target.value, lbl); }}});
-  var pas = shiftPAs(s.id).map(function(x){ var per = D.people.get(x.person_id); return h('span', {class: 'chip' + (per.deleted_at ? ' gone' : '')}, avatar(per), h('span', {class: 'nm', text: per.name})); });
-  var addPa = h('button', {type: 'button', class: 'addp', id: base + '_pa', 'data-fk': 'spa:' + s.id, 'aria-label': 'PA support for ' + lbl + ': change who and how many', on: {click: function(){ shiftPicker(D.shifts.get(s.id) || s); }}}, icon('plus', 'sm'));
-  var dept = h('select', {id: base + '_dp', 'data-fk': 'sdp:' + s.id, on: {change: function(e){ setFields('shifts', s.id, {dept: e.target.value}, lbl); invalidate('shifts', 'person', 'cal', 'pas'); }}},
-    h('option', {value: '', text: 'None'}), DEPTS.map(function(d){ return h('option', {value: d, text: d}); }));
-  if (s.dept && DEPTS.indexOf(s.dept) < 0) dept.append(h('option', {value: s.dept, text: s.dept}));
-  dept.value = s.dept || '';
-  return h('li', {class: 'shift manual ' + (deptClass(s) || 'dept-other') + (s.done ? ' done' : ''), 'data-id': s.id, 'aria-label': lbl},
-    h('label', {class: 'cb'}, h('input', {type: 'checkbox', checked: !!s.done, 'data-fk': 'sx:' + s.id, 'aria-label': 'Shift completed: ' + lbl, on: {change: function(e){
-      setFields('shifts', s.id, {done: e.target.checked}, lbl); invalidate('shifts'); announce(e.target.checked ? 'Moved to Completed' : 'Moved back to upcoming');
-    }}})),
-    h('div', {class: 's-fields'},
-      sField('f-date', 'Date', base + '_d', dateBox),
-      sField('f-time', 'Time', base + '_t', time),
-      sField('f-prog', 'Program', base + '_p', prog),
-      sField('f-loc', 'Location', base + '_l', loc),
-      h('div', {class: 's-f f-pa'}, h('span', {class: 's-lab', id: base + '_pal', text: 'PA support'}), h('div', {class: 's-pa', role: 'group', 'aria-labelledby': base + '_pal'}, shiftStatus(s), pas, addPa)),
-      sField('f-dept', 'Department', base + '_dp', dept)),
-    h('button', {type: 'button', class: 'icon', 'aria-label': 'Archive ' + lbl, 'data-fk': 'sm:' + s.id, on: {click: function(){ archiveShift(s.id); }}}, icon('archive')));
+function firstName(pid){ return (personName(pid) || '').trim().split(/\s+/)[0] || ''; }
+function shiftOpen(s){ return s.cal_status !== 'gone' && (+s.pa_needed || 0) > livePAs(s).length; }
+function shiftMe(){ return isTeamLogin() && !isAdmin() ? myId() : null; }
+/* the row's one status: signup (PA with a name picked, open slot) | mine | open | partial | covered | none | gone */
+function shiftState(s){
+  var on = livePAs(s), need = +s.pa_needed || 0, miss = Math.max(0, need - on.length), gone = s.cal_status === 'gone';
+  var me = shiftMe(), mine = !!me && D.sp.has(s.id + '|' + me), past = !!s.date && s.date < todayIso();
+  var canMe = !!me && !gone && !past && miss > 0 && !mine && paPeople().some(function(p){ return p.id === me; });
+  var st = gone ? 'gone' : !isCalRow(s) && s.done ? 'done' : mine ? 'mine' : canMe ? 'signup' : miss ? (on.length ? 'partial' : 'open') : on.length ? 'covered' : 'none';
+  return {on: on, need: need, miss: miss, me: me, st: st};
+}
+function shiftRowEl(s){
+  var lbl = shiftLabel(s), st = shiftState(s), cal = isCalRow(s), gone = s.cal_status === 'gone', past = !!s.date && s.date < todayIso();
+  var name = (s.program || '').trim() || (cal ? 'Untitled event' : 'New shift'), where = (s.location || '').trim(), d = deptOf(s);
+  var shown = where ? tileTitle(name, where) : name, t = startTime(s);
+  var who = st.on.length ? h('span', {class: 's-who'},
+    h('span', {class: 's-avs', 'aria-hidden': 'true'}, st.on.slice(0, 2).map(function(pid){ return avatar(D.people.get(pid)); })),
+    h('span', {class: 's-names', text: firstName(st.on[0]) + (st.on.length > 1 ? ' +' + (st.on.length - 1) : '')})) : null;
+  var act;
+  if (st.st === 'signup') act = h('button', {type: 'button', class: 'primary su-me s-signup', 'data-fk': 'sume:' + s.id, 'aria-label': 'Sign me up for ' + lbl, on: {click: function(){
+    signUp(D.shifts.get(s.id) || s, st.me);
+    setTimeout(function(){ var el = fkEl('sho:' + s.id); if (el) el.focus({preventScroll: true}); }, 80);
+  }}}, 'Sign up');
+  else if (st.st === 'mine') act = h('span', {class: 's-pill mine'}, icon('check', 'sm'), 'You\u2019re on');
+  else if (st.st === 'open') act = h('span', {class: 'cal__tag need s-pill'}, 'Need ' + st.miss);
+  else if (st.st === 'partial') act = h('span', {class: 'cal__tag need s-pill'}, 'Need ' + st.miss + ' more');
+  else if (st.st === 'gone') act = h('span', {class: 's-pill quiet'}, 'Cancelled');
+  else if (st.st === 'done') act = h('span', {class: 's-pill quiet'}, icon('check', 'sm'), 'Done');
+  else if (st.st === 'covered') act = h('span', {class: 's-pill full'}, icon('check', 'sm'), 'Full');
+  else act = h('span', {class: 's-pill quiet'}, 'No PA needed');
+  var aria = (s.date ? niceDate(s.date) : (s.date_text || 'No date yet')) + ', ' + (shiftTime(s) || 'time to be confirmed') + ': ' + shown + (where ? ', ' + where : '') + (d ? '. ' + d : '') + '. ' +
+    (gone ? 'Cancelled on the calendar. ' : '') + (st.st === 'mine' ? 'You\u2019re on it. ' : '') + (s.done && !cal ? 'Done. ' : '') + paInfo(s).full + '. Open details';
+  return h('li', {class: 'shift v26 ' + (cal ? 'cal' : 'manual') + ' st-' + st.st + ' ' + (deptClass(s) || 'dept-other') + (gone ? ' gone' : '') + (past ? ' past' : '') + (s.done && !cal ? ' done' : ''),
+      'data-id': s.id, 'data-cal': cal ? '1' : null,
+      on: {click: function(e){ if (e.target.closest('button, a, input, select, label')) return; var b = e.currentTarget.querySelector('.s-open'); shiftSheet(s.id, b); }}},   // a tap on the status pill opens it too
+    h('button', {type: 'button', class: 's-open', 'data-fk': 'sho:' + s.id, 'aria-haspopup': 'dialog', 'aria-label': aria, on: {click: function(e){ shiftSheet(s.id, e.currentTarget); }}},
+      h('span', {class: 's-time', text: t || 'TBC'}),
+      h('span', {class: 's-main'},
+        h('span', {class: 's-prog', text: shown}),
+        h('span', {class: 's-meta'},
+          d ? h('span', {class: 's-dept'}, h('span', {class: 's-ddot'}), h('span', {class: 'sr-only', text: 'Department: ' + d})) : null,
+          where ? h('span', {class: 's-where', text: where}) : null)),
+      who),
+    h('span', {class: 's-act'}, act));
+}
+function calShiftEl(s){ return shiftRowEl(s); }
+function shiftEl(s){ return shiftRowEl(s); }
+/* the Shift sheet: the facts, who's on (Remove each), Sign me up / Add someone, PAs needed (admins), the hand-typed row's fields (admins) */
+function shiftSheet(id, ret, focusFk){
+  var s = D.shifts.get(id); if (!s) return;
+  var body = h('div', {class: 'ev-sheet sh-sheet'});
+  function fld(label, fid, control){ return h('div', {class: 'sh-fld'}, h('label', {class: 'field', for: fid, text: label}), control); }
+  function render(){
+    var cur = D.shifts.get(id); if (!cur || cur.deleted_at){ body.replaceChildren(h('p', {class: 'muted', text: 'This shift was archived.'})); return; }
+    s = cur;
+    var keep = document.activeElement && body.contains(document.activeElement) ? document.activeElement.dataset.fk : null;
+    var lbl = shiftLabel(s), gone = s.cal_status === 'gone', cal = isCalRow(s), base = 'hs_' + s.id.replace(/[^a-z0-9_]/gi, ''), edit = !cal && isAdmin();
+    var where = (s.location || '').trim(), d = deptOf(s), need = +s.pa_needed || 0;
+    var facts = h('dl', {class: 'ev-facts'},
+      h('dt', {text: 'When'}), h('dd', {text: (s.date ? dayLong(s.date) : (s.date_text || 'No date yet')) + (shiftTime(s) ? ' \u00b7 ' + shiftTime(s) : '')}),
+      where ? [h('dt', {text: 'Where'}), h('dd', {text: where})] : null,
+      d ? [h('dt', {text: 'Department'}), h('dd', null, h('span', {class: 'sh-dept ' + (deptClass(s) || 'dept-other')}, h('span', {class: 'cal__dot', 'aria-hidden': 'true'}), d))] : null);
+    var src = h('p', {class: 'ev-src small muted', text: cal ? 'From the Roots calendar. Date, time and place change there.' : 'Added by hand on PA shifts.'});
+    var on = shiftPAs(s.id), onIds = on.map(function(x){ return x.person_id; }), me = shiftMe();
+    var free = paPeople().filter(function(p){ return onIds.indexOf(p.id) < 0; });
+    var free2 = me && free.some(function(p){ return p.id === me; }) ? [D.people.get(me)].concat(free.filter(function(p){ return p.id !== me; })) : free;
+    var meOpen = !!me && !gone && free.some(function(p){ return p.id === me; }) && (need ? on.length < need : !on.length);
+    var people = on.length ? h('ul', {class: 'sh-people', 'aria-label': 'Who\u2019s on ' + lbl}, on.map(function(x){
+      var per = D.people.get(x.person_id);
+      return h('li', {class: 'chip su sh-person' + (per.deleted_at ? ' gone' : '')}, avatar(per),
+        h('span', {class: 'nm', text: per.name + (per.deleted_at ? ' (archived)' : '')}), per.id === me ? h('span', {class: 'sub', text: 'you'}) : null,
+        h('button', {type: 'button', class: 'chip-x sh-rm', 'data-fk': 'sux:' + s.id + ':' + per.id, 'aria-label': 'Take ' + per.name + ' off ' + lbl, on: {click: function(){
+          signOff(D.shifts.get(s.id) || s, per.id);
+          setTimeout(function(){ var el = fkEl('sume:' + s.id) || fkEl('ssu:' + s.id) || $('#sheetTitle'); if (el) el.focus({preventScroll: true}); }, 90);
+        }}}, 'Remove'));
+    })) : h('p', {class: 'muted sh-nobody', text: 'Nobody yet.'});
+    var meBtn = meOpen ? h('button', {type: 'button', class: 'primary su-me', 'data-fk': 'sume:' + s.id, 'aria-label': 'Sign me up for ' + lbl, on: {click: function(){
+      signUp(D.shifts.get(s.id) || s, me);
+      setTimeout(function(){ var el = fkEl('ssu:' + s.id) || $('#sheetTitle'); if (el) el.focus({preventScroll: true}); }, 90);
+    }}}, icon('plus', 'sm'), 'Sign me up') : null;
+    var sel = gone ? null : h('select', {class: 'su-sel', id: base + '_su', 'data-fk': 'ssu:' + s.id, 'aria-label': 'Add someone to ' + lbl, on: {change: function(e){
+      var pid = e.target.value; if (!pid) return;
+      e.target.blur();
+      signUp(D.shifts.get(s.id) || s, pid);
+      setTimeout(function(){ var el = fkEl('ssu:' + s.id); if (el) el.focus({preventScroll: true}); }, 90);
+    }}}, h('option', {value: '', text: free2.length ? 'Add someone\u2026' : 'Everyone\u2019s on'}), free2.map(function(p){ return h('option', {value: p.id, text: p.id === me ? p.name + ' (me)' : p.name}); }));
+    if (sel && !free2.length) sel.disabled = true;
+    var step = isAdmin() && !gone ? h('div', {class: 'sh-need'}, h('span', {class: 'sh-need-l', id: base + '_nl', text: 'PAs needed'}),
+      h('span', {class: 'need-step', role: 'group', 'aria-labelledby': base + '_nl'},
+        h('button', {type: 'button', class: 'icon', 'data-fk': 'snm:' + s.id, 'aria-label': 'One fewer PA needed', disabled: need <= 0, on: {click: function(){ var c = D.shifts.get(s.id) || s; setNeeded(c, (+c.pa_needed || 0) - 1); }}}, icon('minus', 'sm')),
+        h('span', {class: 'nv', text: String(need)}),
+        h('button', {type: 'button', class: 'icon', 'data-fk': 'snp:' + s.id, 'aria-label': 'One more PA needed', disabled: need >= 9, on: {click: function(){ var c = D.shifts.get(s.id) || s; setNeeded(c, (+c.pa_needed || 0) + 1); }}}, icon('plus', 'sm')))) : null;
+    var whoSec = h('section', {class: 'ev-sec sh-whosec', 'aria-labelledby': base + '_wh'},
+      h('div', {class: 'sh-who-h'}, h('h3', {id: base + '_wh', text: 'Who\u2019s on'}), shiftStatus(s)),
+      h('div', {class: 's-pa', role: 'group', 'aria-labelledby': base + '_wh'}, people, meBtn, sel), step);
+    var editSec = null;
+    if (edit){
+      var date = h('input', {type: 'date', id: base + '_d', value: s.date || '', 'data-fk': 'sd:' + s.id, on: {change: function(e){
+        var c = D.shifts.get(s.id) || s, v = e.target.value || null, patch = {date: v, date_text: ''};
+        if (v && monthOf(v) !== c.month){ patch.month = monthOf(v); toast('Moved to ' + monthLabel(patch.month) + '.'); }
+        setFields('shifts', s.id, patch, shiftLabel(c)); ensureShifts(); invalidate('shifts', 'person', 'cal', 'pas');
+      }}});
+      var time = h('input', {type: 'text', id: base + '_t', value: shiftTime(s), placeholder: 'e.g. 7\u20139:30 PM', 'data-fk': 'st:' + s.id, autocomplete: 'off', on: {input: function(e){
+        var c = D.shifts.get(s.id);
+        if (c && (c.start_time || c.end_time)) setFields('shifts', s.id, {start_time: '', end_time: ''}, lbl);
+        editField('shifts', s.id, 'time_text', e.target.value, lbl);
+      }}});
+      var prog = h('input', {type: 'text', id: base + '_p', value: s.program || '', placeholder: 'Program name', 'data-fk': 'sp:' + s.id, autocomplete: 'off', on: {input: function(e){ editField('shifts', s.id, 'program', e.target.value, e.target.value); }}});
+      var loc = h('input', {type: 'text', id: base + '_l', value: s.location || '', placeholder: 'Location', list: 'locNames', 'data-fk': 'sl:' + s.id, autocomplete: 'off', on: {input: function(e){ editField('shifts', s.id, 'location', e.target.value, lbl); }}});
+      var dept = h('select', {id: base + '_dp', 'data-fk': 'sdp:' + s.id, on: {change: function(e){ setFields('shifts', s.id, {dept: e.target.value}, lbl); invalidate('shifts', 'person', 'cal', 'pas'); }}},
+        h('option', {value: '', text: 'None'}), DEPTS.map(function(x){ return h('option', {value: x, text: x}); }));
+      if (s.dept && DEPTS.indexOf(s.dept) < 0) dept.append(h('option', {value: s.dept, text: s.dept}));
+      dept.value = s.dept || '';
+      var done = h('label', {class: 'sh-done', for: base + '_x'}, h('input', {type: 'checkbox', id: base + '_x', checked: !!s.done, 'data-fk': 'sx:' + s.id, on: {change: function(e){
+        setFields('shifts', s.id, {done: e.target.checked}, lbl); invalidate('shifts'); announce(e.target.checked ? 'Marked done' : 'Marked not done');
+      }}}), h('span', {text: 'Done'}));
+      editSec = h('section', {class: 'ev-sec sh-edit', 'aria-labelledby': base + '_eh'}, h('h3', {id: base + '_eh', text: 'Details'}),
+        fld('Date', base + '_d', h('div', null, date, !s.date && s.date_text ? h('div', {class: 's-hint', text: 'Was typed as \u201c' + s.date_text + '\u201d. Pick the date.'}) : null)), fld('Time', base + '_t', time), fld('Program', base + '_p', prog), fld('Location', base + '_l', loc), fld('Department', base + '_dp', dept),
+        h('div', {class: 'sh-edit-foot'}, done,
+          h('button', {type: 'button', class: 'sh-arch', 'data-fk': 'sm:' + s.id, on: {click: function(){ closeSheet(); archiveShift(s.id); }}}, icon('archive', 'sm'), 'Archive')));
+    }
+    body.className = 'ev-sheet sh-sheet ' + (deptClass(s) || 'dept-other') + (gone ? ' gone' : '');
+    body.replaceChildren.apply(body, [src, gone ? h('p', {class: 'warnbox', text: 'Cancelled on the Roots calendar. It stays here because someone signed up.'}) : null, facts, whoSec, editSec].filter(Boolean));
+    if (keep){ var el = body.querySelector('[data-fk="' + cssEsc(keep) + '"]'); if (el) el.focus({preventScroll: true}); }
+  }
+  render();
+  var wk = s.date ? h('button', {type: 'button', class: 'link sh-wk', 'data-fk': 'hopenwk', on: {click: function(){ var d = (D.shifts.get(id) || s).date; closeSheet(); go({tab: 'cal', mode: 'week', week: mondayOf(isoToDate(d)), day: d}); }}}, icon('cal', 'sm'), 'Open this week in the Calendar') : null;
+  openSheet({title: (s.program || '').trim() || (isCalRow(s) ? 'Untitled event' : 'New shift'), returnTo: ret, body: body,
+    onClose: function(){ if (!isCalRow(s)) commitPendFor('shifts', id); if (S.sheetLive && S.sheetLive.shift === id) S.sheetLive = null; },
+    foot: [wk, h('button', {type: 'button', class: 'primary', on: {click: closeSheet}}, 'Done')].filter(Boolean)});
+  S.sheetLive = {id: 'shift:' + id, shift: id, ret: ret, views: ['shifts'], render: render};
+  $('#sheet').classList.add('evsheet');
+  if (focusFk){ var fe = $('#sheet').querySelector('[data-fk="' + cssEsc(focusFk) + '"]'); if (fe) fe.focus({preventScroll: false}); }
 }
 function personFilterSel(id, fk, cur, onPick, label){
   var sel = h('select', {id: id, class: 'pill-sel', 'data-fk': fk, on: {change: function(e){ onPick(e.target.value); }}},
@@ -4194,86 +4389,108 @@ RENDER.shifts = function(){
     if (!S.monthError) ensureShifts();
     return;
   }
+  sec.classList.add('v26');
+  var hb = $('.hdr'); if (hb) sec.style.setProperty('--sh-top', hb.offsetHeight + 'px');   // day headings stick just under the app header
   shiftPeopleKey = activePeople().map(function(p){ return p.id + p.name; }).join(',');
-  var wk = false;      // PA shifts = the whole month, every row (the Calendar has the week view)
-  var who = S.shiftPerson && D.people.has(S.shiftPerson) ? S.shiftPerson : '';
-  var all = activeShifts().filter(function(s){ return !who || D.sp.has(s.id + '|' + who); });
-  var open = all.filter(function(s){ return isCalRow(s) || !s.done; }), done = all.filter(function(s){ return !isCalRow(s) && s.done; });
-  var headKey = [who, isAdmin(), shiftPeopleKey].join('|');
+  var today = todayIso(), me = shiftMe();
+  var who = isAdmin() && S.shiftPerson && D.people.has(S.shiftPerson) ? S.shiftPerson : '';
+  var seg = S.shiftSeg === 'need' || (S.shiftSeg === 'mine' && !isAdmin()) ? S.shiftSeg : 'all';
+  if (who) seg = 'all';
+  var month = activeShifts();
+  // v2.6: counts are from today on (what's still ahead this month)
+  var ahead = month.filter(function(s){ return s.date && s.date >= today && (isCalRow(s) || !s.done); });
+  var cnt = {all: ahead.length, need: ahead.filter(shiftOpen).length, mine: me ? ahead.filter(function(s){ return D.sp.has(s.id + '|' + me); }).length : null};
+  var all = month.filter(function(s){
+    if (who) return D.sp.has(s.id + '|' + who);
+    if (seg === 'need') return shiftOpen(s) && !!s.date && s.date >= today && (isCalRow(s) || !s.done);   // same rule as its count
+    if (seg === 'mine') return !!me && D.sp.has(s.id + '|' + me);
+    return true;
+  });
+  var open = all.filter(function(s){ return isCalRow(s) || !s.done; }), done = seg === 'need' ? [] : all.filter(function(s){ return !isCalRow(s) && s.done; });
+  var headKey = [who, seg, isAdmin(), me, shiftPeopleKey, cnt.all, cnt.need, cnt.mine].join('|');
   var head = sec.querySelector(':scope > .view-head');
-  if (!head || (head._k !== headKey && !head.contains(document.activeElement))){
-    var nh = h('div', {class: 'view-head shifts-head'}, h('h2', {class: 'sr-only', id: 'shiftsH'}, 'PA shifts'),
-      h('p', {class: 'caption grow', text: 'Every program this month, from the Roots calendar.'}),
-      h('label', {class: 'sr-only', for: 'shPerson', text: 'Show shifts for'}),
-      personFilterSel('shPerson', 'shperson', who, function(v){ S.shiftPerson = v; invalidate('shifts'); }, 'Everyone'),
-      isAdmin() ? h('button', {type: 'button', 'data-fk': 'addshift', on: {click: addShift}}, icon('plus'), 'Add shift') : null);
+  var ae = document.activeElement, inHead = head && head.contains(ae);
+  if (!head || (head._k !== headKey && !(inHead && isTexty(ae)))){
+    var keepFk = inHead && ae.dataset ? ae.dataset.fk : null;
+    var segs = [['all', 'All', cnt.all], ['need', 'Need a PA', cnt.need]].concat(isAdmin() ? [] : [['mine', 'Mine', cnt.mine]]);
+    var segEl = h('div', {class: 'seg sh-seg', role: 'group', 'aria-label': 'Show shifts'}, segs.map(function(x){
+      return h('button', {type: 'button', 'data-fk': 'shseg:' + x[0], 'aria-pressed': !who && seg === x[0] ? 'true' : 'false', on: {click: function(){
+        S.shiftSeg = x[0]; S.shiftPerson = ''; invalidate('shifts');
+      }}}, h('span', {text: x[1]}), x[2] == null ? null : h('span', {class: 'seg-n', text: String(x[2])}));
+    }));
+    var nh = h('div', {class: 'view-head shifts-head'}, h('h2', {class: 'sr-only', id: 'shiftsH'}, 'PA shifts'), segEl,
+      isAdmin() ? h('label', {class: 'sr-only', for: 'shPerson', text: 'Show shifts for'}) : null,
+      isAdmin() ? personFilterSel('shPerson', 'shperson', who, function(v){ S.shiftPerson = v; if (v) S.shiftSeg = 'all'; invalidate('shifts'); }, 'Anyone') : null,
+      isAdmin() ? h('button', {type: 'button', class: 'sh-add', 'data-fk': 'addshift', on: {click: addShift}}, icon('plus', 'sm'), h('span', {class: 'sh-add-t', text: 'Add shift'})) : null);
     nh._k = headKey;
     if (head) head.replaceWith(nh);
     head = nh;
+    if (keepFk){ var kf = head.querySelector('[data-fk="' + cssEsc(keepFk) + '"]'); if (kf) kf.focus({preventScroll: true}); }
   }
-  var groups = [], by = new Map(), today = todayIso();
+  // day cards, grouped by week (weeks are sections for screen readers only; the date lives in each day's heading)
+  var groups = [], by = new Map();
   open.forEach(function(s){
-    var k = !s.date ? 'none' : wk ? s.date : mondayOf(isoToDate(s.date));
+    var k = !s.date ? 'none' : mondayOf(isoToDate(s.date));
     if (!by.has(k)) by.set(k, []); by.get(k).push(s);
   });
-  // v2.5b: in the current month, weeks that are over fold into one "earlier" line at the top (one tap opens them)
-  var curMonth = S.month === monthOf(today), earlier = [];
+  var curMonth = S.month === monthOf(today), earlier = [], foldOn = curMonth && !who && seg === 'all';   // Mine / one person: their whole month
   by.forEach(function(v, k){
-    var g = {key: (wk ? 'd:' : 'w:') + k, k: k, items: v, title: k === 'none' ? 'No date yet' : wk ? niceDate(k) + (k === today ? ' \u00b7 Today' : '') : weekLabel(k)};
-    if (curMonth && !wk && !who && k !== 'none' && addDays(k, 6) < today) earlier.push(g); else groups.push(g);   // one person picked: their whole month, no fold
+    var g = {key: 'w:' + k, k: k, items: v, title: k === 'none' ? 'No date yet' : weekLabel(k)};
+    if (foldOn && k !== 'none' && addDays(k, 6) < today) earlier.push(g); else groups.push(g);   // one person picked: their whole month, no fold
   });
   if (done.length) groups.push({key: 'done', title: 'Completed', items: done});
   var nEarlier = earlier.reduce(function(n, g){ return n + g.items.length; }, 0), showEarlier = !!S.shiftEarlier;
   var fold = earlier.length ? h('button', {type: 'button', class: 'link sh-earlier', 'data-fk': 'shearlier', 'aria-expanded': showEarlier ? 'true' : 'false',
     on: {click: function(){ S.shiftEarlier = !S.shiftEarlier; invalidate('shifts'); setTimeout(function(){ var el = fkEl('shearlier'); if (el) el.focus({preventScroll: true}); }, 60); }}},
-    icon(showEarlier ? 'down' : 'chevR', 'sm'), (showEarlier ? 'Hide ' : 'Show ') + nEarlier + ' earlier ' + (nEarlier === 1 ? 'shift' : 'shifts') + ' this month') : null;
+    icon(showEarlier ? 'up' : 'down', 'sm'), (showEarlier ? 'Hide earlier' : 'Show earlier') + ' (' + nEarlier + ')') : null;
   if (earlier.length && showEarlier) groups = earlier.concat(groups);
-  var box = sec.querySelector(':scope > .sgroups') || h('div', {class: 'sgroups'});
-  box.className = 'sgroups ' + (wk ? 'by-day' : 'by-week');
+  var box = sec.querySelector(':scope > .sgroups') || h('div', {class: 'sgroups by-day'});
+  box.className = 'sgroups by-day';
   var rowOf = function(s, o){ return memo(o, 'shifts', shiftSig(s), function(){ return shiftEl(s); }); };
+  function dayCard(dk, items, title, did, o){
+    var dv = o && o.classList.contains('sday') ? o : h('div', {class: 'sday'});
+    dv.classList.toggle('is-today', dk === today);
+    dv.classList.toggle('is-past', /^\d/.test(dk) && dk < today);
+    var dh = h('h4', {class: 'sday-h', id: did}, h('span', {class: 'sday-t', text: title}), dk === today ? h('span', {class: 'rd-today'}, 'Today') : null);
+    var ul = dv.querySelector(':scope > ul') || h('ul', {class: 'shifts'});
+    ul.setAttribute('aria-labelledby', did);
+    reconcile(ul, items, function(s){ return s.id; }, rowOf);
+    var oh = dv.querySelector(':scope > h4');
+    setKids(dv, [oh && oh.textContent === dh.textContent ? oh : dh, ul]);
+    return dv;
+  }
   reconcile(box, groups, function(g){ return g.key; }, function(g, old){
     var gs = old && old.tagName === 'SECTION' ? old : h('section', {class: 'sgroup'});
     var hid = 'sg_' + g.key.replace(/[^a-z0-9]/gi, '');
     gs.setAttribute('aria-labelledby', hid);
-    gs.classList.toggle('today', wk && g.k === today);
-    var n = g.items.length, cnt = n + (n === 1 ? ' shift' : ' shifts');
-    var h3 = !wk && g.k && g.k !== 'none' && g.key !== 'done'
-      ? h('h3', {id: hid}, h('button', {type: 'button', class: 'wk-jump', 'data-fk': 'sgw:' + g.k, 'aria-label': g.title + ', ' + cnt + '. Open this week in the Calendar', on: {click: function(){ go({tab: 'cal', mode: 'week', week: g.k}); }}},
-          h('span', {text: g.title}), h('span', {class: 'muted', text: cnt}), icon('chevR', 'sm')))
-      : h('h3', {id: hid}, h('span', {text: g.title}), h('span', {class: 'muted', text: cnt}));
-    // v2.5b: dated weeks are split by day: a small day heading, then that day's rows (the row no longer repeats the date)
-    var byDay = g.key !== 'done' && g.k !== 'none';
-    var body;
-    if (byDay){
+    var n = g.items.length, cnt2 = n + (n === 1 ? ' shift' : ' shifts');
+    var h3 = h('h3', {id: hid, class: 'sr-only'}, g.title + ', ' + cnt2);
+    var body = gs.querySelector(':scope > .sdays') || h('div', {class: 'sdays'});
+    if (g.key === 'done' || g.k === 'none'){
+      reconcile(body, [g.key], function(x){ return x; }, function(x, o){ return dayCard(x, g.items, g.title, hid + '_d', o); });
+    } else {
       var days = [], dm = new Map();
       g.items.forEach(function(s){ var dk = s.date || 'none'; if (!dm.has(dk)){ dm.set(dk, []); days.push(dk); } dm.get(dk).push(s); });
-      body = gs.querySelector(':scope > .sdays') || h('div', {class: 'sdays'});
-      reconcile(body, days, function(dk){ return 'd' + dk; }, function(dk, o){
-        var dv = o && o.classList.contains('sday') ? o : h('div', {class: 'sday'});
-        var did = hid + '_' + dk.replace(/[^0-9]/g, '');
-        dv.classList.toggle('is-today', dk === today);
-        dv.classList.toggle('is-past', dk < today);
-        var dh = h('h4', {class: 'sday-h', id: did}, dk === 'none' ? 'No date yet' : niceDate(dk), dk === today ? h('span', {class: 'rd-today'}, 'Today') : null);
-        var ul = dv.querySelector(':scope > ul') || h('ul', {class: 'shifts', 'aria-labelledby': did});
-        ul.setAttribute('aria-labelledby', did);
-        reconcile(ul, dm.get(dk), function(s){ return s.id; }, rowOf);
-        var oh = dv.querySelector(':scope > h4');
-        setKids(dv, [oh && oh.textContent === dh.textContent ? oh : dh, ul]);
-        return dv;
-      });
-    } else {
-      body = gs.querySelector(':scope > ul') || h('ul', {class: 'shifts'});
-      reconcile(body, g.items, function(s){ return s.id; }, rowOf);
+      reconcile(body, days, function(dk){ return 'd' + dk; }, function(dk, o){ return dayCard(dk, dm.get(dk), dk === 'none' ? 'No date yet' : niceDate(dk), hid + '_' + dk.replace(/[^0-9]/g, ''), o); });
     }
     var oldH = gs.querySelector(':scope > h3');
-    if (oldH && oldH.contains(document.activeElement)){ setKids(gs, [oldH, body]); return gs; }
-    setKids(gs, [h3, body]);
+    setKids(gs, [oldH && oldH.textContent === h3.textContent ? oldH : h3, body]);
     return gs;
   });
-  var empty = !all.length ? h('div', {class: 'empty'}, h('h2', {text: who ? personName(who) + ' has no PA shifts in ' + monthLabel(S.month) : 'No PA shifts in ' + monthLabel(S.month)}),
-    h('p', {class: 'muted', text: 'Programs show up here once they\u2019re on the Roots calendar.'})) : null;
+  var empty = null;
+  if (!all.length || (seg !== 'all' && !open.length && !done.length)){
+    var msg, act = null;
+    if (who) msg = personName(who) + ' has no PA shifts in ' + monthLabel(S.month) + '.';
+    else if (seg === 'need') msg = 'Every program this month has a PA.';
+    else if (seg === 'mine' && !me){ msg = 'Pick your name on My tasks to see your shifts.'; act = h('button', {type: 'button', 'data-fk': 'shpickme', on: {click: function(){ go({tab: 'person'}); }}}, 'Pick my name'); }
+    else if (seg === 'mine') msg = 'You\u2019re not on any programs yet.';
+    else msg = 'No PA shifts in ' + monthLabel(S.month) + '. Programs show up here once they\u2019re on the Roots calendar.';
+    empty = h('div', {class: 'empty sh-empty'}, h('p', {text: msg}), act);
+  }
   var oldFold = sec.querySelector(':scope > .sh-earlier');
   if (fold && oldFold && oldFold.getAttribute('aria-expanded') === fold.getAttribute('aria-expanded') && oldFold.textContent === fold.textContent) fold = oldFold;   // keeps focus on it
+  var oldEmpty = sec.querySelector(':scope > .sh-empty');
+  if (empty && oldEmpty && oldEmpty.textContent === empty.textContent) empty = oldEmpty;
   setKids(sec, [head, empty, fold, box]);
 };
 
