@@ -1094,6 +1094,12 @@ h3{font-size:var(--fs);font-weight:600}
 .toast.error{background:var(--err)}
 /* ---- skeleton + focus ---- */
 .skel{background:linear-gradient(90deg,var(--tint-2) 0%,var(--hover) 50%,var(--tint-2) 100%)}
+/* ---- v2.4 PA UX: one-tap sign-up + iOS home screen tip (team logins only) ---- */
+.su-me{border-radius:var(--radius-pill);min-height:36px;padding:4px 14px;font-weight:600;font-size:var(--fs-s);gap:4px}
+.a2hs{display:flex;align-items:center;gap:var(--space-2);margin:var(--space-3) var(--space-4) 0;padding:var(--space-1) var(--space-1) var(--space-1) var(--space-4);
+  background:var(--accent-soft);border:1px solid var(--line-accent);border-radius:var(--radius-md);color:var(--ink);font-size:var(--fs-s);line-height:1.4}
+.a2hs span{flex:1}
+@media (max-width:767px),(pointer:coarse){ .su-me{min-height:44px;font-size:16px} }
 
 </style>
 </head>
@@ -3205,6 +3211,21 @@ function tasksFor(pid){
     if (!p || p.deleted_at || p.week !== S.week) return;
     out.push(t);
   });
+  // PA UX (Oct 19): due today and overdue first, then open tasks in day order, done at the bottom.
+  // PA logins only: admins keep the v2.3 order.
+  if (!isTeamLogin() || isAdmin()) return out;
+  var di = function(t){ return DAYS.indexOf(t.due); };
+  out.sort(function(a, b){
+    var da = personDone(a, pid), db = personDone(b, pid);
+    if (da !== db) return da ? 1 : -1;
+    var oa = !da && isOverdue(a), ob = !db && isOverdue(b);
+    if (oa !== ob) return oa ? -1 : 1;
+    var ta = !da && isDueToday(a), tb = !db && isDueToday(b);
+    if (ta !== tb) return ta ? -1 : 1;
+    var xa = di(a) < 0 ? 9 : di(a), xb = di(b) < 0 ? 9 : di(b);
+    if (xa !== xb) return xa - xb;
+    return 0;
+  });
   return out;
 }
 function addTaskForPerson(pid, text, due){
@@ -3505,19 +3526,27 @@ function signupBox(s, lbl, base, pre, opt){
   });
   var gone = s.cal_status === 'gone', need = +s.pa_needed || 0;
   var free = paPeople().filter(function(p){ return onIds.indexOf(p.id) < 0; });   // staff never sign up as PAs (v2.2)
+  var me = isTeamLogin() && !isAdmin() ? myId() : null;                 // PA UX (Oct 19): one-tap self sign-up
+  var free2 = me && free.some(function(p){ return p.id === me; }) ? [D.people.get(me)].concat(free.filter(function(p){ return p.id !== me; })) : free;
+  var meOpen = !!me && !gone && free.some(function(p){ return p.id === me; }) && (need ? on.length < need : !on.length);   // open slot for them
   var sel = gone ? null : h('select', {class: 'su-sel', id: base + '_su', 'data-fk': pre + 'ssu:' + s.id, 'aria-label': 'Sign up a PA for ' + lbl, on: {change: function(e){
       var pid = e.target.value; if (!pid) return;
       e.target.blur();
       signUp(D.shifts.get(s.id) || s, pid);
       setTimeout(function(){ var el = fkEl(pre + 'ssu:' + s.id); if (el) el.focus({preventScroll: true}); }, 80);
     }}},
-    h('option', {value: '', text: on.length ? (need && on.length >= need ? 'Add another\u2026' : 'Add someone\u2026') : 'Sign up\u2026'}),
-    free.map(function(p){ return h('option', {value: p.id, text: p.name}); }));
+    h('option', {value: '', text: meOpen ? 'Someone else\u2026' : on.length ? (need && on.length >= need ? 'Add another\u2026' : 'Add someone\u2026') : 'Sign up\u2026'}),
+    free2.map(function(p){ return h('option', {value: p.id, text: p.id === me ? p.name + ' (me)' : p.name}); }));
+  var meBtn = meOpen ?   // one tap signs the PA up
+    h('button', {type: 'button', class: 'primary su-me', 'data-fk': pre + 'sume:' + s.id, 'aria-label': 'Sign me up for ' + lbl, on: {click: function(){
+      signUp(D.shifts.get(s.id) || s, me);
+      setTimeout(function(){ var el = fkEl(pre + 'ssu:' + s.id); if (el) el.focus({preventScroll: true}); }, 80);
+    }}}, icon('plus', 'sm'), 'Sign me up') : null;
   var step = isAdmin() && !gone && opt.step !== false ? h('span', {class: 'need-step', role: 'group', 'aria-label': 'PAs needed for ' + lbl}, h('span', {class: 'nl', 'aria-hidden': 'true', text: 'Needed'}),
     h('button', {type: 'button', class: 'icon', 'data-fk': pre + 'snm:' + s.id, 'aria-label': 'One fewer PA needed for ' + lbl, disabled: need <= 0, on: {click: function(){ var c = D.shifts.get(s.id) || s; setNeeded(c, (+c.pa_needed || 0) - 1); }}}, icon('minus', 'sm')),
     h('span', {class: 'nv', 'aria-hidden': 'true', title: 'PAs needed', text: String(need)}),
     h('button', {type: 'button', class: 'icon', 'data-fk': pre + 'snp:' + s.id, 'aria-label': 'One more PA needed for ' + lbl, disabled: need >= 9, on: {click: function(){ var c = D.shifts.get(s.id) || s; setNeeded(c, (+c.pa_needed || 0) + 1); }}}, icon('plus', 'sm'))) : null;
-  return h('div', {class: 's-pa', role: 'group', 'aria-labelledby': base + '_pal'}, shiftStatus(s), chips, sel, step);
+  return h('div', {class: 's-pa', role: 'group', 'aria-labelledby': base + '_pal'}, shiftStatus(s), chips, meBtn, sel, step);
 }
 /* a row from the Roots calendar: plain text for everyone; only who's signed up (and, for admins, how many are needed) changes here */
 function calShiftEl(s){
@@ -5051,6 +5080,22 @@ document.addEventListener('visibilitychange', function(){ if (document.visibilit
 function periodFor(tab){ return tab === 'cal' ? (S.calMode === 'month' ? S.month : S.week) : (tab === 'shifts' || tab === 'pas') ? S.month : S.week; }
 function hashFor(){ return '#' + S.team + '/' + periodFor(S.tab) + '/' + S.tab; }
 function defaultTab(){ return hasShifts() ? 'cal' : 'board'; }   // the Calendar is everyone's home (v2.2); Staff has no calendar
+/* PA UX (Oct 19): one-time "Add to Home Screen" hint on iOS team logins. Remembers the dismissal;
+   no requests, no data. Never shown to admins or on desktop. */
+function a2hsHint(){
+  try {
+    var old = document.getElementById('a2hs');
+    var ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent);
+    var standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+    var ok = S.team && isTeamLogin() && !isAdmin() && lsGet('a2hs:' + S.team, null) !== 'gone' && ios && !standalone;
+    if (!ok){ if (old) old.remove(); return; }
+    if (old) return;
+    var bar = h('div', {id: 'a2hs', class: 'a2hs', role: 'status'},
+      h('span', {text: 'Put Roots on your home screen: tap the Share button, then \u201cAdd to Home Screen\u201d.'}),
+      h('button', {type: 'button', class: 'icon', 'aria-label': 'Dismiss the home screen tip', on: {click: function(){ lsSet('a2hs:' + S.team, 'gone'); bar.remove(); }}}, icon('x')));
+    $('#main').prepend(bar);
+  } catch (e){}
+}
 function writeHash(replace){
   if (!S.team) return;
   var hs = hashFor();
@@ -5240,7 +5285,9 @@ function fillDatalists(){
 function openMenu(btn, phone){
   var items = [], ICONS = {pas: 'user', master: 'grid', shifts: 'cal', board: 'grid', history: 'restore', settings: 'user', links: 'ext'};
   // phone: everything not on the bottom bar; desktop: what isn't in the tab row
-  TABS.filter(function(t){ return tabOk(t.id) && (phone ? phoneTabs().indexOf(t.id) < 0 : !topTab(t)); }).forEach(function(t){
+  var paLogin = isTeamLogin() && !isAdmin();          // PA UX (Oct 19): Templates + Weekly board are admin tools
+  TABS.filter(function(t){ return tabOk(t.id) && (phone ? phoneTabs().indexOf(t.id) < 0 : !topTab(t))
+      && !(paLogin && (t.id === 'master' || t.id === 'board')); }).forEach(function(t){
     items.push({label: t.label, icon: ICONS[t.id], fn: function(){ go({tab: t.id}); }});
   });
   if (items.length) items.push('-');
@@ -5504,6 +5551,7 @@ async function enterTeam(team, route){
   buildTabs();
   writeHash(true);
   showTab(true); renderHeader();
+  a2hsHint();                                      // PA UX (Oct 19): iOS team logins only, until dismissed
   subscribe();
   var pShared = reloadShared();
   var pWeek = loadWeek();
