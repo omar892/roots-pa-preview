@@ -1895,13 +1895,14 @@ function isDueToday(t){ return S.week === thisWeek() && DAYS.indexOf(t.due) === 
    WRITE QUEUE: optimistic, coalescing, offline-safe, persisted on device
    ========================================================================== */
 var Q = {items: [], busy: false, paused: false, failed: false, backoff: 1000, retryTimer: null, savedOnce: false};
-var Pend = new Map();          // debounced text edits: rowKey -> {table,key,patch,prev,label,timer}
+var Pend = new Map();          // debounced text edits: rowKey -> {table,key,patch,prev,label,timer,base_at}
+var CF = {k: null, items: [], hide: false};   // R-01: edits that met a newer edit from another device, until the user picks one
 
 function queueKey(){ return 'queue:' + S.uid + ':' + S.team; }
 function saveQueue(){
   if (!S.uid || !S.team) return;
   lsSet(queueKey(), Q.items.length ? Q.items.map(function(o){
-    return {kind:o.kind, table:o.table, key:o.key, patch:o.patch, prev:o.prev, row:o.row, prevRow:o.prevRow, label:o.label, tried:o.tried || o.sent || false};
+    return {kind:o.kind, table:o.table, key:o.key, patch:o.patch, prev:o.prev, row:o.row, prevRow:o.prevRow, label:o.label, tried:o.tried || o.sent || false, base_at:o.base_at || null};
   }) : null);
 }
 function loadQueue(){ Q.items = (lsGet(queueKey(), []) || []).filter(function(o){ return o && T[o.table]; }); }
@@ -1948,7 +1949,8 @@ function editField(table, key, field, value, label){
   var row = rowFor(table, key); if (!row) return;
   if (calBlocked(table, row, field)){ console.warn('[calendar row] not writing ' + field); return; }
   var rk = table + ':' + key, p = Pend.get(rk);
-  if (!p){ p = {table: table, key: key, patch: {}, prev: {}, label: label}; Pend.set(rk, p); }
+  // R-01: the edit's base is the row as this device saw it at the first keystroke (updated_at + the field's value)
+  if (!p){ p = {table: table, key: key, patch: {}, prev: {}, label: label, base_at: row.updated_at || null}; Pend.set(rk, p); }
   if (!(field in p.prev)) p.prev[field] = row[field];
   p.patch[field] = value; row[field] = value; if (label) p.label = label;
   clearTimeout(p.timer);
@@ -1959,7 +1961,7 @@ function editField(table, key, field, value, label){
 function commitPend(rk){
   var p = Pend.get(rk); if (!p) return;
   clearTimeout(p.timer); Pend.delete(rk);
-  enqueue({kind: 'update', table: p.table, key: p.key, patch: p.patch, prev: p.prev, label: p.label});
+  enqueue({kind: 'update', table: p.table, key: p.key, patch: p.patch, prev: p.prev, label: p.label, base_at: p.base_at});
 }
 function commitPendFor(table, key){ commitPend(table + ':' + key); }
 function flushAllPend(){ Array.from(Pend.keys()).forEach(commitPend); }
@@ -1974,7 +1976,7 @@ function setFields(table, key, patch, label){
   if (!changed) return;
   var real = {}; for (var g in prev) real[g] = patch[g];
   IX = null;
-  enqueue({kind: 'update', table: table, key: key, patch: real, prev: prev, label: label});
+  enqueue({kind: 'update', table: table, key: key, patch: real, prev: prev, label: label, base_at: row.updated_at || null});
 }
 function insertRow(table, row, label){
   var key = keyOf(table, row);
@@ -2035,14 +2037,87 @@ async function run(batch){
   }
   if (o.kind === 'upsert') return await sb.from(t).upsert(o.row, {onConflict: pk, defaultToNull: false}).select();
   if (o.kind === 'update' && t === 'templates' && 'tasks' in o.patch && Array.isArray(o.prev && o.prev.tasks)) return await runTemplateTasks(o);
-  if (o.kind === 'update'){
-    var r = await sb.from(t).update(o.patch).match(matchOf(t, o.key)).select();
-    if (!r.error && Array.isArray(r.data) && r.data.length === 0) r = {error: {message: 'not found', code: 'NOROW'}, status: 404, data: null};
-    return r;
-  }
+  if (o.kind === 'update') return await runUpdate(o);
   if (o.kind === 'delete') return await sb.from(t).delete().match(matchOf(t, o.key));
   return {error: {message: 'unknown op'}, status: 400};
 }
+/* ---------- R-01: an older edit never overwrites a newer one ----------
+   Each queued update carries its base: the row's updated_at (base_at) and each field's value (prev)
+   when the edit started. Saving is one compare-and-swap request (update ... where updated_at = base_at),
+   so an online save costs what it did before. When the row changed in between, it is read again
+   and each field is merged on its own (same idea as B13 below):
+   - nobody else changed this field since: save mine;
+   - they changed it to what I have, or I changed it back: nothing to save;
+   - both changed it to different values: a conflict. Their value stays in the database; mine is
+     kept on this device with Keep mine / Keep theirs, and the save pill says so until it's settled.
+   Ticks (true/false, archive) can't conflict: two changes away from the same base agree. Order
+   (sort) keeps theirs without asking. updated_at is set by the database on every write (tg_touch). */
+function tsKey(s){ if (!s) return ''; var m = String(s).match(/\.(\d+)/); return Math.floor(tsMs(s) / 1000) + '.' + ((m ? m[1] : '') + '000000').slice(0, 6); }
+function cfNorm(f, v){ if (f === 'deleted_at') return !!v; return v == null ? '' : v; }
+function sameVal(f, a, b){ a = cfNorm(f, a); b = cfNorm(f, b); if (typeof a === 'boolean' || typeof b === 'boolean') return !!a === !!b; return same(a, b); }
+function mergePlan(o, srv){
+  var patch = {}, conflicts = [];
+  for (var f in o.patch){
+    var mine = o.patch[f], theirs = srv[f], hasBase = !!o.prev && (f in o.prev), base = hasBase ? o.prev[f] : undefined;
+    if (sameVal(f, theirs, mine)) continue;                                   // already there
+    if (!hasBase || sameVal(f, theirs, base)){ patch[f] = mine; continue; }    // only this device changed it
+    if (sameVal(f, mine, base)) continue;                                     // changed back here: theirs stays
+    if (f === 'sort') continue;                                               // order: theirs, no question
+    conflicts.push({field: f, mine: mine, theirs: theirs});
+  }
+  return {patch: patch, conflicts: conflicts};
+}
+async function runUpdate(o){
+  var t = o.table, m = matchOf(t, o.key), r;
+  var base = o.base_at;   // a live update may move o.base_at while this is in flight
+  if (base){
+    r = await sb.from(t).update(o.patch).match(m).eq('updated_at', base).select();
+    if (r.error) return r;
+    if (Array.isArray(r.data) && r.data.length){ r.casFrom = base; return r; }
+  }
+  // the row changed since this edit started (or the edit has no base): read it, merge field by field, swap again
+  var seen = null;
+  for (var attempt = 0; attempt < 4; attempt++){
+    var cur = await sb.from(t).select('*').match(m).maybeSingle();
+    if (cur.error) return cur;
+    if (!cur.data) return {error: {message: 'not found', code: 'NOROW'}, status: 404, data: null};
+    // the swap found nothing, yet nobody wrote in between: the update itself was refused (as before R-01)
+    if (seen !== null && tsKey(cur.data.updated_at) === seen) return {error: {message: 'not found', code: 'NOROW'}, status: 404, data: null};
+    seen = tsKey(cur.data.updated_at);
+    var plan = mergePlan(o, cur.data);
+    if (!Object.keys(plan.patch).length) return {error: null, status: 200, data: [cur.data], srv: cur.data, conflicts: plan.conflicts};
+    r = await sb.from(t).update(plan.patch).match(m).eq('updated_at', cur.data.updated_at).select();
+    if (r.error) return r;
+    if (Array.isArray(r.data) && r.data.length) return {error: null, status: r.status, data: r.data, srv: r.data[0], conflicts: plan.conflicts, casFrom: cur.data.updated_at};
+  }
+  return {error: {message: 'busy, try again', code: 'BUSY'}, status: 503, data: null};
+}
+/* after this device's own swap from `from` to `to`, edits based on `from` are based on `to` (nobody else wrote in
+   between). from = null: the row was just inserted here, so edits made before the insert came back get its stamp. */
+function rebaseOps(t, key, from, to){
+  if (!to) return;
+  var fk = from ? tsKey(from) : '';
+  function fix(o){ if (from ? (o.base_at && tsKey(o.base_at) === fk) : !o.base_at) o.base_at = to; }
+  Q.items.forEach(function(o){ if (o.kind === 'update' && o.table === t && o.key === key) fix(o); });
+  var p = Pend.get(t + ':' + key); if (p) fix(p);
+}
+
+/* a newer full copy of the row arrived (live update, reload, merged save) and every field an edit here
+   changes is still at that edit's base in it: the edit can swap from this newer stamp, so an edit to a
+   different field on another device costs no extra request. Missing columns or a moved field: no rebase. */
+function tsCmp(a, b){ var x = tsKey(a).split('.'), y = tsKey(b).split('.'); return (+x[0] - +y[0]) || (+x[1] - +y[1]); }
+function rebaseClean(t, key, inc){
+  if (!inc || !inc.updated_at) return;
+  function clean(o){
+    if (!o.base_at || !o.prev || tsCmp(inc.updated_at, o.base_at) <= 0) return false;
+    if (t === 'templates' && 'tasks' in o.patch) return false;
+    for (var f in o.patch){ if (!(f in inc) || !(f in o.prev) || !sameVal(f, inc[f], o.prev[f])) return false; }
+    return true;
+  }
+  Q.items.forEach(function(o){ if (o.kind === 'update' && o.table === t && o.key === key && clean(o)) o.base_at = inc.updated_at; });
+  var p = Pend.get(t + ':' + key); if (p && clean(p)) p.base_at = inc.updated_at;
+}
+
 /* Template task lists are one JSON column. Instead of overwriting the whole list (which would
    erase what someone else changed in the same template a moment ago), apply only what this
    device changed, by task id, to the list as it is on the server now, and write it back only
@@ -2068,13 +2143,17 @@ function rebaseTplTasks(base, before, after){
 }
 async function runTemplateTasks(o){
   for (var attempt = 0; attempt < 4; attempt++){
-    var cur = await sb.from('templates').select('tasks,updated_at').eq('id', o.key).maybeSingle();
+    var cur = await sb.from('templates').select('*').eq('id', o.key).maybeSingle();
     if (cur.error) return cur;
     if (!cur.data) return {error: {message: 'not found', code: 'NOROW'}, status: 404, data: null};
-    var patch = Object.assign({}, o.patch, {tasks: rebaseTplTasks(cur.data.tasks, o.prev.tasks, o.patch.tasks)});
+    // R-01: the template's other fields in the same change (name, link) merge like any other row
+    var rest = {}; for (var f in o.patch) if (f !== 'tasks') rest[f] = o.patch[f];
+    var plan = mergePlan({patch: rest, prev: o.prev}, cur.data);
+    var patch = Object.assign({}, plan.patch, {tasks: rebaseTplTasks(cur.data.tasks, o.prev.tasks, o.patch.tasks)});
     var r = await sb.from('templates').update(patch).eq('id', o.key).eq('updated_at', cur.data.updated_at).select();
     if (r.error) return r;
     if (Array.isArray(r.data) && r.data.length){
+      r.conflicts = plan.conflicts; r.casFrom = cur.data.updated_at;
       var row = D.templates.get(o.key);
       if (row && !isPendingField('templates', o.key, 'tasks') && Q.items.filter(function(x){ return x.table === 'templates' && x.key === o.key; }).length <= 1){ row.tasks = normTplTasks(r.data[0].tasks); invalidate('master'); }
       return r;
@@ -2101,13 +2180,19 @@ async function flush(){
   Q.busy = false;
   batch.forEach(function(b){ b.sent = false; });
   if (items !== Q.items || team !== S.team){
-    if (!res.error){ items.splice(0, batch.length); lsSet('queue:' + S.uid + ':' + team, items.length ? items.map(function(o){ return {kind:o.kind, table:o.table, key:o.key, patch:o.patch, prev:o.prev, row:o.row, prevRow:o.prevRow, label:o.label, tried:true}; }) : null); }
+    if (!res.error){ items.splice(0, batch.length); lsSet('queue:' + S.uid + ':' + team, items.length ? items.map(function(o){ return {kind:o.kind, table:o.table, key:o.key, patch:o.patch, prev:o.prev, row:o.row, prevRow:o.prevRow, label:o.label, tried:true, base_at:o.base_at || null}; }) : null);
+      if (res.conflicts && res.conflicts.length) addConflicts(first, res.conflicts, res.srv, team); }
     kick(); return;
   }
   if (!res.error){
     Q.items.splice(0, batch.length); Q.authTries = 0;
     S.offline = false; Q.failed = false; Q.backoff = 1000; Q.savedOnce = true;
     if (Array.isArray(res.data)) ackRows(first.table, res.data);
+    // R-01: later edits of this row built on this save; a merged save brings the other device's changes in
+    if (first.kind === 'update' && res.casFrom && res.data && res.data[0]) rebaseOps(first.table, first.key, res.casFrom, res.data[0].updated_at);
+    if ((first.kind === 'insert' || first.kind === 'upsert') && Array.isArray(res.data)) res.data.forEach(function(r){ rebaseOps(first.table, keyOf(first.table, r), null, r.updated_at); });
+    if (res.srv && mergeRow(first.table, first.key, res.srv)) invalidateFor(first.table);
+    if (res.conflicts && res.conflicts.length) addConflicts(first, res.conflicts, res.srv, team);
     saveQueue(); updateSaveState();
     if (Q.items.length) kick();
     return;
@@ -2181,10 +2266,13 @@ function plainError(e){
 var lastSaveClass = '';
 function updateSaveState(){
   var el = $('#saveState'); if (!el) return;
+  cfLoad(); if (CF.items.length && !CF.hide && $$('#toasts .toast.cf').length !== CF.items.length) cfRender();
   var pending = Q.items.length + Pend.size, cls, text, ic, sr = '';
   if (Q.paused){ cls = 'error'; text = 'Sign in again to save'; ic = 'warn'; }
   else if (S.offline || !navigator.onLine){ cls = 'offline'; ic = 'cloudoff'; text = pending ? 'Offline: will save when back online' : 'Offline'; }
   else if (Q.failed){ cls = 'error'; text = 'Not saved yet, retrying\u2026'; ic = 'warn'; }
+  // R-01: never "All changes saved" while an edit that met a newer one is waiting for Keep mine / Keep theirs
+  else if (CF.items.length){ cls = 'error cfstate'; ic = 'warn'; text = CF.items.length === 1 ? 'Changed elsewhere' : CF.items.length + ' changed elsewhere'; sr = (CF.items.length === 1 ? 'An edit was' : CF.items.length + ' edits were') + ' changed on another device. Choose which version to keep.'; }
   else if (pending || Q.busy){ cls = 'saving'; text = 'Saving\u2026'; ic = 'clock'; }
   else { cls = 'ok'; text = 'Saved'; sr = 'All changes saved'; ic = 'check'; }
   if (cls === lastSaveClass && el.dataset.text === text) return;
@@ -2194,12 +2282,102 @@ function updateSaveState(){
   var btn = $('#reauthBtn');
   if (Q.paused){
     el.replaceChildren(h('button', {type: 'button', id: 'reauthBtn', class: 'save-btn', on: {click: function(){ S.reauthOpen = false; promptReauth(); }}}, icon(ic), label));
+  } else if (cls === 'error cfstate'){
+    el.replaceChildren(h('button', {type: 'button', id: 'cfBtn', class: 'save-btn', on: {click: function(){ CF.hide = false; cfRender(true); var b = $('#toasts .toast.cf button.cf-mine'); if (b) b.focus(); }}}, icon(ic), label));
   } else {
     el.replaceChildren.apply(el, [icon(ic)].concat(label));
   }
   if (btn && document.activeElement === btn && !Q.paused){ var m = $('#main'); if (m) m.focus({preventScroll: true}); }
   if (S.rtDown && cls === 'ok') el.title = 'Live updates paused, reconnecting'; else el.removeAttribute('title');
 }
+/* ---------- R-01: Changed on another device (Keep mine / Keep theirs) ---------- */
+var CF_FIELD = {task: 'task', notes: 'note', waiting_on: 'waiting on', name: 'name', program: 'program', location: 'location', time_text: 'time',
+  pa_needed: 'PAs needed', due: 'day', label: 'label', url: 'link', folder: 'folder', date: 'date', grp: 'group', dept: 'department',
+  manual_url: 'program flow link', start_time: 'start time', end_time: 'end time', program_id: 'program', lead_ids: 'leads', locations: 'locations',
+  offsite: 'offsite place', template_id: 'template', text: 'note', minutes: 'time estimate'};
+function cfKeyFor(team){ return 'conflicts:' + S.uid + ':' + team; }
+function cfLoad(){
+  var k = S.uid && S.team ? cfKeyFor(S.team) : null;
+  if (CF.k === k) return;
+  CF.k = k; CF.hide = false; CF.items = k ? (lsGet(k, []) || []).filter(function(c){ return c && T[c.table]; }) : [];
+  cfRender();
+}
+function cfSave(){ if (CF.k) lsSet(CF.k, CF.items.length ? CF.items : null); }
+function addConflicts(op, list, srv, team){
+  var k = cfKeyFor(team || S.team), here = k === CF.k, items = here ? CF.items : (lsGet(k, []) || []);
+  list.forEach(function(c){
+    var id = op.table + '|' + op.key + '|' + c.field, i = items.findIndex(function(x){ return x.id === id; });
+    var rec = {id: id, table: op.table, key: op.key, field: c.field, mine: c.mine, theirs: c.theirs, theirs_at: (srv && srv.updated_at) || null, label: op.label || '', at: Date.now()};
+    if (i >= 0) items[i] = rec; else items.push(rec);
+    // this device shows their version too (unless that field is being typed in right now)
+    var row = here && rowFor(op.table, op.key);
+    if (row && !isPendingField(op.table, op.key, c.field) && !same(row[c.field], c.theirs)){ row[c.field] = c.theirs; IX = null; invalidateFor(op.table); }
+  });
+  if (!here){ lsSet(k, items); return; }
+  CF.items = items; CF.hide = false; cfSave(); cfRender(true); updateSaveState();
+}
+function cfShow(v, field){
+  if (v == null || v === '' || (Array.isArray(v) && !v.length)) return '(empty)';
+  if (field === 'program_id'){ var p = D.programs.get(v); return p ? (p.name || 'another program') : 'another program'; }
+  if (field === 'lead_ids' && Array.isArray(v)) return v.map(personName).join(', ');
+  if (typeof v === 'boolean') return v ? 'Yes' : 'No';
+  if (Array.isArray(v)) return v.join(', ');
+  v = String(v); return v.length > 160 ? v.slice(0, 157) + '\u2026' : v;
+}
+function cfCard(c){
+  var what = (c.label ? quote(c.label) + ' \u00b7 ' : '') + (CF_FIELD[c.field] || String(c.field).replace(/_/g, ' '));
+  var line = function(k, v){ return h('div', {class: 'cf-v', style: {'font-weight': '500', 'margin-top': '4px', 'overflow-wrap': 'anywhere', 'white-space': 'pre-wrap'}}, h('b', {text: k}), ' ', cfShow(v, c.field)); };
+  var el = h('div', {class: 'toast cf', role: 'alert', 'data-cf': c.id, style: {display: 'block', padding: '10px 8px 10px 16px'}},
+    h('div', {style: {display: 'flex', 'align-items': 'center', gap: '8px'}}, icon('warn'), h('strong', {style: {flex: '1'}, text: 'Changed on another device'}),
+      h('button', {type: 'button', class: 'icon', 'aria-label': 'Decide later', on: {click: function(){ CF.hide = true; cfRender(); var b = $('#cfBtn'); if (b) b.focus({preventScroll: true}); }}}, icon('x'))),
+    h('div', {style: {'font-weight': '500', 'padding-right': '8px'}, text: what + ': their version is saved. Yours is kept on this device until you choose.'}),
+    line('Theirs:', c.theirs), line('Yours:', c.mine),
+    h('div', {style: {display: 'flex', gap: '8px', 'margin-top': '8px', 'flex-wrap': 'wrap'}},
+      h('button', {type: 'button', class: 'cf-mine', 'data-fk': 'cfmine:' + c.id, on: {click: function(){ cfResolve(c.id, 'mine'); }}}, 'Keep mine'),
+      h('button', {type: 'button', class: 'cf-theirs', 'data-fk': 'cftheirs:' + c.id, on: {click: function(){ cfResolve(c.id, 'theirs'); }}}, 'Keep theirs')));
+  el._at = c.at;
+  return el;
+}
+function toastBox(){
+  var box = $('#toasts');
+  // an open sheet sits in the top layer, above everything else; put the toast inside it so Undo can be tapped (review L2)
+  var dlg = $('#confirmDlg').open ? $('#confirmDlg') : $('#sheet').open ? $('#sheet') : null;
+  if (dlg && box.parentNode !== dlg) dlg.append(box); else if (!dlg && box.parentNode !== document.body) document.body.append(box);
+  return box;
+}
+function cfRender(show){
+  var box = show ? toastBox() : $('#toasts'); if (!box) return;
+  var want = new Map(CF.items.map(function(c){ return [c.id, c]; }));
+  $$('.toast.cf', box).forEach(function(el){ var c = want.get(el.dataset.cf); if (!c || el._at !== c.at) el.remove(); });
+  CF.items.forEach(function(c){
+    var el = box.querySelector('.toast.cf[data-cf="' + cssEsc(c.id) + '"]');
+    if (!el){ el = cfCard(c); box.insertBefore(el, box.firstChild); }
+    el.style.display = CF.hide ? 'none' : 'block';   // .toast's display:flex beats the hidden attribute
+  });
+}
+function cfResolve(id, keep){
+  var i = CF.items.findIndex(function(x){ return x.id === id; }); if (i < 0) return;
+  var c = CF.items.splice(i, 1)[0], row = rowFor(c.table, c.key);
+  cfSave();
+  if (keep === 'mine'){
+    var patch = {}, prev = {}; patch[c.field] = c.mine; prev[c.field] = c.theirs;
+    if (row){ row[c.field] = c.mine; IX = null; invalidateFor(c.table); }
+    // saved as a swap from their version: if it changed yet again meanwhile, this asks again rather than overwrite
+    Q.items.push({kind: 'update', table: c.table, key: c.key, patch: patch, prev: prev, base_at: c.theirs_at, label: c.label});
+    queued();
+    announce('Kept your version');
+  } else {
+    // their version is already in the database and on screen; only undo the screen if it still shows mine
+    if (row && !isPendingField(c.table, c.key, c.field) && same(row[c.field], c.mine)){ row[c.field] = c.theirs; IX = null; invalidateFor(c.table); }
+    announce('Kept the other device\u2019s version');
+  }
+  cfRender(); updateSaveState(); refreshSheet();
+  // focus moves to the next card's Keep mine, or back to the page when none is left
+  var next = $('#toasts .toast.cf button.cf-mine'), m = $('#main');
+  if (document.activeElement === document.body || !document.contains(document.activeElement)){ if (next && !CF.hide) next.focus({preventScroll: true}); else if (m) m.focus({preventScroll: true}); }
+}
+window.__rootspaR01 = {conflicts: function(){ return CF.items.slice(); }, resolve: cfResolve, insertRow: insertRow, deleteRow: deleteRow};   // probe hooks
+
 window.addEventListener('online', function(){ S.offline = false; Q.backoff = 1000; clearTimeout(Q.retryTimer); updateSaveState(); kick(); if (S.team) resync(); });
 window.addEventListener('offline', function(){ S.offline = true; updateSaveState(); });
 function onLeave(){ flushAllPend(); saveQueue(); }
@@ -2462,6 +2640,7 @@ function mergeRow(t, key, inc){
   var map = T[t].map(), cur = map.get(key);
   if (!cur){ map.set(key, Object.assign({}, inc)); IX = null; return true; }
   if (cur.updated_at && inc.updated_at && tsMs(inc.updated_at) < tsMs(cur.updated_at)) return false;
+  rebaseClean(t, key, inc);
   var changed = false;
   for (var f in inc){
     if (isPendingField(t, key, f)) continue;
@@ -2625,10 +2804,7 @@ document.addEventListener('input', function(e){
 /* ---------- toasts ---------- */
 function toast(msg, opts){
   opts = opts || {};
-  var box = $('#toasts');
-  // an open sheet sits in the top layer, above everything else; put the toast inside it so Undo can be tapped (review L2)
-  var dlg = $('#confirmDlg').open ? $('#confirmDlg') : $('#sheet').open ? $('#sheet') : null;
-  if (dlg && box.parentNode !== dlg) dlg.append(box); else if (!dlg && box.parentNode !== document.body) document.body.append(box);
+  var box = toastBox();
   var el = h('div', {class: 'toast' + (opts.kind === 'error' ? ' error' : ''), role: opts.kind === 'error' ? 'alert' : null});
   el.append(h('span', {text: msg}));
   var timer;
@@ -2638,7 +2814,7 @@ function toast(msg, opts){
   }
   el.append(h('button', {type: 'button', class: 'icon', 'aria-label': 'Dismiss', on: {click: close}}, icon('x')));
   box.append(el);
-  while (box.children.length > 3) box.firstElementChild.remove();
+  var plain = $$('.toast:not(.cf)', box); while (plain.length > 3) plain.shift().remove();   // R-01: conflict cards stay until settled
   timer = setTimeout(close, opts.timeout || 7000);
   return el;
 }
