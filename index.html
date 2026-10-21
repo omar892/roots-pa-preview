@@ -993,6 +993,8 @@ a.tplflow{position:absolute;top:0;right:14px;height:48px;display:flex;align-item
   /* the person and department pills scroll sideways; the fade on the right says there is more */
   .cal-bar .cal-who,.cal-bar .cal-dept{-webkit-mask-image:linear-gradient(90deg,var(--mask-ink) calc(100% - 36px),transparent);mask-image:linear-gradient(90deg,var(--mask-ink) calc(100% - 36px),transparent);padding-right:30px}
   .cal-bar .cal-who,.cal-bar .cal-dept{flex:1 1 100%}
+  /* v2.6.9: the 5 department pills wrap instead of scrolling, so every department and the picked one are always in view */
+  .cal-bar .cal-dept{flex-wrap:wrap;overflow-x:visible;-webkit-mask-image:none;mask-image:none;padding-right:4px;border-radius:20px}
   #v-cal .caption{display:none}
   .mhead{grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
   .mhead>span:first-child{display:none}
@@ -1563,7 +1565,8 @@ dialog{border-radius:var(--r-card)}
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.6.8';   // v2.6.8: team switcher label no longer vanishes on hover, no "Open now"   // v2.6.7: "View as" a PA or YC for admins in Sandbox / QA
+var BUILD = '2.6.9';   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
+// v2.6.8:   // v2.6.8: team switcher label no longer vanishes on hover, no "Open now"   // v2.6.7: "View as" a PA or YC for admins in Sandbox / QA
 // v2.6.6: Anisha's Oct 21 feedback (Common tasks in Templates, Add task box on Enter, no Waiting on, today's task in today's box), per-person PA/YC logins, youth coordinators   // v2.6.5: less is more (Omar Oct 21): no how-to captions, source notes, eyebrow caps or repeated counts; no A2HS banner
 var TZ = 'America/Chicago';   // Roots' clock: "today", "overdue" and "this week" follow Central time on every device
 var ICON192 = 'data:image/png;base64,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';
@@ -1571,8 +1574,9 @@ var ICON512 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkO
 
 var STAGING = '0' === '1';   // staging build: opens only Sandbox / QA (practice data)
 var STAGING_TEAMS = ['sandbox', 'qa'];
+var TEAM_NAMES = {community: 'Roots DFW'};   // v2.6.9 (Omar Oct 21): the community team holds every department's programs; Community is one department
 var PICKER = [
-  {team:'community', team_name:'Community', accent:'#2e4a0d'},
+  {team:'community', team_name:'Roots DFW', accent:'#2e4a0d'},
   {team:'grove', team_name:'The Grove', accent:'#293d93'},
   {team:'bloom', team_name:'Bloom', accent:'#e59e2c'}
 ];
@@ -5596,19 +5600,42 @@ function paInfo(s){
 }
 function calFilter(s){
   if (S.calDept && deptOf(s) !== S.calDept) return false;
-  if (S.calPerson && !D.sp.has(s.id + '|' + S.calPerson)) return false;
+  var cp = calPerson(); if (cp && !D.sp.has(s.id + '|' + cp)) return false;
   if (S.calNeed && !needsPA(s)) return false;   // v2.6.4: the PA shifts "Need a PA" rule
   return true;
 }
 /* v2.6.4 (judge signal: Anisha scanned 16 cards for coverage): "Needs a PA" shows only programs short of PAs, from today on.
    Kept per team on this device like the person and department filters. */
-function setCalNeed(v){ S.calNeed = !!v; lsSet('caln:' + S.team, S.calNeed || null); invalidate('cal'); announce(v ? 'Showing programs that need a PA' : 'Showing every program'); }
+function setCalNeed(v){ S.calNeed = !!v; lsSet('caln:' + S.team, S.calNeed || null);
+  if (v && S.calPerson){ S.calPerson = ''; S.calPersonSet = true; lsSet('calp:' + S.team, 'all'); }   /* v2.6.9: Needs a PA is about everyone's programs */ invalidate('cal'); announce(v ? 'Showing programs that need a PA' : 'Showing every program'); }
 function needEmpty(what){
   return h('div', {class: 'cal-empty', id: 'calNeedEmpty'}, h('p', {class: 'ce-t', 'aria-hidden': 'true', text: 'Every program ' + what + ' has a PA.'}),
     h('button', {type: 'button', class: 'link', 'data-fk': 'cneedoff', on: {click: function(){ setCalNeed(false); setTimeout(function(){ var b = fkEl('cneed'); if (b) b.focus({preventScroll: true}); }, 60); }}}, 'Show every program'));
 }
-function calPerson(){ var p = S.calPerson && D.people.get(S.calPerson); return p && !p.deleted_at && !p.is_staff ? S.calPerson : ''; }
-function setCalPerson(pid){ S.calPerson = pid || ''; lsSet('calp:' + S.team, S.calPerson || null); invalidate('cal'); announce(pid ? 'Showing ' + personName(pid) + '\u2019s programs' : 'Showing everyone'); }
+function calMe(){ return isPaLogin() ? myId() || '' : ''; }   // v2.6.9: the signed-in PA/YC (or the one an admin views as)
+function calPerson(){
+  var id = S.calPerson;
+  if (!id && !S.calPersonSet && !S.calNeed) id = calMe();   // v2.6.9: a PA's or YC's calendar opens on her own programs
+  var p = id && D.people.get(id); return p && !p.deleted_at && !p.is_staff ? id : '';
+}
+function setCalPerson(pid){
+  S.calPerson = pid || ''; S.calPersonSet = true; lsSet('calp:' + S.team, pid || 'all');
+  if (pid && S.calNeed){ S.calNeed = false; lsSet('caln:' + S.team, null); }   // v2.6.9: a person's programs, not just the short ones
+  invalidate('cal'); announce(pid ? (pid === calMe() ? 'Showing your programs' : 'Showing ' + personName(pid) + '\u2019s programs') : 'Showing everyone');
+}
+function mineEmpty(what){
+  return h('div', {class: 'cal-empty', id: 'calMineEmpty'}, h('p', {class: 'ce-t', text: 'Nothing you\u2019re signed up for ' + what + '.'}),
+    h('button', {type: 'button', class: 'link', 'data-fk': 'cmineoff', on: {click: function(){ setCalPerson(''); setTimeout(function(){ var b = fkEl('cwho:all'); if (b) b.focus({preventScroll: true}); }, 60); }}}, 'Show everyone'));
+}
+/* v2.6.9: on a phone the pill rows scroll sideways; bring the picked pill into view when the bar is rebuilt */
+function revealPicked(sec){
+  $$('.cal-bar .cal__chips', sec).forEach(function(row){
+    if (row.scrollWidth <= row.clientWidth + 1) return;
+    var b = row.querySelector('[aria-pressed="true"]'); if (!b) return;
+    var r = row.getBoundingClientRect(), c = b.getBoundingClientRect();
+    if (c.left < r.left || c.right > r.right - 36) row.scrollLeft += c.left - r.left - 8;
+  });
+}
 function setCalDept(d){ S.calDept = d || ''; lsSet('cald:' + S.team, S.calDept || null); invalidate('cal'); announce(d ? 'Showing ' + d + ' only' : 'Showing every department'); }
 function fmtRange(a, b){ var x = pretty12(a), y = pretty12(b); if (!x || !y) return x || y || ''; return x.slice(-2) === y.slice(-2) ? x.slice(0, -3) + ' \u2013 ' + y : x + ' \u2013 ' + y; }
 function officeHours(pid, date){
@@ -5627,13 +5654,16 @@ function dayLong(iso){ var d = isoToDate(iso); return WEEKDAY_NAMES[d.getDay()] 
 function pillGroup(label, cls, items){ return h('div', {class: 'cal__chips ' + (cls || ''), role: 'group', 'aria-label': label}, items); }
 function calBar(){
   var pid = calPerson(), wk = S.calMode === 'week';
-  var key = [S.calMode, pid, S.calDept, S.calNeed ? 1 : 0, paPeople().map(function(p){ return p.id + p.name; }).join(',')].join('|');
+  var me = calMe();
+  var key = [S.calMode, pid, me, S.calDept, S.calNeed ? 1 : 0, paPeople().map(function(p){ return p.id + p.name; }).join(',')].join('|');
   var old = $('#v-cal > .cal-bar');
   if (old && old._k === key) return old;
   var seg = pillGroup('Calendar view', 'cal-mode', [
     h('button', {type: 'button', class: 'cal__chip', 'aria-pressed': wk ? 'false' : 'true', 'data-fk': 'cmode:month', on: {click: function(){ go({mode: 'month'}); }}}, 'Month'),
     h('button', {type: 'button', class: 'cal__chip', 'aria-pressed': wk ? 'true' : 'false', 'data-fk': 'cmode:week', on: {click: function(){ go({mode: 'week'}); }}}, 'Week')]);
-  var who = pillGroup('Whose programs', 'cal-who', [{id: '', name: 'Everyone'}].concat(paPeople()).map(function(p){
+  var whoList = me ? [{id: me, name: 'Mine'}, {id: '', name: 'Everyone'}].concat(paPeople().filter(function(p){ return p.id !== me; }))   // v2.6.9: her own pill first
+    : [{id: '', name: 'Everyone'}].concat(paPeople());
+  var who = pillGroup('Whose programs', 'cal-who', whoList.map(function(p){
     var on = (pid || '') === p.id;
     return h('button', {type: 'button', class: 'cal__chip', 'aria-pressed': on ? 'true' : 'false', 'data-fk': 'cwho:' + (p.id || 'all'), on: {click: function(){ setCalPerson(p.id); }}}, p.name);
   }));
@@ -5645,7 +5675,7 @@ function calBar(){
   var need = pillGroup('Coverage', 'cal-need', [h('button', {type: 'button', class: 'cal__chip', 'aria-pressed': S.calNeed ? 'true' : 'false', 'data-fk': 'cneed',
     on: {click: function(){ setCalNeed(!S.calNeed); }}}, 'Needs a PA')]);
   var bar = h('div', {class: 'cal-bar'}, seg, need, who, depts);
-  bar._k = key;
+  bar._k = key; bar._fresh = true;
   return bar;
 }
 
@@ -5876,7 +5906,7 @@ function calMonth(sec){
         h('h3', {id: 'agh_' + x[0]}, h('span', {text: dayLong(x[0])}), x[0] === today ? h('span', {class: 'rd-today'}, 'Today') : null),
         h('ul', {class: 'rtiles'}, x[1].map(function(s){ return h('li', null, calTile(s, 'ca', 'list')); })));
     }) : h('p', {class: 'muted', text: pid ? personName(pid) + ' hasn\u2019t signed up for anything this month.' : 'No programs this month.'}));
-  var nEmpty = S.calNeed && !agDays.length ? needEmpty('this month') : null;
+  var nEmpty = S.calNeed && !agDays.length ? needEmpty('this month') : pid && pid === calMe() && !agDays.length ? mineEmpty('this month') : null;   // v2.6.9
   if (nEmpty) agenda = h('div', {class: 'agenda'}, h('h2', {class: 'sr-only', text: 'Programs in ' + monthLabel(m)}));
   return [h('p', {class: 'cal-line sr-only', id: 'calLine', role: 'status', text: monthLine(evs, pid)}), pid ? hoursLine(pid) : null, nEmpty, grid, pid ? null : whoPanel(), agenda];
 }
@@ -5916,7 +5946,7 @@ function calWeek(sec){
   var evs = eventsIn(a, addDays(a, 6)).filter(calFilter), pairs = calPairs();
   var myTasks = pid ? tasksFor(pid) : [];
   var strip = weekStrip(a, evs, pid, 'ct', S.calNeed ? {hideEmpty: true} : null);
-  var nEmpty = S.calNeed && !evs.length ? needEmpty('this week') : null;
+  var nEmpty = S.calNeed && !evs.length ? needEmpty('this week') : pid && pid === calMe() && !evs.length ? mineEmpty('this week') : null;   // v2.6.9
   var tail;
   if (pid){
     var none = personDayTasks(pid).none;
@@ -5968,6 +5998,7 @@ RENDER.cal = function(){
     setKids(sec, keep);
     if (S.weekLoaded === S.week) wireDrag(sec);
   }
+  if (bar._fresh){ bar._fresh = false; revealPicked(sec); }
   if (S.calScrollTo){
     var d = S.calScrollTo; S.calScrollTo = null;
     setTimeout(function(){ var el = $('#cd_' + d); if (el){ el.scrollIntoView({block: 'start'}); var hh = el.querySelector('h3'); if (hh){ hh.setAttribute('tabindex', '-1'); hh.focus({preventScroll: true}); } } }, 60);
@@ -6262,7 +6293,7 @@ function paProfile(pid, ret){
   render();
   openSheet({title: p.name, returnTo: ret, body: body, refresh: render,
     onClose: function(){ if (S.sheetLive && S.sheetLive.pa === pid) S.sheetLive = null; },
-    foot: [h('button', {type: 'button', 'data-fk': 'ppcal', on: {click: function(){ closeSheet(); S.calPerson = pid; lsSet('calp:' + S.team, pid); go({tab: 'cal', mode: 'month'}); }}}, 'Open in Calendar'), h('button', {type: 'button', class: 'primary', on: {click: closeSheet}}, 'Done')]});
+    foot: [h('button', {type: 'button', 'data-fk': 'ppcal', on: {click: function(){ closeSheet(); S.calPerson = pid; S.calPersonSet = true; lsSet('calp:' + S.team, pid); go({tab: 'cal', mode: 'month'}); }}}, 'Open in Calendar'), h('button', {type: 'button', class: 'primary', on: {click: closeSheet}}, 'Done')]});
   $('#sheet').classList.add('wide');
   S.sheetLive = {pa: pid, views: ['pas', 'cal'], render: render};
   if (S.paNotesFor !== pid) loadPaNotes(pid);
@@ -6338,12 +6369,16 @@ function isPaLogin(){ return !!S.team && !isAdmin(); }
 /* v2.6.7: "View as" in Sandbox / QA. An admin sees what a PA's or YC's own login sees (first one on the team).
    Edits still save under her admin sign-in, which is why it's offered on the practice teams only. */
 function viewAsPick(kind){ var l = kind === 'yc' ? paPeople().filter(isYC) : paOnlyPeople(); return l.length ? l[0].id : null; }
+/* v2.6.9: the calendar's person filter on this device. 'all' = Everyone picked on purpose; nothing saved = the default
+   (a PA's or YC's own programs, everyone for admins) */
+function loadCalPerson(team){ var cp = lsGet('calp:' + team, null); S.calPerson = cp && cp !== 'all' ? cp : ''; S.calPersonSet = cp != null; }
 function setViewAs(kind){
   var pid = kind ? viewAsPick(kind) : null;
   if (kind && !pid) return;
   if ((S.viewAs || null) === pid) return;
   S.viewAs = pid; S.viewAsKind = pid ? kind : null;
   S.person = pid || (lsGet('me:' + S.team, null) || null);
+  if (pid){ S.calPerson = ''; S.calPersonSet = false; } else loadCalPerson(S.team);   // v2.6.9: View as opens on her default calendar
   closeSheet();
   buildTabs(); invalidateAll();
   go({tab: pid || !tabOk(S.tab) ? defaultTab() : S.tab}, true);
@@ -6831,11 +6866,12 @@ async function afterSignIn(session, route){
     teams.sort(function(a, b){ var x = order.indexOf(a.team), y = order.indexOf(b.team); return (x < 0 ? 99 : x) - (y < 0 ? 99 : y) || a.team.localeCompare(b.team); });
     lsSet('teams:' + S.uid, teams);
   }
+  teams.forEach(function(t){ if (TEAM_NAMES[t.team]) t.team_name = TEAM_NAMES[t.team]; });   // v2.6.9
   if (STAGING) teams = teams.filter(function(t){ return STAGING_TEAMS.indexOf(t.team) >= 0; });   // staging never opens a real team
   S.teams = teams;
   if (!teams.length && STAGING){
     S.signingOut = true; await sb.auth.signOut({scope: 'local'}); S.signingOut = false;
-    showLogin('This is the staging copy. It only opens Sandbox. Use the real app link for Community.'); return;
+    showLogin('This is the staging copy. It only opens Sandbox. Use the real app link for Roots DFW.'); return;
   }
   if (!teams.length){
     S.signingOut = true; await sb.auth.signOut({scope: 'local'}); S.signingOut = false;
@@ -6870,7 +6906,7 @@ async function enterTeam(team, route){
   Q.items = []; Q.paused = false; Q.failed = false; Q.backoff = 1000; Q.authTries = 0; loadQueue();
   S.week = route.week || thisWeek(); S.month = route.month || thisMonth();
   S.calMode = route.mode || 'month';
-  S.calPerson = lsGet('calp:' + team, '') || ''; S.calDept = lsGet('cald:' + team, '') || ''; S.calNeed = !!lsGet('caln:' + team, false); S.shiftPerson = '';
+  loadCalPerson(team); S.calDept = lsGet('cald:' + team, '') || ''; S.calNeed = !!lsGet('caln:' + team, false); S.shiftPerson = '';
   if (route.tab && tabOk(route.tab)) S.tab = route.tab; else if (!S.tabPicked || !tabOk(S.tab)) S.tab = defaultTab();
   dayNow = todayIso();
   applyTheme();
