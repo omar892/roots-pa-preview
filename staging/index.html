@@ -314,7 +314,7 @@ legend{font-weight:600;font-size:var(--fs-s);padding:0}
 
 /* ---------- shifts ---------- */
 .sgroup{margin-bottom:var(--sp4)}
-.sgroup>h3{margin:0 0 var(--sp2);font-size:var(--fs-s);text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.sgroup>h3{margin:0 0 var(--sp2);font-size:var(--fs-s);color:var(--muted)}
 .shifts{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp2)}
 .shift{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);border:1px solid var(--line2);border-left:6px solid var(--roots-sage);padding:var(--sp2);display:grid;grid-template-columns:var(--tap) 1fr var(--tap);gap:6px var(--sp2);align-items:start}
 .shift.dept-grove{border-left-color:var(--grove-blue);background:var(--t-grove)}
@@ -347,7 +347,7 @@ legend{font-weight:600;font-size:var(--fs-s);padding:0}
 .hist li:first-child{border-top:none}
 .hist .hx{flex:1;min-width:0;word-break:break-word}
 .hist .when{font-size:var(--fs-s);color:var(--muted);white-space:nowrap}
-.hday{font-size:var(--fs-s);text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:var(--sp3) 0 var(--sp2);font-weight:700}
+.hday{font-size:var(--fs-s);color:var(--muted);margin:var(--sp3) 0 var(--sp2);font-weight:700}
 .panel{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:var(--sp3);margin-bottom:var(--sp3);max-width:720px;border:1px solid var(--line2)}
 .panel h2{margin-bottom:var(--sp2);font-size:var(--fs-l)}
 .prow{display:flex;align-items:center;gap:var(--sp2);padding:6px 0;border-top:1px solid var(--line2)}
@@ -377,7 +377,7 @@ dialog[open]{display:flex;flex-direction:column}
 .opt.dis{opacity:.55;cursor:default}
 .opt.add{color:var(--accent-ink);border:1px dashed var(--line)}
 .opt .sub{font-weight:500;color:var(--muted);font-size:var(--fs-s);margin-left:auto}
-.optgroup-h{font-size:var(--fs-s);font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:var(--sp2) 0 2px}
+.optgroup-h{font-size:var(--fs-s);font-weight:700;color:var(--muted);margin:var(--sp2) 0 2px}
 .menu-list{display:grid;gap:4px}
 .menu-list button{justify-content:flex-start;border:none;background:none;font-size:var(--fs);font-weight:500;width:100%}
 .menu-list button:hover{background:var(--hover)}
@@ -725,7 +725,7 @@ button.icon{border-radius:50%}
 .rquiet{margin:0;color:var(--muted);font:400 14px/1.5 var(--font)}
 .rtiles{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
 /* a program (site's rhythm__tile): beige, time, name, dot pill */
-.rtile{width:100%;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:5px;padding:12px 12px 11px;border:0;border-radius:12px;background:var(--roots-white);color:var(--ink);text-align:left;font:inherit;cursor:pointer;transition:background-color .15s ease}
+.rtile{width:100%;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:5px;padding:12px 12px 11px;border:0;border-radius:12px;background:var(--roots-white);color:var(--ink);text-align:left;font:inherit;cursor:pointer;}
 .rtile:hover{background:var(--tint-2)}
 .rt-time{font:400 14px/1.35 var(--font);color:var(--muted);font-variant-numeric:tabular-nums}
 .rt-name{font:600 16px/1.3 var(--font);color:var(--heading);overflow-wrap:break-word;hyphens:manual}
@@ -899,7 +899,7 @@ a.flow:hover{color:var(--roots-green)}
 a.flow .ic{width:14px;height:14px}
 .flowrow{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px}
 .flowrow .pmeta{flex:1 1 auto}
-.optgroup-h{font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:10px 4px 4px}
+.optgroup-h{font-size:13px;font-weight:700;color:var(--muted);padding:10px 4px 4px}
 
 .ev-sheet .need-step{margin-left:4px}
 
@@ -1051,7 +1051,7 @@ a.tplflow{position:absolute;top:0;right:14px;height:48px;display:flex;align-item
 body{background:var(--surface);color:var(--ink);font-family:var(--font-sans);-webkit-font-smoothing:antialiased}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 /* ---- buttons: rt-btn (pill, action-coloured outline; solid = the one main action) ---- */
-button,.btn{min-height:var(--tap);padding:0 var(--space-4);border:1px solid var(--action);border-radius:var(--radius-pill);background:transparent;color:var(--action);font-weight:500;font-size:15px;transition:background-color .15s ease,color .15s ease,opacity .15s ease}
+button,.btn{min-height:var(--tap);padding:0 var(--space-4);border:1px solid var(--action);border-radius:var(--radius-pill);background:transparent;color:var(--action);font-weight:500;font-size:15px;}
 @media (max-width:767px),(pointer:coarse){button,.btn{font-size:16px}}
 button:hover,.btn:hover{background:var(--action);color:var(--on-action)}
 button:disabled{opacity:.45;cursor:not-allowed}
@@ -1485,7 +1485,7 @@ dialog{border-radius:var(--r-card)}
          ("community" signs in as community@<domain>); admins type their own username or email. -->
     <form id="signinForm" novalidate>
       <fieldset class="team-quick">
-        <legend id="teamPickL">Team login? Tap your team</legend>
+        <legend id="teamPickL">Team login</legend>
         <div class="team-pick" id="teamPick"></div>
       </fieldset>
       <label class="field" for="signinUser">Username or email</label>
@@ -1553,7 +1553,7 @@ dialog{border-radius:var(--r-card)}
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.6.4';   // v2.6.4: re-audit batch 2 (task kept over sign-in-again, touch sizes in landscape, PA shifts tab, Needs a PA filter, ...)
+var BUILD = '2.6.5';   // v2.6.5: less is more (Omar Oct 21): no how-to captions, source notes, eyebrow caps or repeated counts; no A2HS banner
 var TZ = 'America/Chicago';   // Roots' clock: "today", "overdue" and "this week" follow Central time on every device
 var ICON192 = 'data:image/png;base64,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';
 var ICON512 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAApgElEQVR42u3dd5hV5YH48bec2++dxtARUEFUEOsSxbBrAU0xxhpdTDRFowkaY8q6RtcWdWPizxKNmlg2iYklanSTBxPrxobGAnZEEZFept+ZW8/7vr8/jhAjigPcmTn3zvezPNnkAQHPPff9vuc9Te4+54sCADD4KDYBABAAAAABAAAQAAAAAQAAEAAAAAEAABAAAAABAAAQAAAAAQAAEAAAAAEAABAAAAABAAAQAAAAAQAAEAAAAAEAABAAAAABAAAQAAAAAQAAEAAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAABAAAAABAAAQAAAAAQAAEAAAAAEAABAAAAABAAAQAAAAAQAAEAAAAAEAABAAAAABAAAQAAAAAQAAEAAAAAEAABAAAAABAAAQAAAAAQAAEAAAAAEAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAABAAAAABAAAQAAAAAQAAEAAAAAEAABAAAAABAAAQAAAAAQAAEAAAAAEAABAAAAABAAAQAABA3/HYBFVECiFk8B+SrYFwcc790/8HAcC2D/pSKimFkE44Y4y1xlpb8n22DMI1lGjtaS2F9DxPCimEcM5aYkAAsBWUlFIq62ypXC6WS8YZT+lMMp2OptKJ5NihI9lECM3cXwgpWrra17a3Wmfbsh2+MUKIWCQaj8aUVE44ay3biQDgk2mlnbP5UrFQLiWj8VFDhk0ZN3HyuAk7j9lh9JDhTZn64HvFhkKoWGuz+Z58qbh07cp3Vi9buPydV5a+tXjVe4VS0dNeKp5QUllnWSAK1wLD7nO+yFYIz9DvW5PNdcci0Z1Gj58xZZ+Ze+y385gdNh3urWM+hbAds374ihJjzRvL3nnx7dcfeXne/MVvFEqlZCwei0TJAAHAh4d+Y01Xrrs+lTl0r08fvu9Bn9ppqtZ649zKCSeElBtO/nISGGHjhBDOCSGsc8GqkFb/SMJLSxbe/8yjj7787Ir1q1PxZCwSNdaw0QgA8yYlpOjq6U4nkodNO/CrM4+YMGrcxgmUDAiGe1RlEpyzzjklVTBlac123Pn4A3c98cCKlrV1yZRWynBugAAMWp7WuWKhVC4fMX3maZ89fsKosUIIY60UQilu0UDtsM46J4JjgrZsx40P3HXH43OL5VJdMhWcMcbArD2MmLYzW2GgRv+2bOeOI8de9OUz5hw2uylTH8yGtFKs8KDWZppSKimdc9bZVDw5Y8o+Mybv/faqpYtXvZeIxZWUnBMgAIOFklJI2Z7tPGr6rOu+ff6UcROttY6hH4MiA8o5Z50b0dh89PRDYtHo028scE5EvAhnhgnAIBj9lSobv1AuXXDCnB8ec3JwNkwrzdCPQXU0YK1VSv7LTlP3mrDr3155rr27KxmLc+MYAajpza10vlisS6VvmHPB56cdENwdw3I/BmcGhJC+MeOGjZoxee9Xli5atn41DSAAtT36F+qSqVu/e+leEyb7xmjNxB+D/YDYGDO0oemwf/m3599+bcnq5al4kttc+m/7swn6bUfPFQuZZOp/zrps17ETfGO8DZf5A4N6YqS1sSadSN185iX77DSlLdvJV4MA1NZWlrLslxtS6WD0N4z+wD8fHFtrM4nUzd+5ZNpOu2VzPVrxBSEAtcIJUSyXrzn13GDurxn9gU0Oka21mWTqxtMvHN7YXCgVOTdGAGqBp3V7d9cFs+dMmzSVlR9gMw0w1jSk637xrfOlFNZazpARgKof/duyncfsf8gJB37BWEZ/YHO00saY3bbf6UfHndaV6970AXMgANU0o8kVChNHjz9/9hzrHHsz8MkN0NpYM/uAw2buOb2zJ8vJAAJQraQQRb/0w6O/UZdMO8fxLNC7L46UTrjz//3bTZn6sl/mi0MAqnIi09GTPXr/Q2busV9wry/bBOjVqCSVNXZM84hTP3d8Nt+jORtMAKqO8U0mkTz9sC874XieM7BlA5NS1tkTD/ri1O0n9RTyXBFEAKps+t+Z7z5834PHDhtprWX3BbaIlNI5F/G8kw89tlguMYUiAFU2/W9IZb4x62im/8BWzqKkts59Zu8ZU7eflCvmleJ7RACqZPrfle/+7D4zxg0fzfQf2NqjAOGsjXjeSQcfUSgVFYMVAagKztqoFzlyv1ku2IsBbN3wpJQT7sCpnxo7bFShXOJyIAIQ+lmLlLliceftdthrx12FcFzAAGzLt8la25CuO2C3abkip4IJQOhppYrl4r/t9i9aa2N4qi2wrRVwQszcYz+tlOBVAQQg5IyxiVh85h7TRfDqRwDbMkJJKYXYe8LkccNHF0qsAhGAcB+xFv3SmOYRE0eNF++/8wjANn2njLXJeGLq+EmFcpFJFQEI9WylWC7vNn6neDRqeJYhUAnBy+L3mTjFOsd3igCEerZirZ08dsLGvRbAts+rhBC7brdjPBI1lq8VAQjtVMU6T6mdRo8XnAAAKjevEkKMGza6IZ3xjc9BAAEI6W7qW1OXSo9pHiE4AQBU7pvlnEvFEyObhpV9AkAAwspYm4gnhtY1sSmASh5bCxeNRIZkGow1bA0CEFLWuVQsLqVwgpVKoMLSiSSn1ghAeA9Uy355/LAxyXjCcbkCUMGplXVCiF2229G3hrNrBCDMBwHc/Qv0UQb4chEAAAABAAAQAAAAAQAAEAAAAAEAABAAAAABAAACAAAgAAAAAgAAIAAAAAIAACAAGAycc9byMlaAAGDwjf5SSqWUFMLyOg6AAGCQMNZIKW984M6f3nOzdU5JyTv5gJrhsQnwcay1WunnFr1y1f2/KZaKryxddNlJ3xs7dKS1VkrJK88AjgBQm4KXr3blui/4/bVKqmGNQ/7+5ivH/eSsv7zwhFJKSsnrmQACgNpkrFVKXXLnDW8uX5KKx4vlcl0y3Z3Pzbn+4vNv+3lPIaeUYjkIIACowdHf0/pPzz72x6cfbso0+MZIIYw1ntaN6brf/d+fj7nszJeWLNRKW2sdZ4YBAoDaYK3VSq1sWXvR7dclY/EPvubeOWesbcrUvbtm5YlXnH3D3DuC5SAOBQACgKrnnHNCGGPO/vUV2Xwu4kU2neD7xiTjcaXU5ffcfOq157d0tWuljTUcCgAEAFXMWKuVuunBu5987cW6ZOrjpvbWWilkc13Doy89e9QlZzw4/ymtNNcFAQQA1cpa6+n3r/sckmnwzeYWdpxwvjH16UxrV8d3brzksrtuXNfRap3jOAAgAKgy/3zdpxS9m80bY2LRaCqWvGHuHUvXrlRS9lEA3Ia0OH4M7A8KX0O4EQz/WPzxtA6u+xxS9wnT/3+aREi5vqv9/Nlzpk2aGqwgVXroF1KKjetLLDMNMBb6CABqcvT/4HWfvfwHtdJduZ4ZU/b++qyjrbOqD0YHKYWxtiub6+ruyRdKfFgDO/ink4n6TCqdSmxsMwgAqthmrvv8pOFAlv1yJpG8/Ks/0Fpba6Wq/HjQ2tG1bOX6QrHkhJNSChYgBlRrR1ZJVZ9JbjdqWDoZpwEEAGEUPMWzN7/sg9d9ZhKp3l/Ur6TKFnuuPPE/RzcPr/jiTzCyLF2xdtXaVq2V5ykhpGD4D8FhgHOuo6unK7t0h3EjhzbV0wACgDCO/sHzOzf/K4PFnxsfuPPJ114cWt/Y+8UfT+vWro5jZ3zm8H0P8o3xtK7k318IKcWyVetWrmmJRj3nxIYTwBj4nUsI4XnaObd46SqtVVN9hgZUKa4CqkHWWSllV65bSbn59Zwtuu7zn/YbpXoK+Z232+G8479l+2LuL0RntmfV2tZoxOOik7DOMISScumKtb5vGP0JAELBN0ZJdc9TDx5y3jcWrliipDIfM6xv3XWfG2eB1rmLTjijLpkWQlT4FjAphBAr1rQ4x0U/YW6AUFoVCqW1rR3B/wQBwACP/p7Wf5z38Lm/uaq9u+trV57zxrLFWuuPbMA/P+8z0fvHO3tat2Y7zjripGmTpvrGqEpf9ymFKBRLPbmC1ophJdQNEE4p1dreFRwQgABg4Ef/s2+9IhGLZxKprp7ur131o49swLZf93nKocf20VX/QohsT94Yw7Mlwl8ApWShWCoUuTyXACAco38qnpBSlo2fiMWzuZ5NG1Cp6z5lxRd/gkFFiGKpzNy/KkghrLWlshGsAhEAhGT0d84FT/DftAHOiU983ufH7i5S5YqFC2afHlz3WfHFnw+Who+1mjLAx0UAEJ7Rf+PPbtqAkl/qzfM+N+Vp3ZbtOGr/WcF1n1qx8wAEAGEd/TdtwKtL34pFos8sfOnqMF33CYAAoPKj/wcb0JXrPu26C558/cXL77nJCRGi6z4BDATuBK5Wptej/4cacOq153tKJ2PxLbruc31n+zlf+mZw3Wdlb/rdhBRCJOJRKSVnFcPPOae1jscigjMBBAD9w1qrtb7vmUf+49afpeNJ2bun8FtrPe15+v3vbS//rL6+7vPDw78UQohMMhGJaGssg0qYSSmMdZlELBqJcNNeNWIJqArn/tYqpe59+qGzfvXf9cm03JJ3sLgNev0N74frPjf9S4pIxGtqqPONZa0p5Amw1g1vbhCCBzURAPTXtMs5t13ziBGNzYVSSfXlENlv131uavTwIZGIZ60lAWHdD6Xvm4a69JCGOsf6DwFAP31mUjnhpk2aeut3L0snkvliUas+WZQfqOs+g8X/WDSy/XYjrHXWOo4Dwjn6RyLejuNG8pKG6sU5gGptgDFm17E7/s9Zl33tqh9lcz2JWLz3V/T36o8Y0Os+gwY0N9Y555auWFv2fU9rMhAOzlpX9v26dHLHsaNi0QjPgiYA6G/Bbb27jp3QVw34wHWf1g7AWnzQgKFN9ZlUYuXa1vaObNk3vJB8oGf+QkkZi0ZGj2geOaxJK8XoTwBQaw3o3+s+P6EB8Vh0x7EjSyOHdufy+XyR8Wbgpv5OSplOJlKp+MYjQj4NAoCaakA/X/f5iQ0QQjgnohGvqT4j6jN86OFoASdmCABqrgEf8Z73EHzPN2SA9Z8wkFJyKzgBQC02oE/f816BgQdA5XAZaA02IJNM5YuFrbg2lOd9AgQAg7EBPO8TIAAYrA3geZ8AAcAgbEBfv+cdAAHAwDRg8xfya6W787l/nbLPyYcey+IPQABQUw3oyvVE9Edf8aWU8o2vlbr0xLOCTrD4AxAA1E4DdhgxpiXboZXSSiv5PqWUp71iudRdyF1y4lljh420/fu8TwAEAH3ZAGt3HTvhD+dcffT0WV25no6ernyp6BtT9v1svqels21IpuGGORceOX0moz8w2HAjWK03QCnrbF0yfcXJZx81/ZC5z//ttffebulqj3iRCSPH7r/LXkdMn9mYrmP0BwgAavEoT6rgHWDTd91z+q57Gmu78z1a63Q8GfwCRn+AAKBmSSmlENZaJ4RWqj6VEUJY55yzSipGf4AAoNYPBZQSwatbnRNCKCmF1GwWgABg0BwNCB7iDkAIrgICAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACgG1knXPOsR0AAoDBxTmnpJRSWmvZGgABwCCa+0sp312zYmXrWqWUsYZtAhAADIq5v3MuV8ifddN/H/nj0x9a8LRW2jlnHYcCAAFAjU//rVbq53++7aUlbxbLpTnXX3z5PTc755TkUAAgAKhdxlqt9KMvPXPLQ/c2Zeq10pl48pcP3Hn85d9/c/kSrbS1ljPDAAFArQlO/LZ3d114+3VRHQmOBqxzTZn6Be+88eUr/uP2v/1ZKSWlNJwZBggAamz6L6W89K4bV7asS8RiG6//8Y2pS6bLfvlHv7n6+zdf3tLVrjkzDBAA1NDobzyt//DkX+9+8q9NmTrfmA/9rFKqua7hvnmPHHPpd+YtXKCVFkJYloMAAoCqZq3VSr+98r3L776pIZX5yBUe55xvTFOmbn1n+9evPvf6ubcba5WUnBIACACqVXC/r7X2vNuu7sp1e9rbzJjuGxOLRBPR2OV333zi/zt7ecsaSQMAAoBqnf47q5W68v5fP/fWq/Wp9Ccu7ltnnXND6xtffPu1z5//zecWvSKk4IZhgACg2kZ/a7XSzy165Vd/uashlfnQ0v9mM+CU0juM3G77EWOcE1LKyh+aCMGxRaiOFNkItcFjE2DjV7or133B76/1lNf7xZzgGUFSip9+/YdD65ustVKpSv/dhJRCSCmE8I2RfFoDtZMIIYXUWgWNf/9zAQFAtTPWelpfcucNby5fMqSuoffTf61Ua7bz0hO/u9Po8caa4IqgypJSdOfybR3ZbHeuUCpLIZl/DlQCpJTJeKw+k2puqo94mi1CAFAjo/+fnn3sj08/3JTZktFf6/Zs16w9p88+4LA+Gv2NtctXrV+zvt06GzyUlM9rYLWXym0d2VVrW0ePbB7R3MgGIQAII2ut6sVqjLVWK7WyZe1Ft1+XjMV7/6A3KWWpXB7W0HT+v3/bOVfxodkJYYx5850VndnuqOdp6bH2HIohQ0mhpW/MO0tX5Qul7ccMZy2oenESuHY/WqU+cTQPrvv0jTn711dk87mIF+n9GKuk6s73/PgrZ45pHmGdVbKS+5ITQgqx+L3VXdmeWCTiNvxVMeCcE0Hvo9HIqjUtK9e2Sin4bAgAQvL9dMFw+cLbrympNn9RprFWK3XLQ/c8+dqLdcl07x/q4Gnd3t150swjZ+45veKLP84JKcS6lo629q5oxOMe49DuaZGIt3JNS6FYklIIPiUCgAH/TlrnpBAX33H9kZecfv8zjyilPm5N31rraf3a0rev+/PvGtN1vR/9lVLd+fykMduffcwpFZ/7CyGEFM651evblFKOcSXEpJS+b1avaxOM/wQAYRj9tVIX3f6L/3n4j0Prmn54y8/+OO9hT+tNG+CcE1Lki8Uf3vrTsm+UUlt03WfE0z/7+n8kYjFR6Qv/g+l/rlAsFEtaSWb/Id/ltFYd2Z7gUmAQAAz86H/rQ/c21zU44VLxxNm3XvGRDQhm7pffc9OiFe+mE4ne376rlW7v7jr9C1+eMn6ib4xSFd+FnBAi2503xnJusQpGEClLpXK+UAriDQKAAR79h9Y3+sYEZ+o+sgHBqv0jC+b95pH7GtP1W3LVv+7Kdc+Ysvc3DjkmOH/QR/9GPs+TqKrdj8+rSnEZaG2O/ht/amMDhBBHTZ/lG6OkVFKtaFnzX7ddk06ktui6z7JfziSSl3/1B57W1tq+uyqfmX914fPiCADhGv03bcD7xwHWSCkvvuP6dR1t0ciWXfeZKxYumH366Obhpnc3GQAgABiY0X+TBvzs7qcejHqR2x770yML5jVm6ozZgus+27IdR+0/6/B9D/KN0Yz+QPVjCajGR/8PNiAZS1z0+2tXrF995xMPpOLJ3r/OVymVKxR23m6H847/lu3Lpf9/LCmwplBV+Lw4AkB/6+Xov7EBSilPe7+Ye3uxXPKU7v3ij3POt/5FJ5xRl0wLIfr4gTxSCJFOJpTiBtMqYJ2LRCKJeIwMEAD017fOWuvcJXfe0MvRf+M4LoSoT6aFEL2/wcrTuqMn+83PHjdt0tTghcD9MJdMJWLRaJR7gMM/8bfWZVJxT2s+KgKA/hCMwrc+dO81//vbEY3Nvb+Ic8M/vgVX7GmlO3u6p+202/eO+KqxfXDT70eHSmithzc3GGMVs8owc0IIMWJo08b/DgKAPv7MpLLOHTbtgFl7Tm/pbPd0X53IkVL6xq9Lpi/5yneVUrLPF3/+Ma90Qoxobkwl475veAR0WPdDWfbNiKGNdekkDwQlAOi3424phRjZNPSXZ1y8z05T2rOdfdQArVRHT/bsY0+ZOHpcPyz+fPhP12rC+FFeRAcNYHgJ1x4oRans12dS40YPc6z+EwD08zfQWptJpG4+85I+aoCndVu269gZn/nSjM/4pk9e9rK5f0EhnBOpRHzXCeMy6US57AcrV3LDz/JjQH6I4IoA3/i+HTGsaecJ2wWHhqhSXAZatelWamMDTr7mvBfeeq0xU+8bv1K/eb5YHN087NzjTnPODchV/8FCUDIRmzxxfEtb57rWjnyhuKUnPFBBwUsaIhEvk0wMH9pYn0mxTQgAarABUoiSKV84+/TGdJ3plwv/P+6vEZRg6JD6oUPqS6VyoVTmcx/IQ08hEomYp3kbMAFAjTbA0976zrZvff74g/fYr4/e9LvFc88Nr6CKRiN86GE4FBCc9a2NAYRNUEsN2PbzAVqp7nzPPhMnf+cLX+m36z4/eeK5YbBxjh8D/CM4DmD0JwCotQZIKY21WuvLTvpeMp7ot+s+t+RvyI8B/gECgNpsgFaqM9d97nGnTRqzff9f9wmAAGBgGqC1bs92zdpz+uwDDgvJ0j8AAoA+b4CUslQuD2toOv/fvx2ccWVjAgQAg6IBSsrufM+Pv3LmmOYRweuC2ZIAAUAtNCDiba4BnvY6erInzTxy5p7TWfwBCABqqgFr21s97X3kwk5Ee935njHNw39w1Netc8z9AQKAGmrAdy455tOHtnS1+8b3tNZKK6W0Up7WSqm2bGdDuu76b1+YTiQFq//AYMKdwDXeAOdcJpm68pT/3HvC5Ovn3rG6bZ2UUkklhPONiUWiM/fc77zjv7Xd0JHW8Z53gACghkgpnXNOiBMO/MJn9pnx+KvPz1/8+qrWdbFodLfxk6bvsuceO+wshODEL0AAUJsNkEJYa4dkGo6aPuuo6bM++LPBeyIZ/QECgJoVLAdZZzc+38E5J4Vk2QcgABgUhwJafuAST073AoN8XsgmAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAAIOYxyaoYc65Sv1WUkq2J0AAUAXjvnVWSqUqN2pb55yzSipKABAAhJS1VimlpRZCdOdz1lkppdjqIwEpnHNKqnQiKaQWQlhnlWTlECAACNvo76xSqr276/55jzy9cP7bq96z1kop3dYWQArpnFNKTRw1bvouex73r59LxRNBY9jaAAFAuOb+zyx86ZxfX/nu2hXRSCTmRaUU23giIPgdVrete3jB03c/9deffPX7u++ws7FW0wCAACAMghH50Zee+ea15yei8aH1TdbZCp4EjkYi9cnM0rWrjr/8e9d9678O3mM/GgBUO77ANTH3d05JuXz96vN+e3UyGo9FIr7xrbWucqy1ZeMn43El1Xm/vXr5+tVKSlu5wAAgANgazlkp5S0P3bOqbX0sGjPW9tVxhjHJeHxV2/pbHrpHSumcZeMDBAADOPo7rXShVHzqjfnpeNJY06d/nG9MOp586o35hVJRK+04CACqFucAaiEAUsp3Vi9b07Y+6kX6ekR2zkW9yJq29e+sXjZ53MTgT++3f1PrHLchDNieJoQUQkrJvSAEAOHSXciVyuWoF/24AGzFl3Yzv1WpXO4u5Ppt3LHWBPegaYaeELDWCiG4FJgAICw2f4+uc843W7w0pNXH/p5Syv65HSw4v62VFkKsblu/bP1qRQMG7AjAaaUnjBxbn8oEH43kGSEEAGH/3jrnaa8uFd/SfzBXKPjGH8BveHBng7X2d//3pwfnP/32yqUdPVnGm4ELgFBSDq1v2n37nWcfeNj0XfYUG1Yg2TgEAKE8MlCqO5/79OTJ13zz3N4/xSH4lWf+6tKnXp+fTiStHYCrfYLRf9GKd//rtmv+vuiVeDQai8TSiaTgrPOAVqCjp+uv8598cP5TX9z3oPNnz6lLpmkAAUDYjwAyydQW7xzaG6iLfIJnWryx7J2vXXVOa7ZjWH2TcdZZOyApwof2ivpkRAj5hyf/uqJ17a/OuDioMg2oygkim2CQNMA5Z6zp5W1fG3/lQP1thZA9hfz3b/5Je3dXY7quHNzXxgcZjn3JWGusGdHU/PQbCy658wYlFbcEEgCEmtxyA/VXDU78Xj/39oXLl9Qn02Xf5+MLoVK5PKy+6b55Dz+36FWtFAdnBACowARTK9WTz819/vF0POn38X1t2Pajtd8+dp8QnJohAEBFRhQhXl+2eHXrun64rw3beKyWiMZeWvJmZ0+3VooPiwAA2zqmCCFefvfNkl9WivOKYa91xIu0dLYvXv2eqOgrSEEAMHj51jCWVFEGDCt1BACoFCmY+/N5gQCAAQUAAcDgwZJCFXHOWd4MQQCASskkUzz0rVpG/2gkko4n2RQEANjmPVJKIcQ+E6bEozFjmFeGmpSy5JdHNA3dceRYwZNBCQCwrXukUs65CaPGTRqzfb5U5KHzYaaVypcKn95173g0ZqwhAAQA2FbW2YjnfX3W0YVyUUt20fBO/31jUvHEV2ceKThvTwAQWsELYbb0x0Dd16OVts5+ftoBh+796XWdbVEvwicYwtFfSdXa1XHOl04dP3x08OxuNkvV4XHQg2L0j3iep7UQuveDsBAi4g3Y46CD6eRPv/aDzp7svDcWDKlr0EpZ6xyPnAnF0C8L5VJPIX/q546bfcBhxlrN6E8AEM7RPxaJLlu3+sYH7nTC9fI4PfiVy9atjkWiA9IAKaVzrj6VueXMS6/+39/84Ym/dHR3RSPRqOfxuIGBG/qFc6JYLvnGH9k07KITzjh6/0Msoz8BQJgDEI1E3lu36id33yR7/cjG4Fem48loZMAexxY0IBVPnHvcacfN+Nx9zzw8f/Hry1vWKik5DhiQYzLnnFJq4qhx+++y1xf3O7gpU2+dY+WHACDsDYh4XnNdw5b+g8bagX28l5TSCeesmzBq7A+P/oYQoivXLaVk/B+QAjjnlFTpxPuX/LPuTwAQFpt/JVNwErg//8QKTjylktY556xWui6Z5rMe8D3NOaukYvQnAAjBzExKIcS4oaPq05lCqdTnj2WX0liTSabGDR0l+uveHyWlkFrwwOEQ2PhZgAAgFAGwzg5vHLLjyLEvvv16OpHs01FSS5ktFffZacrwxiHWWdW/1+lzqxFQyZyzCWqAc0JK+bWZR5WN39eP0JFClvzSlw88XErJdBwgABhgwSu5D9lr/5MOPmJNW0vEi/TFTFlJ5WlvXWfbKZ/50oFTP8X1f0C1YwmoRgQLQWcfc8rqtvUPvvhkKpGMRaKyQksmzgknXKFUzOZ7Tjn02HOPO417fwACgBAFQDiRiMV+ecZFv/zLXXc+PndV27pSuVyRRRopRMSL7Dhy7FcOOnz2AYdZa3lWM0AAEK4GBKd/T/3scV856PBXl771yruLfLOtz2h0znla7zZ+0j4TJ3vac9z7AxAAhPQ4QAhjbTKW+NSk3T81affK/v6s/AAEAKEW3ArgnLOiQg9NkEIKqZRk9AcIAKrgUEBKHqUPYHMYIgCAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACECVqtAD+AFs8uVyfLkIQKhHf+EpXrEA9ImIx5eLAIR4ehLRem1HS7Fc2vh6XgDbLnjX6bL1q4O33bFBCEAYaaXXdbaWfV8KydYAKhcAIYRY2bpOScXwTwDCO08xxnYXcmwKoLJ8YwqlouI9pwQgnJxzEe21dXUsX79acMIKqNw3S0lVKBbfW7cy4nl8swhAWLemkr41S9YsF0JYdlOgQgEQQixvWd3Zk/U0ASAAod1ThRBCvLHsHbFh1RLANgrmUguWLMzmc55myCIAod1TrY1Foi8tWVj2y0qxbYEKCOZSby5fwhlgAhD2Y9V4JLZ41XuLVy2TQlpr2SbANn6ntNKFUumZRS/FozG+UwQg1LRWuVLx+bdfFZwGACoRACHE4lVLV7WsjXkRTgAQgFCzzkW09/CCedY5pTgPAFQgAA8tmJcrFjQnAAhA2ANgbSqWeHHx6wuXLVZSccQKbMvor7TKFwsPvPB4MpYwfJsIQBVsU60KpeIf5z0seDYcsG3TKSnk468+/+6aFfFojPUfAlAde20ylnh4wdMd3VkleXQJsJWCRwDdO+8hJRVzKQJQNcet8Wh02fo1dz0xV0ppHcetwNZMpJRSL7z92hOvPp9JpFhNJQBVw1ibjid/97c/d+W6JQcBwFZMpISw1t4w9w7rHA9XJABVdhAQi0RXtqy9Ye4dioMAYIunUEYr9cALTzz28rP1yTTTfwJQfXtwXTJ922N/enP5u1pp9mCg9/MnIWSukL9+7u2JaJz5EwGoSlqpkl++4Pc/941xPB8U6O3kyWqlfv7n2xYueycZj3NDJQGo1v24Lpn6+6JXbn7wbq2UsYZtAmyeb4yn9aMvPXPLQ/c2Zup9w7eGAFTz3tyYrrvq/t88t+gVT3uGvRn4eNZaT+tVrevO/e1VMS/KQTMBqHpSiKjnfeeXly5etUxrzd2MwEdyzgkpsrmes27677ZsVyxCAAhADUxqnItGoq1dHT+89afZXI9WPB8C+IjR3zqrpLrw9mufefPl+mSaJVMCUCOMMfWp9KvvvnXyz8/L5nsUDQA2Gf210hfd/ov75j0yrL6pbHw2CwGoHb4xDem6F9567eRrzsvmehTnhIHgENlaKaVW+qLbr7v1oXsb0/U+o39/0SOm7cxW6Kcd3dlUPPnO6uXzF79+4NRPpeJJY42SNBiDemKktc7me8759ZV3PfHAkEwDEyMCUMsNSMYTy9atmvvC43vuuOuopmHWWrfhoVfA4OGcM9Z6Wi9fv/r0G3788IKnm+uaGP0JQO3v9/ForCvXff8zD2cSqT122EVKyaEABhVjjVJKKfXQ/KfmXH/xkjUrmjINrPwQgMHSgIj2hJQPvvjU6+8tnrr9pMZ0vRDCWKs4FEBtHwRbK4RQSnUXclfce8tlf/iVsTYZSzD3JwCDqQHCKSGTscSby5fMff5v1tndd9jZ0zqYHEkhWRRCjU16gic6KKWklPfNe+ScX1/54ItP1SczWime9kMABum3IhGLF/3S/73898dffT4eiU4YOc7TnpTSWOuck5weQJVPdJx11lkVDPxSzlu44MLfX/fLv9zVXcjVp9LGWu71GkBy9zlfZCsM8GcgpZIqV8wXy6Wp20864YAvHLT7vkPqGjYeMjvh3j8moAaohmmNC/5DSK3eP7PVU8g9+vKzf3r2sadef9FYW5dMO2d5yhsBwPuUlHJDBrYbOnLG5L0P3n3faZOmpuLJD/4y66xwgm8OQjiPkVJIqT44R8mXiotWLHnkpWf++sKTS9eulFJmEikpBQ9EIQD42AwUy6VcMa+VHjds1JRxE/eZOGWXsTtuP3xMQzrDxUIIuc6e7PKWNfPfeeOtFe8+u+jl1a3rc6V8MpaIR6JCMPQTAPRiMhW8BbtYLhVKxeD9Yg2pupFNQxvTdXWpzKTR49lKCAnnnJRyVdu65evXlP3y0rUrO3PZ7nxOSRWPxqKRiJLKOsuT3QgAtqIEUghpnfWN8Y3vG+Oc87lmDiGjlVJSKSmjkYhWWisthGDcDzmPTRDyuZXZ8P3xtI5oHZwH5mQwwrevio3/55zjun4CgArHwAXfMwCoBM4oAgABAAAQAAAAAQAAEAAAAAEAABAAAAABAAAQAAAAAQAAEAAAAAEAABAAAAABAAAQAAAAAQAAEAAAAAEAABAAAAABAAAQAAAAAQAAEAAAAAEAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAABIBNAAAEAABAAAAABAAAQAAAAAQAAEAAAAAEAABAAAAABAAAQAAAAAQAAEAAAAAEAABAAAAABAAAQAAAAAQAAEAAAAAEAABAAAAABAAAQAAAAAQAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAgAAAAAgAAIAAAAAIAACAAAAACAAAEAAAAAEAABAAAAABAAAQAAAAAQAAEAAAAAEAABAAAAABAAAQAAAAAQAAEAAAAAEAABAAAEAf+v9SJ3EXeQGABgAAAABJRU5ErkJggg==';
@@ -2985,7 +2985,7 @@ function templatePicker(o){
           h('span', {text: t.name.trim()}), h('span', {class: 'sub', text: (o.markOnBoard && onBoard.has(t.id) ? 'on the board \u00b7 ' : '') + (n === 1 ? '1 task' : n + ' tasks')})));
       });
     });
-    if (!tpls.length && q) kids.push(h('p', {class: 'muted small', text: 'Nothing in Master matches. Use the first option to start a new program with that name.'}));
+    if (!tpls.length && q) kids.push(h('p', {class: 'muted small', text: 'Nothing in Master matches.'}));
     holder.replaceChildren(h('div', {class: 'optlist'}, kids));
   }
   var search = h('input', {type: 'search', id: 'tplSearch', placeholder: 'Search Master or type a new name', 'aria-label': 'Search Master or type a new name', autocomplete: 'off',
@@ -3017,7 +3017,7 @@ function locationPicker(row, table, label){
   }
   var holder = h('div');
   redraw();
-  openSheet({title: 'Where is it?', refresh: redraw, body: [holder, h('p', {class: 'muted small', text: 'Pick Offsite to type the address on the card.'})],
+  openSheet({title: 'Where is it?', refresh: redraw, body: [holder],
     foot: [h('button', {type: 'button', class: 'primary', on: {click: closeSheet}}, 'Done')]});
 }
 
@@ -3044,7 +3044,7 @@ function promptReauth(){
     closeSheet(); toast('Signed in again. Saving your changes now.'); updateSaveState(); kick(); subscribe(); resync();
     setTimeout(function(){ if (S.team && !S.reauthOpen) restoreSheetDraft(); }, 120);   // v2.6.4 (R-02): a kept sheet comes back filled in (none kept: nothing happens)
   }}},
-    h('p', {text: 'For your security you were signed out. Your unsaved changes are kept on this device and will save after you sign in.' + (kept === 'add' ? ' The task you were adding opens again, filled in.' : '')}),
+    h('p', {text: 'You were signed out. Your changes are kept on this device and save after you sign in.' + (kept === 'add' ? ' The task you were adding opens again, filled in.' : '')}),
     h('label', {class: 'field', for: 'reauthPw', text: isTeam ? tm.team_name + ' team password' : 'Password for ' + (S.email || 'your account')}),
     pw, err, go,
     h('button', {type: 'button', class: 'link', on: {click: function(){ S.reauthOpen = false; closeSheet(); signOut(); }}}, 'Sign out instead')
@@ -3114,7 +3114,6 @@ function waitSheet(id, ret){
   var inp = h('input', {type: 'text', id: 'waitOn', value: t.waiting_on || '', autocomplete: 'off', placeholder: 'e.g. Osama for the flyer', enterkeyhint: 'done', 'data-fk': 'wo:' + id});
   function save(v){ var cur = D.tasks.get(id); if (!cur) return; v = (v || '').trim(); if (v !== (cur.waiting_on || '')){ setFields('tasks', id, {waiting_on: v}, taskLabel(cur)); invalidate('board', 'person', 'cal'); announce(v ? 'Waiting on ' + v : 'Not waiting on anyone'); } closeSheet(); }
   var form = h('form', {class: 'stack', novalidate: true, on: {submit: function(e){ e.preventDefault(); save(inp.value); }}},
-    h('p', {class: 'muted small', text: 'For a task that\u2019s stuck on someone else. It shows \u201cWaiting\u201d on the task until it\u2019s checked off.'}),
     h('label', {class: 'field', for: 'waitOn', text: 'Waiting on'}), inp);
   openSheet({title: 'Waiting on\u2026', returnTo: ret, body: form, focus: '#waitOn', forceFocus: true,
     foot: [(t.waiting_on || '').trim() ? h('button', {type: 'button', 'data-fk': 'woclear', on: {click: function(){ save(''); }}}, 'Clear') : null,
@@ -3161,8 +3160,7 @@ function watchSheet(id, ret){
     var sel = h('select', {id: 'wAdd', 'data-fk': 'wadd:' + id, on: {change: function(e){ var pid = e.target.value; if (!pid) return; addWatcher(cur, pid); draw(); var s2 = $('#wAdd'); if (s2) s2.focus(); }}},
       h('option', {value: '', text: 'Add a watcher\u2026'}), personOptions(free));
     holder.replaceChildren(
-      h('p', {class: 'muted small', text: 'Watchers are waiting on this task. They see it under Watching on My tasks' + (owners.length ? ', as \u201c' + owners.join(', ') + ' owes \u2026\u201d' : '') + '.'}),
-      h('div', {class: 'wchips', role: 'group', 'aria-label': 'Watchers'}, chips.length ? chips : h('span', {class: 'muted', text: 'Nobody is watching yet.'})),
+      h('div', {class: 'wchips', role: 'group', 'aria-label': 'Watchers'}, chips.length ? chips : null),
       h('label', {class: 'field', for: 'wAdd', text: 'Add someone'}), sel);
   }
   draw();
@@ -3241,7 +3239,6 @@ function unassignPerson(t, pid){
 function assignPicker(t){
   peoplePicker({
     title: 'Who\u2019s on ' + quote(t.task) + '?',
-    note: 'Each person checks off their own part. The task is done when everyone has.',
     selected: function(){ return assigneesOf(t.id).map(function(x){ return x.person_id; }); },
     toggle: function(pid, on){
       if (on) assignPerson(t, pid);
@@ -3690,7 +3687,7 @@ function startFromTemplates(){
     });
   });
   count();
-  openSheet({title: 'Add recurring programs', body: [h('p', {class: 'muted small', text: 'Weekly programs are ticked for you.'}), body],
+  openSheet({title: 'Add recurring programs', body: [body],
     foot: [h('button', {type: 'button', on: {click: closeSheet}}, 'Cancel'), goBtn]});
 }
 /* Copy last week's unfinished tasks. Safe to press twice: a run in progress ignores more
@@ -3775,7 +3772,7 @@ function whoAmISheet(s, ret){
     setTimeout(function(){ if ($('#sheet').open) return; var el = fkEl('sho:' + s.id); if (el) el.focus({preventScroll: true}); }, 120);
   };
   openSheet({title: 'Who are you?', returnTo: ret, body: h('div', {class: 'pv-pick wh-pick'},
-      h('p', {class: 'muted', text: 'Tap your name to sign up for ' + lbl + '. This device remembers it.'}),
+      h('p', {class: 'muted', text: 'Tap your name to sign up for ' + lbl + '.'}),
       pas.length ? h('div', {class: 'who-grid'}, pas.map(function(p){ return whoCard(p, 'swho:', function(){ pick(p); }, true); })) : h('p', {class: 'muted', text: 'No PAs on this team yet. Ask Anisha to add you.'})),
     foot: [h('button', {type: 'button', 'data-fk': 'swhocancel', on: {click: closeSheet}}, 'Cancel')]});
 }
@@ -4052,7 +4049,7 @@ function peopleChips(o){
     var more = h('button', {type: 'button', class: 'link pc-more', 'aria-expanded': open ? 'true' : 'false', 'data-fk': o.id + 'more',
       on: {click: function(){ open = !open; if (o.onOpen) o.onOpen(open); draw(o.id + 'more'); }}}, open ? 'Show fewer' : [icon('plus', 'sm'), sel.length ? 'Someone else' : 'Choose someone']);
     box.replaceChildren.apply(box, [h('legend', {text: o.label}),
-      !shown.length ? h('p', {class: 'muted small pc-none', text: o.none || 'Nobody yet.'}) : null,
+      !shown.length && o.none !== '' ? h('p', {class: 'muted small pc-none', text: o.none || 'Nobody yet.'}) : null,
       pas.length ? h('div', {class: 'tchips'}, pas.map(on)) : null,
       st.length && open ? h('p', {class: 'pc-h', text: 'Staff'}) : null,
       st.length ? h('div', {class: 'tchips'}, st.map(on)) : null,
@@ -4117,7 +4114,7 @@ function addTaskSheet(o){
   var txt = h('input', {type: 'text', id: 'atText', autocomplete: 'off', enterkeyhint: 'done', placeholder: 'What needs doing?', 'data-fk': 'attext'});
   txt.value = o.text || '';
   var combo = repCombo(txt, pid, function(v){ txt.value = v; err.hidden = true; }, {idp: 'atRep', fill: true});
-  var who = peopleChips({id: 'atWho', label: 'Who', none: 'Nobody yet. Choose who it\u2019s for.', selected: function(){ return st.who; },
+  var who = peopleChips({id: 'atWho', label: 'Who', none: 'Choose who it\u2019s for.', selected: function(){ return st.who; },
     toggle: function(x, on){ st.who = st.who.filter(function(y){ return y !== x; }); if (on) st.who.push(x); }});
   var dayBox = dayChips('atDay', st.due, function(d){ st.due = d; });
   // v2.6.4 (judge signal: a Thursday Soul Food task was filed on Tuesday): picking a program sets Day to that program's day
@@ -4135,9 +4132,9 @@ function addTaskSheet(o){
   if (dr) note.value = dr.note || '';
   var watch = me ? h('label', {class: 'sw25', for: 'atWatch'},
     h('input', {type: 'checkbox', id: 'atWatch', checked: st.watchMe, 'data-fk': 'atwatch', on: {change: function(e){ st.watchMe = e.target.checked; lsSet('atw:' + S.team, st.watchMe ? null : false); }}}),
-    h('span', {class: 'sw-t'}, h('b', {text: 'Let me know when it\u2019s done'}), h('span', {class: 'sub', text: 'It shows under Watching on ' + personName(me) + '\u2019s My tasks'}))) : null;
+    h('span', {class: 'sw-t'}, h('b', {text: 'Let me know when it\u2019s done'}))) : null;
   var more = isAdmin() ? h('details', {class: 'at-more', open: !!(dr && st.watchers.length)}, h('summary', {'data-fk': 'atmore'}, icon('chevR', 'sm'), 'More'),
-    peopleChips({id: 'atWat', label: 'Watchers', none: 'Nobody is watching yet.', selected: function(){ return st.watchers; },
+    peopleChips({id: 'atWat', label: 'Watchers', none: '', selected: function(){ return st.watchers; },
       toggle: function(x, on){ st.watchers = st.watchers.filter(function(y){ return y !== x; }); if (on) st.watchers.push(x); }}).el) : null;
   function save(){
     var text = txt.value.replace(/\s+/g, ' ').trim();
@@ -4250,8 +4247,7 @@ function taskSheet(id, pid, ret){
       who.el, wat.el,
       h('div', null, h('label', {class: 'field', for: 'tdProg', text: 'Program'}), prog, prog.hint, board),
       days,
-      h('div', null, h('label', {class: 'field', for: 'tdWait', text: 'Waiting on'}), wait,
-        h('p', {class: 'small muted', text: 'For a task stuck on someone else. It shows \u201cWaiting\u201d until it\u2019s checked off.'})),
+      h('div', null, h('label', {class: 'field', for: 'tdWait', text: 'Waiting on'}), wait),
       est].filter(Boolean));
     if (keepFk){ var el = body.querySelector('[data-fk="' + cssEsc(keepFk) + '"]'); if (el) el.focus({preventScroll: true}); }
     autosizeSoon();
@@ -4322,7 +4318,7 @@ RENDER.person = function(){
     var paLogin = isTeamLogin() && !isAdmin();
     setKids(sec, [h('div', {class: 'pv-pick'},
       h('h2', {class: 'pv-pick-h', text: paLogin ? 'Who are you?' : 'Whose tasks?'}),
-      h('p', {class: 'muted', text: ppl.length ? 'Tap a name to see that week. This device remembers it.' : 'No people yet. Add them when you assign a task.'}),
+      ppl.length ? null : h('p', {class: 'muted', text: 'No people yet. Add them when you assign a task.'}),
       pas.length ? h('div', {class: 'who-grid'}, pas.map(card)) : null,
       st.length ? h('h3', {class: 'who-sub', text: 'Staff'}) : null,
       st.length ? h('div', {class: 'who-grid'}, st.map(card)) : null)]);
@@ -4334,7 +4330,7 @@ RENDER.person = function(){
     var sel = h('select', {id: 'pvSel', class: 'pill-sel', 'data-fk': 'pvsel', on: {change: function(e){ setMe(e.target.value); }}},
       h('option', {value: '', text: 'Choose a person\u2026'}), personOptions(ppl));
     sel.value = pid || '';
-    var nt = h('div', {class: 'pv-top'}, h('h2', {class: 'sr-only'}, 'My tasks'), h('label', {for: 'pvSel', text: 'Whose tasks?'}), sel);
+    var nt = h('div', {class: 'pv-top'}, h('h2', {class: 'sr-only'}, 'My tasks'), h('label', {class: 'sr-only', for: 'pvSel', text: 'Whose tasks?'}), sel);
     nt._k = topKey;
     if (top) top.replaceWith(nt);
     top = nt;
@@ -4370,7 +4366,7 @@ RENDER.person = function(){
   var noneT = personDayTasks(pid).none;
   var openN = ts.filter(function(t){ return !personDone(t, pid); }).length;
   var tasksH = h('h2', {class: 'pv-h', id: 'pvTasksH'}, tw ? 'This week' : weekLabel(S.week),
-    h('span', {class: 'muted', text: openN + ' open'}));
+    openN ? h('span', {class: 'muted', text: openN + ' open'}) : null);
   var quiet = !box && !noneT.length ? h('p', {class: 'muted pv-quiet', text: needs.length ? 'Nothing else on ' + personName(pid) + '\u2019s week.' : 'Nothing on ' + personName(pid) + '\u2019s week yet.' + (wkOk ? '' : ' Loading the calendar\u2026')}) : null;
   var noneEl = noneT.length ? h('section', {class: 'wother pv-none', 'aria-labelledby': 'pvNoneH'}, h('h3', {id: 'pvNoneH', text: 'No day set'}),
     h('ul', {class: 'rtasks wide'}, noneT.map(function(t){ return taskLine(t, pid, 'pv'); }))) : null;
@@ -4390,18 +4386,18 @@ RENDER.person = function(){
           h('span', {class: 'cal__dot', 'aria-hidden': 'true'}), h('span', {class: 'ntw-line'}, h('span', {class: 'ntw-d', text: niceDate(s.date)}), shiftTime(s) ? ' \u00b7 ' + shiftTime(s) : '', ' \u00b7 ', h('b', {text: name}))),
         tlist);
     });
-    ntw = h('section', {class: 'pv-ntw', 'aria-labelledby': 'pvNtwH'}, h('h2', {class: 'pv-h', id: 'pvNtwH'}, 'Signed up, next 2 weeks', h('span', {class: 'muted', text: ready ? evs.length + (evs.length === 1 ? ' program' : ' programs') : ''})),
-      !ready ? h('p', {class: 'muted', text: 'Loading\u2026'}) : rows.length ? h('ul', {class: 'ntw-list c25'}, rows) : h('p', {class: 'muted', text: personName(pid) + ' isn\u2019t signed up for anything in the next two weeks. Sign up from the Calendar.'}));
+    ntw = h('section', {class: 'pv-ntw', 'aria-labelledby': 'pvNtwH'}, h('h2', {class: 'pv-h', id: 'pvNtwH'}, 'Signed up, next 2 weeks'),
+      !ready ? h('p', {class: 'muted', text: 'Loading\u2026'}) : rows.length ? h('ul', {class: 'ntw-list c25'}, rows) : h('p', {class: 'muted', text: 'Nothing in the next two weeks.'}));
   }
   // 4. Watching: first for staff (Anisha, Ummehani); at the bottom for PAs, and only when there is something
   var watch = pvWatching(pid);
-  var watchSec = watch.length || staffView ? h('section', {class: 'pv-watch', 'aria-labelledby': 'pvWH'}, h('h2', {class: 'pv-h', id: 'pvWH'}, 'Watching', h('span', {class: 'muted', text: watch.filter(function(x){ return !x.done; }).length + ' open'})),
+  var watchSec = watch.length || staffView ? h('section', {class: 'pv-watch', 'aria-labelledby': 'pvWH'}, h('h2', {class: 'pv-h', id: 'pvWH'}, 'Watching', watch.some(function(x){ return !x.done; }) ? h('span', {class: 'muted', text: watch.filter(function(x){ return !x.done; }).length + ' open'}) : null),
     watch.length ? h('ul', {class: 'watch-list'}, watch.map(function(x){
       var txt = owesLine(x.t, x.people, pid);
       return h('li', {class: x.done ? 'done' : null}, icon('eye', 'sm'),
         x.live ? h('button', {type: 'button', class: 'grow w-open', 'data-fk': 'pwm:' + x.t.id, 'aria-haspopup': 'dialog', on: {click: function(e){ taskSheet(x.t.id, pid, e.currentTarget); }}}, txt) : h('span', {class: 'grow', text: txt}),
         x.done ? h('span', {class: 'mk full'}, icon('check'), 'Done') : null);
-    })) : h('p', {class: 'muted small', text: 'Nothing yet. Tick \u201cLet me know when it\u2019s done\u201d when you add a task, or add yourself as a watcher on any task.'})) : null;
+    })) : h('p', {class: 'muted small', text: 'Nothing yet.'})) : null;
   setKids(sec, [top, addf, staffView ? watchSec : null, needSec, tasksH, estLine(pid, S.week), box, quiet, noneEl, ntw, staffView ? null : watchSec]);
 };
 
@@ -4454,8 +4450,8 @@ function weekShifts(){
 function shiftStatus(s){
   var need = +s.pa_needed || 0, have = shiftPAs(s.id).filter(function(x){ return !isArchivedPerson(x.person_id); }).length;   // archived people don't fill a shift (review M1)
   if (!need) return h('span', {class: 'mk none'}, 'No PA needed');
-  if (have >= need) return h('span', {class: 'mk full'}, icon('check'), 'Full (' + have + ' of ' + need + ')');
-  return h('span', {class: 'mk need'}, icon('warn'), 'Needs ' + (need - have) + ' (' + have + ' of ' + need + ')');
+  if (have >= need) return h('span', {class: 'mk full'}, icon('check'), 'Full', h('span', {class: 'sr-only', text: ' (' + have + ' of ' + need + ')'}));
+  return h('span', {class: 'mk need'}, icon('warn'), 'Needs ' + (need - have), h('span', {class: 'sr-only', text: ' (' + have + ' of ' + need + ')'}));
 }
 function signUp(s, pid){
   var key = s.id + '|' + pid;
@@ -4642,7 +4638,7 @@ function shiftSheet(id, ret, focusFk){
       h('dt', {text: 'When'}), h('dd', {text: (s.date ? dayLong(s.date) : (s.date_text || 'No date yet')) + (shiftTime(s) ? ' \u00b7 ' + shiftTime(s) : '')}),
       where ? [h('dt', {text: 'Where'}), h('dd', {text: where})] : null,
       d ? [h('dt', {text: 'Department'}), h('dd', null, h('span', {class: 'sh-dept ' + (deptClass(s) || 'dept-other')}, h('span', {class: 'cal__dot', 'aria-hidden': 'true'}), d))] : null);
-    var src = h('p', {class: 'ev-src small muted', text: cal ? 'From the Roots calendar. Date, time and place change there.' : 'Added by hand on PA shifts.'});
+    var src = null;   // v2.6.5: no source note
     var on = shiftPAs(s.id), onIds = on.map(function(x){ return x.person_id; }), me = shiftMe();
     var free = paPeople().filter(function(p){ return onIds.indexOf(p.id) < 0; });
     var free2 = me && free.some(function(p){ return p.id === me; }) ? [D.people.get(me)].concat(free.filter(function(p){ return p.id !== me; })) : free;
@@ -4656,7 +4652,7 @@ function shiftSheet(id, ret, focusFk){
           signOff(D.shifts.get(s.id) || s, per.id);
           setTimeout(function(){ var el = fkEl('sume:' + s.id) || fkEl('ssu:' + s.id) || $('#sheetTitle'); if (el) el.focus({preventScroll: true}); }, 90);
         }}}, 'Remove'));
-    })) : h('p', {class: 'muted sh-nobody', text: 'Nobody yet.'});
+    })) : null;
     var meBtn = meOpen ? h('button', {type: 'button', class: 'primary su-me', 'data-fk': 'sume:' + s.id, 'aria-label': 'Sign me up for ' + lbl, on: {click: function(){
       signUp(D.shifts.get(s.id) || s, me);
       setTimeout(function(){ var el = fkEl('ssu:' + s.id) || $('#sheetTitle'); if (el) el.focus({preventScroll: true}); }, 90);
@@ -4709,7 +4705,7 @@ function shiftSheet(id, ret, focusFk){
     if (keep){ var el = body.querySelector('[data-fk="' + cssEsc(keep) + '"]'); if (el) el.focus({preventScroll: true}); }
   }
   render();
-  var wk = s.date ? h('button', {type: 'button', class: 'link sh-wk', 'data-fk': 'hopenwk', on: {click: function(){ var d = (D.shifts.get(id) || s).date; closeSheet(); go({tab: 'cal', mode: 'week', week: mondayOf(isoToDate(d)), day: d}); }}}, icon('cal', 'sm'), 'Open this week in the Calendar') : null;
+  var wk = s.date ? h('button', {type: 'button', class: 'link sh-wk', 'data-fk': 'hopenwk', on: {click: function(){ var d = (D.shifts.get(id) || s).date; closeSheet(); go({tab: 'cal', mode: 'week', week: mondayOf(isoToDate(d)), day: d}); }}}, icon('cal', 'sm'), 'Open the week') : null;
   openSheet({title: (s.program || '').trim() || (isCalRow(s) ? 'Untitled event' : 'New shift'), returnTo: ret, body: body,
     onClose: function(){ if (!isCalRow(s)) commitPendFor('shifts', id); if (S.sheetLive && S.sheetLive.shift === id) S.sheetLive = null; },
     foot: [wk, h('button', {type: 'button', class: 'primary', on: {click: closeSheet}}, 'Done')].filter(Boolean)});
@@ -5055,8 +5051,7 @@ RENDER.master = function(){
     setKids(gs, [h3, ul]);
     return gs;
   });
-  var empty = !groups.length ? h('div', {class: 'empty'}, h('h2', {text: q ? 'Nothing in Master matches \u201c' + S.tplQuery + '\u201d' : 'Master is empty'}),
-    h('p', {class: 'muted', text: 'Set up each program once here with its usual tasks. Adding it to a week brings all its tasks along.'})) : null;
+  var empty = !groups.length ? h('div', {class: 'empty'}, h('h2', {text: q ? 'Nothing in Master matches \u201c' + S.tplQuery + '\u201d' : 'Master is empty'})) : null;
   setKids(sec, [head, empty, box]);
   if (S.openTpl){
     var id = S.openTpl; S.openTpl = null;
@@ -5133,7 +5128,7 @@ RENDER.links = function(){
     h('button', {type: 'button', class: 'primary', 'data-fk': 'addlink', on: {click: function(e){ linkSheet(null, e.currentTarget); }}}, icon('plus'), 'Add link'));
   var ul = sec.querySelector(':scope > ul.links') || h('ul', {class: 'links'});
   reconcile(ul, list, function(l){ return l.id; }, function(l, o){ return memo(o, 'links', [l.label, l.url, l.sort, list.length].join('|') + (list[0] === l) + (list[list.length - 1] === l), function(){ return linkEl(l); }); });
-  var empty = !list.length ? h('div', {class: 'empty'}, h('h2', {text: 'No links yet'}), h('p', {class: 'muted', text: 'Keep the forms, sign-up sheets and manuals your team uses in one place.'})) : null;
+  var empty = !list.length ? h('div', {class: 'empty'}, h('h2', {text: 'No links yet'})) : null;
   setKids(sec, [head, empty, ul]);
 };
 
@@ -5346,7 +5341,7 @@ RENDER.history = function(){
   if (!S.hist){ if (!sec.querySelector('.skel')) sec.replaceChildren(h('div', {class: 'skel', style: {height: '360px', 'max-width': '900px'}})); return; }
   var items = S.hist.map(function(e){ return {e: e, text: describe(e)}; }).filter(function(x){ return x.text; });
   var kids = [h('div', {class: 'view-head'}, h('h2', {class: 'sr-only'}, 'History'),
-    h('p', {class: 'grow summary', text: 'Restore puts something back the way it was before that change.'}),
+    h('span', {class: 'grow'}),
     h('button', {type: 'button', 'data-fk': 'histrefresh', on: {click: function(){ loadHistory(); announce('Refreshing history'); }}}, icon('restore'), 'Refresh'))];
   var day = null, ul = null;
   items.forEach(function(x){
@@ -5359,7 +5354,7 @@ RENDER.history = function(){
       h('span', {class: 'hx'}, h('span', {text: x.text}), h('span', {class: 'when', text: ' \u00b7 ' + relTime(x.e.at)})),
       canRestore ? h('button', {type: 'button', 'data-fk': 'hr:' + x.e.id, 'aria-label': 'Restore: undo \u201c' + x.text + '\u201d', on: {click: function(ev){ restoreEntry(x.e, ev.currentTarget); }}}, icon('restore'), 'Restore') : null));
   });
-  if (!items.length) kids.push(h('div', {class: 'empty'}, h('h2', {text: 'No changes yet'}), h('p', {class: 'muted', text: 'Edits to the sheet will show up here.'})));
+  if (!items.length) kids.push(h('div', {class: 'empty'}, h('h2', {text: 'No changes yet'})));
   if (S.histMore) kids.push(h('p', {class: 'more-row'}, h('button', {type: 'button', 'data-fk': 'histmore', on: {click: function(){ loadHistory(true); }}}, 'Show older changes')));
   sec.replaceChildren.apply(sec, kids);
 };
@@ -5392,7 +5387,6 @@ RENDER.settings = function(){
     }}}, h('label', {class: 'sr-only', for: 'newPerson', text: 'New person\u2019s name'}), newIn, h('button', {type: 'submit'}, icon('plus'), 'Add person'));
     people = h('section', {class: 'panel', id: 'peoplePanel', 'aria-labelledby': 'peopleH'},
       h('h2', {id: 'peopleH', text: 'People on ' + S.teamName}),
-      h('p', {class: 'small muted', text: 'These are the names you can assign tasks and shifts to.'}),
       h('div', {class: 'plist'}), addForm, h('div', {class: 'gone'}));
     people.dataset.team = S.team;
   }
@@ -5643,7 +5637,7 @@ function hoursLine(pid){
   if (H.noTime) parts.push(H.noTime + ' without times');
   return h('div', {class: 'hrs-line', id: 'hrsLine'},
     h('p', {class: 'hrs-main'}, h('b', {text: personName(pid)}), h('span', {text: ' \u00b7 ' + rangeLabel(r) + ': ' + parts.join(' \u00b7 ')})),
-    h('p', {class: 'hrs-faint'}, h('span', {text: fmtHours(all.mins) + ' of programs scheduled for all of ' + MONTHS[(+r.m.slice(5)) - 1] + (all.noTime ? ' (' + all.noTime + ' without times)' : '') + '. Click a day to count up to it. Only admins see hours.'}),
+    h('p', {class: 'hrs-faint'}, h('span', {text: fmtHours(all.mins) + ' of programs scheduled for all of ' + MONTHS[(+r.m.slice(5)) - 1] + (all.noTime ? ' (' + all.noTime + ' without times)' : '')}),
       S.calSel && !r.today && monthOf(todayIso()) === r.m ? h('button', {type: 'button', class: 'link hrs-reset', 'data-fk': 'hrsreset', on: {click: function(){ setCalSel(''); }}}, 'Count to today') : null));
 }
 function whoPanel(){
@@ -5653,7 +5647,7 @@ function whoPanel(){
     .sort(function(x, y){ return y.H.mins - x.H.mins || y.H.n - x.H.n || x.p.name.localeCompare(y.p.name); });
   return h('section', {class: 'whodo', id: 'whoDo', 'aria-labelledby': 'whoDoH'},
     h('div', {class: 'whodo-head'}, h('h3', {id: 'whoDoH', text: 'Who\u2019s doing what'}),
-      h('span', {class: 'small muted', text: rangeLabel(r) + ' so far \u00b7 programs signed up for, hours, office time, departments covered \u00b7 only admins see this'})),
+      h('span', {class: 'small muted', text: rangeLabel(r)})),
     rows.length ? h('ul', {class: 'whodo-list'}, rows.map(function(x){
       var H = x.H, nm = x.p.name;
       return h('li', null, h('button', {type: 'button', class: 'whodo-row', 'data-fk': 'whod:' + x.p.id, 'data-id': x.p.id,
@@ -5671,7 +5665,7 @@ function whoPanel(){
 function tileTasks(s){
   if (!weekReady(s)) return '';
   var p = calPairs().byEv.get(s.id), ts = p ? tasksOf(p.id) : [];
-  return ts.length ? ts.filter(taskDone).length + ' of ' + ts.length + ' tasks done' : 'No tasks yet';
+  return ts.length ? ts.filter(taskDone).length + ' of ' + ts.length + ' tasks done' : '';   // v2.6.5: nothing when there are no tasks
 }
 /* v2.5 item 6: the location is one small line under the title (week tiles only; the month view is unchanged).
    A trailing "(MPH2)" that only repeats the location is dropped from the shown title; "(Ages 13-15)" and the like always stay. */
@@ -5850,7 +5844,7 @@ function calMonth(sec){
     }) : h('p', {class: 'muted', text: pid ? personName(pid) + ' hasn\u2019t signed up for anything this month.' : 'No programs this month.'}));
   var nEmpty = S.calNeed && !agDays.length ? needEmpty('this month') : null;
   if (nEmpty) agenda = h('div', {class: 'agenda'}, h('h2', {class: 'sr-only', text: 'Programs in ' + monthLabel(m)}));
-  return [h('p', {class: 'cal-line' + (nEmpty ? ' sr-only' : ''), id: 'calLine', role: 'status', text: monthLine(evs, pid)}), pid ? hoursLine(pid) : null, nEmpty, grid, pid ? null : whoPanel(), agenda];
+  return [h('p', {class: 'cal-line sr-only', id: 'calLine', role: 'status', text: monthLine(evs, pid)}), pid ? hoursLine(pid) : null, nEmpty, grid, pid ? null : whoPanel(), agenda];
 }
 
 /* ---------- week ---------- */
@@ -5873,8 +5867,7 @@ function personalCard(old){
   progs.forEach(function(p){ tasksOf(p.id).forEach(function(t){ ts.push(t); }); });
   if (!ts.length) return null;
   var li = old && old.tagName === 'LI' ? old : h('li', {class: 'card personal'});
-  var head = li.querySelector(':scope > .card-head') || h('div', {class: 'card-head'}, h('div', {class: 'ch-row'}, h('h4', {class: 'pname-static', text: 'Personal tasks'})),
-    h('p', {class: 'small muted', text: 'Tasks given to one person, not tied to a program.'}));
+  var head = li.querySelector(':scope > .card-head') || h('div', {class: 'card-head'}, h('div', {class: 'ch-row'}, h('h4', {class: 'pname-static', text: 'Personal tasks'})));
   var ul = li.querySelector(':scope > ul.tasks') || h('ul', {class: 'tasks', 'aria-label': 'Personal tasks'});
   reconcile(ul, ts, function(t){ return t.id; }, function(t, o){ return memo(o, 'cal', taskSig(t), function(){ return taskEl(t); }); });
   setKids(li, [head, ul]);
@@ -5910,12 +5903,12 @@ function calWeek(sec){
       h('button', {type: 'button', 'data-fk': 'addprog', on: {click: addProgramFlow}}, icon('plus'), 'Add program'),
       h('button', {type: 'button', class: 'icon', 'data-fk': 'boardmore', 'aria-label': 'More board actions', on: {click: function(e){ boardMenu(e.currentTarget); }}}, icon('more')));
     tail = old2 && old2.contains(document.activeElement) ? old2 : h('section', {class: 'wother', 'aria-labelledby': 'cwoH'});
-    setKids(tail, [oh2, items.length ? oul : h('p', {class: 'muted', text: 'Every program this week is on the calendar above.'})]);
+    setKids(tail, [oh2, items.length ? oul : null]);
   }
   var line = pid ? personName(pid) + ': ' + evs.length + (evs.length === 1 ? ' program' : ' programs') + ' and ' + myTasks.filter(function(t){ return !personDone(t, pid); }).length + ' open tasks this week'
     : evs.length + (evs.length === 1 ? ' program' : ' programs') + ' this week' + (S.calDept ? ' in ' + S.calDept : '');
   if (S.calNeed && !pid) line = evs.length ? evs.length + (evs.length === 1 ? ' program' : ' programs') + ' this week ' + (evs.length === 1 ? 'needs' : 'need') + ' a PA' + (S.calDept ? ' in ' + S.calDept : '') : 'Every program this week has a PA.';
-  return [h('p', {class: 'cal-line' + (nEmpty ? ' sr-only' : ''), id: 'calLine', role: 'status', text: line}), pid ? hoursLine(pid) : null, pid ? estLine(pid, S.week) : null, nEmpty, strip, pid ? null : whoPanel(), tail];
+  return [h('p', {class: 'cal-line sr-only', id: 'calLine', role: 'status', text: line}), pid ? hoursLine(pid) : null, pid ? estLine(pid, S.week) : null, nEmpty, strip, pid ? null : whoPanel(), tail];
 }
 
 RENDER.cal = function(){
@@ -5932,7 +5925,7 @@ RENDER.cal = function(){
   shiftPeopleKey = activePeople().map(function(p){ return p.id + p.name; }).join(',');
   var bar = calBar();
   var title = h('h2', {class: 'sr-only'}, 'Calendar');
-  var cap = h('p', {class: 'caption', text: 'Programs come from the Roots calendar. Tap one to sign up, see its tasks or check them off.'});
+  var cap = null;   // v2.6.5 less is more: no how-to caption
   if (S.calMode === 'month'){
       setKids(sec, [title, bar, cap].concat(calMonth(sec)));
   } else {
@@ -5976,7 +5969,7 @@ function eventSheet(id, ret, focusFk){
       h('dt', {text: 'When'}), h('dd', {text: (s.date ? dayLong(s.date) : (s.date_text || 'No date')) + (shiftTime(s) ? ' \u00b7 ' + shiftTime(s) : '')}),
       (s.location || '').trim() ? [h('dt', {text: 'Where'}), h('dd', {text: s.location.trim()})] : null,
       deptOf(s) ? [h('dt', {text: 'Department'}), h('dd', null, deptPill(s))] : null);
-    var src = h('p', {class: 'ev-src small muted'}, isCalRow(s) ? 'From the Roots calendar' : 'Added by hand on PA shifts', flow ? [' \u00b7 ', flow] : null);
+    var src = flow ? h('p', {class: 'ev-src small'}, flow) : null;
     var pa = h('section', {class: 'ev-sec', 'aria-labelledby': 'esPaH'}, h('h3', {id: 'esPaH', text: 'PA support'}),
       h('span', {class: 'sr-only', id: 'es_' + s.id + '_pal', text: 'PA support for ' + lbl}), signupBox(s, lbl, 'es_' + s.id, 'e'));
     var tasks;
@@ -5985,7 +5978,7 @@ function eventSheet(id, ret, focusFk){
     else {
       var ts = p ? tasksOf(p.id) : [], o = offerTpl(s, p);
       tasks = h('section', {class: 'ev-sec', 'aria-labelledby': 'esTH'}, h('h3', {id: 'esTH', text: ts.length ? 'Tasks (' + ts.filter(taskDone).length + ' of ' + ts.length + ' done)' : 'Tasks'}),
-        ts.length ? h('ul', {class: 'tasks', 'aria-label': 'Tasks for ' + lbl}, ts.map(function(t){ return sheetTaskEl(t, s); })) : h('p', {class: 'muted small', text: 'No tasks for this program yet.'}),
+        ts.length ? h('ul', {class: 'tasks', 'aria-label': 'Tasks for ' + lbl}, ts.map(function(t){ return sheetTaskEl(t, s); })) : null,
         evAddForm(s, 'eat'),
         o ? h('button', {type: 'button', class: 'tplbtn', 'data-fk': 'etpl:' + s.id, on: {click: function(){ addTplTasks(D.shifts.get(s.id) || s); }}}, icon('plus', 'sm'), 'Add the ' + o.n + ' template ' + (o.n === 1 ? 'task' : 'tasks')) : null);
     }
@@ -6055,7 +6048,7 @@ function estSheet(id, ret){
     announce('Estimate set to ' + minsWords(m)); closeSheet();
   }
   var form = h('form', {class: 'stack', novalidate: true, on: {submit: function(ev){ ev.preventDefault(); save(); }}},
-    h('p', {class: 'muted small', text: e && e.source !== 'admin' ? 'Po\u2019s estimate from the wording: about ' + minsWords(cur) + (e.kind ? ' (' + e.kind + ')' : '') + '. It\u2019s a rough guide, not measured time.' : 'A rough guide, not measured time. Only admins see estimates for now.'}),
+    e && e.source !== 'admin' ? h('p', {class: 'muted small', text: 'Po\u2019s estimate: about ' + minsWords(cur) + '.'}) : null,
     h('div', null, h('label', {class: 'field', for: 'estSel', text: 'Time estimate'}), sel), h('div', null, cl, custom), err);
   openSheet({title: 'Time estimate', returnTo: ret, body: form, focus: '#estSel', forceFocus: true,
     foot: [h('button', {type: 'button', on: {click: closeSheet}}, 'Cancel'), h('button', {type: 'button', class: 'primary', 'data-fk': 'estsave', on: {click: save}}, 'Save')]});
@@ -6114,7 +6107,6 @@ function estLine(pid, week){
   var parts = ['About ' + fmtHours(L.est) + ' of tasks' + (thisWk ? ' this week' : ''), fmtHours(L.office) + ' in office', fmtHours(L.prog) + ' of programs'];
   return h('p', {class: 'est-line', 'data-fk': 'estline'}, icon('clock', 'sm'),
     h('span', {text: parts.join(' \u00b7 ')}),
-    h('span', {class: 'est-note', text: ' (task time is estimated' + (L.unk ? ', ' + L.unk + ' without an estimate' : '') + ')'}),
     overbooked(L) ? h('span', {class: 'mk overbook'}, icon('warn'), 'May be overbooked') : null);
 }
 
@@ -6139,7 +6131,7 @@ RENDER.pas = function(){
   });
   var head = h('div', {class: 'pas-head'},
     h('h2', {class: 'pas-title'}, 'PAs', h('span', {class: 'muted', text: ' \u00b7 ' + monthLabel(m)})),
-    h('p', {class: 'muted', text: 'So no one is overbooked. Programs and hours are for ' + MONTHS[(+m.slice(5)) - 1] + '; tasks and office hours are for this week (' + weekLabel(wk).replace('Week of ', '') + ').'}));
+    h('p', {class: 'muted', text: 'Tasks and office: week of ' + weekLabel(wk).replace('Week of ', '')}));
   var th = function(t, cls, sr){ return h('th', {scope: 'col', class: cls || null}, sr ? [h('span', {'aria-hidden': 'true', text: t}), h('span', {class: 'sr-only', text: sr})] : t); };
   var table = h('table', {class: 'pas-table'},
     h('caption', {class: 'sr-only', text: 'PAs: programs and hours in ' + monthLabel(m) + ', tasks and office hours this week'}),
@@ -6155,8 +6147,8 @@ RENDER.pas = function(){
         h('td', {class: 'num', 'data-l': 'In office this week'}, L.days ? L.days + (L.days === 1 ? ' day' : ' days') + ' \u00b7 ' + fmtHours(L.office) : h('span', {class: 'muted', text: 'None listed'})),
         est ? h('td', {class: 'num est-cell', 'data-l': 'Est. task time'}, L.ready ? [h('span', {title: 'Estimated from the task wording', text: '~' + fmtHours(L.est)}), ob ? h('span', {class: 'mk overbook'}, icon('warn'), 'May be overbooked') : null] : '\u2026') : null);
     })));
-  var note = est ? h('p', {class: 'small muted pas-note', text: 'Est. task time is a rough guide from each task\u2019s wording (only admins see it for now). \u201cMay be overbooked\u201d means estimated tasks are more than 80% of their office hours this week.'}) : null;
-  sec.replaceChildren(head, ppl.length ? h('div', {class: 'pas-wrap'}, table) : h('p', {class: 'muted', text: 'No PAs on this team yet.'}), note);
+  // v2.6.5: no estimate note (the estimate cell's title explains it). replaceChildren() prints a null arg as "null", so it's left out.
+  sec.replaceChildren(head, ppl.length ? h('div', {class: 'pas-wrap'}, table) : h('p', {class: 'muted', text: 'No PAs on this team yet.'}));
   if (S.paOpen && !$('#sheet[open]')){ var id = S.paOpen; S.paOpen = null; paProfile(id, null); }
 };
 
@@ -6292,7 +6284,7 @@ RENDER.links = function(){
     setKids(det, kids);
     return det;
   });
-  var empty = !all.length ? h('div', {class: 'empty'}, h('h2', {text: 'No links yet'}), h('p', {class: 'muted', text: 'Keep the forms, sign-up sheets and manuals your team uses in one place.'})) : null;
+  var empty = !all.length ? h('div', {class: 'empty'}, h('h2', {text: 'No links yet'})) : null;
   setKids(sec, [head, empty, all.length ? box : null]);
 };
 
@@ -6814,7 +6806,7 @@ async function enterTeam(team, route){
   buildTabs();
   writeHash(true);
   showTab(true); renderHeader();
-  a2hsHint();                                      // PA UX (Oct 19): iOS team logins only, until dismissed
+  // v2.6.5 less is more: the Add to Home Screen banner is gone (a2hsHint kept, not called)
   subscribe();
   var pShared = reloadShared();
   var pWeek = loadWeek();
