@@ -1504,6 +1504,13 @@ dialog{border-radius:var(--r-card)}
 #sheet.cf-sheet .cf-item{min-height:48px}
 @media (pointer:coarse){ .cal-filter,.cf-item{min-height:44px} }
 @media (max-width:767px){ .cal-bar .cal-filter{min-height:44px;padding:0 10px 0 14px} }
+/* v2.7.2: the same department dropdown on the Board ('bfilter') and PA shifts ('sfilter') */
+.view-head .cal-filter{min-height:40px;font-size:15px}
+#v-board.dept-on .card-head .drag{display:none}
+.dept-empty{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-2,8px)}
+.dept-empty p{margin:0}
+@media (pointer:coarse),(max-width:767px){ .view-head .cal-filter{min-height:44px} }
+@media (max-width:767px){ .view-head .cal-filter{padding:0 10px 0 14px;max-width:100%} }
 @media print{ .cal-filter{display:none !important} }
 /* ---------- v2.7.1: the PA/YC Board (read-first cards, Take it) ---------- */
 .pa-card .card-head{padding:10px 12px 10px 14px}
@@ -1537,10 +1544,6 @@ button.take:hover{background:var(--action,var(--roots-herb));color:var(--on-acti
     <!-- v2.5: ONE sign-in form for everyone. The team chips fill the username with the team id
          ("community" signs in as community@<domain>); admins type their own username or email. -->
     <form id="signinForm" novalidate>
-      <fieldset class="team-quick">
-        <legend id="teamPickL">Team login</legend>
-        <div class="team-pick" id="teamPick"></div>
-      </fieldset>
       <label class="field" for="signinUser">Username or email</label>
       <input type="text" id="signinUser" name="username" autocomplete="username" required inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="next">
       <label class="field gap" for="signinPw">Password</label>
@@ -1607,7 +1610,8 @@ button.take:hover{background:var(--action,var(--roots-herb));color:var(--on-acti
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.7.1';   // v2.7.1: Calendar filter is one dropdown (departments + Needs a PA); Board tab for PAs/YCs with Take it
+var BUILD = '2.7.2';   // v2.7.2: departments are one shared filter (Calendar, Board, PA shifts), never a team; no team chips at sign-in
+// v2.7.1: Calendar filter is one dropdown (departments + Needs a PA); Board tab for PAs/YCs with Take it
 // v2.6.9:   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
 // v2.6.8:   // v2.6.8: team switcher label no longer vanishes on hover, no "Open now"   // v2.6.7: "View as" a PA or YC for admins in Sandbox / QA
 // v2.6.6: Anisha's Oct 21 feedback (Common tasks in Templates, Add task box on Enter, no Waiting on, today's task in today's box), per-person PA/YC logins, youth coordinators   // v2.6.5: less is more (Omar Oct 21): no how-to captions, source notes, eyebrow caps or repeated counts; no A2HS banner
@@ -1619,10 +1623,9 @@ var STAGING = '0' === '1';   // staging build: opens only Sandbox / QA (practice
 var STAGING_TEAMS = ['sandbox', 'qa'];
 var TEAM_NAMES = {community: 'Roots DFW'};   // v2.6.9 (Omar Oct 21): the community team holds every department's programs; Community is one department
 var PICKER = [
-  {team:'community', team_name:'Roots DFW', accent:'#2e4a0d'},
-  {team:'grove', team_name:'The Grove', accent:'#293d93'},
-  {team:'bloom', team_name:'Bloom', accent:'#e59e2c'}
-];
+  {team:'community', team_name:'Roots DFW', accent:'#2e4a0d'}
+];   // v2.7.2 (Omar Oct 22): The Grove and Bloom are departments (a filter), never teams
+var DEPT_TEAMS = {grove: 1, bloom: 1};   // old team ids: never listed, never offered, never announced
 var LOCATIONS = ['Roots','Roots Flex Rooms','MPH','MPH2','Roots Lawn','Musallah','Overflow MPH','The Field','Offsite'];
 var OFFSITE = 'Offsite';
 var DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
@@ -2619,7 +2622,7 @@ async function loadMonth(quiet, only){
   S.monthLoaded = S.month; S.monthError = null; IX = null;
   applyQueueToState(); replayBuffer();
   invalidate('shifts', 'person', 'cal', 'pas');
-  if (S.tab === 'board' && paBoardOn()) invalidate('board');   // v2.7.1: PA board meta + order use the calendar
+  if (S.tab === 'board' && (paBoardOn() || deptOn())) invalidate('board');   // v2.7.1: PA board meta + order use the calendar; v2.7.2: so does the department filter
 }
 async function resync(){
   if (!S.team || !S.session) return;
@@ -3419,11 +3422,11 @@ function onProgramNamed(id, value){
 function cardMenu(id, btn){
   var p = D.programs.get(id); if (!p) return;
   var list = boardPrograms(), i = list.findIndex(function(x){ return x.id === id; });
-  var tpl = p.template_id ? D.templates.get(p.template_id) : null;
+  var tpl = p.template_id ? D.templates.get(p.template_id) : null, flt = !!deptOn();   // v2.7.2: reorder only under All departments
   menuSheet(progLabel(p), [
     {label: 'Date, place and lead', icon: 'clock', fn: function(){ programSheet(id, btn); }},
-    {label: 'Move up', icon: 'up', disabled: i <= 0, fn: function(){ moveIn('programs', boardPrograms(), id, -1); announce('Moved up'); refocusMore('pm:' + id); }},
-    {label: 'Move down', icon: 'down', disabled: i < 0 || i >= list.length - 1, fn: function(){ moveIn('programs', boardPrograms(), id, 1); announce('Moved down'); refocusMore('pm:' + id); }},
+    flt ? null : {label: 'Move up', icon: 'up', disabled: i <= 0, fn: function(){ moveIn('programs', boardPrograms(), id, -1); announce('Moved up'); refocusMore('pm:' + id); }},
+    flt ? null : {label: 'Move down', icon: 'down', disabled: i < 0 || i >= list.length - 1, fn: function(){ moveIn('programs', boardPrograms(), id, 1); announce('Moved down'); refocusMore('pm:' + id); }},
     !tasksOf(id).length ? {label: 'Fill tasks from Master', icon: 'plus', fn: function(){
       templatePicker({title: 'Fill ' + quote(progLabel(p)) + ' from Master', allowBlank: false, onPick: function(t){
         var patch = {template_id: t.id}; if (!(p.name || '').trim()) patch.name = t.name.trim();
@@ -3685,16 +3688,37 @@ RENDER.board = function(){
     return;
   }
   if (!S.sharedLoaded){ if (!sec.querySelector('.skel')) sec.replaceChildren(skeleton(4)); return; }
+  var dep = deptOn();   // v2.7.2: the shared department filter (Calendar, Board, PA shifts)
+  if (dep && hasShifts() && !shiftsReady()){   // a card's department comes from the calendar: wait for it
+    ensureShifts();
+    if (!sec.querySelector('.skel')) sec.replaceChildren(skeleton(4));
+    return;
+  }
+  sec.classList.toggle('dept-on', !!dep);
   if (paBoardOn()) return paBoard(sec);   // v2.7.1: PAs and YCs get the read-first board
-  var progs = boardPrograms();
-  if (!progs.length){
+  var allProgs = boardPrograms();
+  if (!allProgs.length){
     setKids(sec, [h('h2', {class: 'sr-only'}, 'Board'), emptyWeek()]);
     return;
   }
+  var progs = dep ? allProgs.filter(function(p){ return progDept(p) === dep; }) : allProgs;
   var head = sec.querySelector(':scope > .view-head');
-  if (!head) head = h('div', {class: 'view-head'}, h('h2', {class: 'sr-only'}, 'Board'),
-    h('button', {type: 'button', class: 'primary', 'data-fk': 'addprog', on: {click: addProgramFlow}}, icon('plus'), 'Add program'),
-    h('button', {type: 'button', class: 'icon push', 'data-fk': 'boardmore', 'aria-label': 'More board actions', on: {click: function(e){ boardMenu(e.currentTarget); }}}, icon('more')));
+  var hk = 'admin|' + deptVal();
+  if (!head || head._k !== hk){
+    dfDrop(head);
+    var nh = h('div', {class: 'view-head board-head'}, h('h2', {class: 'sr-only'}, 'Board'),
+      h('button', {type: 'button', class: 'primary', 'data-fk': 'addprog', on: {click: addProgramFlow}}, icon('plus'), 'Add program'),
+      hasShifts() ? deptFilterBtn('bfilter') : null,   // v2.7.2
+      h('button', {type: 'button', class: 'icon push', 'data-fk': 'boardmore', 'aria-label': 'More board actions', on: {click: function(e){ boardMenu(e.currentTarget); }}}, icon('more')));
+    nh._k = hk;
+    if (head && head.parentNode) head.replaceWith(nh);
+    head = nh;
+  }
+  if (!progs.length){
+    var oe = sec.querySelector(':scope > #bfilterEmpty');
+    setKids(sec, [head, oe && oe.textContent.indexOf(dep + ' ') >= 0 && oe.textContent.indexOf(weekLabel(S.week).replace('Week of ', '')) >= 0 ? oe : deptEmpty('programs ' + weekLabel(S.week).replace('Week of', 'the week of'), 'bfilter')]);
+    return;
+  }
   var ul = sec.querySelector(':scope > ul.cards:not([aria-busy]):not(.pa-cards)') || h('ul', {class: 'cards', 'aria-label': 'Programs this week'});
   var t0 = performance.now(), gen = boardGen, cont = S.boardFillGen === gen;
   reconcile(ul, progs, function(p){ return p.id; }, function(p, old){
@@ -3813,14 +3837,29 @@ function paCardEl(p, me){
 }
 function paBoard(sec){
   if (hasShifts()) ensureShifts();   // day, time and place come from the calendar
-  var progs = paOrder(boardPrograms()), me = myId();
-  if (!progs.length){
+  var all = boardPrograms(), me = myId(), dep = deptOn();
+  if (!all.length){
     setKids(sec, [h('h2', {class: 'sr-only'}, 'Board'), h('div', {class: 'empty pa-empty'}, h('h2', {text: 'Nothing on the board for ' + weekLabel(S.week).replace('Week of', 'the week of') + ' yet'}))]);
+    return;
+  }
+  var progs = paOrder(dep ? all.filter(function(p){ return progDept(p) === dep; }) : all);
+  // v2.7.2: the shared department filter at the top
+  var head = sec.querySelector(':scope > .view-head'), hk = 'pa|' + deptVal();
+  if (!head || head._k !== hk){
+    dfDrop(head);
+    var nh = h('div', {class: 'view-head board-head pa-bhead'}, h2Board(sec), deptFilterBtn('bfilter'));
+    nh._k = hk;
+    if (head && head.parentNode) head.replaceWith(nh);
+    head = nh;
+  }
+  if (!progs.length){
+    var oe = sec.querySelector(':scope > #bfilterEmpty');
+    setKids(sec, [head, oe && oe.textContent.indexOf(dep + ' ') >= 0 && oe.textContent.indexOf(weekLabel(S.week).replace('Week of ', '')) >= 0 ? oe : deptEmpty('programs ' + weekLabel(S.week).replace('Week of', 'the week of'), 'bfilter')]);
     return;
   }
   var ul = sec.querySelector(':scope > ul.cards.pa-cards') || h('ul', {class: 'cards pa-cards', 'aria-label': 'Programs this week'});
   reconcile(ul, progs, function(p){ return p.id; }, function(p, old){ return memo(old && old.classList.contains('pa-card') ? old : null, 'board', paCardSig(p, me), function(){ return paCardEl(p, me); }); });
-  setKids(sec, [h2Board(sec), ul]);
+  setKids(sec, [head, ul]);
 }
 function h2Board(sec){ return sec.querySelector(':scope > h2.sr-only') || h('h2', {class: 'sr-only'}, 'Board'); }
 
@@ -4911,7 +4950,8 @@ RENDER.shifts = function(){
   var who = isAdmin() && S.shiftPerson && D.people.has(S.shiftPerson) ? S.shiftPerson : '';
   var seg = S.shiftSeg === 'need' || (S.shiftSeg === 'mine' && !isAdmin()) ? S.shiftSeg : 'all';
   if (who) seg = 'all';
-  var month = activeShifts();
+  var dep = deptOn();   // v2.7.2: the shared department filter; the counts follow it
+  var month = activeShifts().filter(function(s){ return !dep || deptOf(s) === dep; });
   // v2.6: counts are from today on (what's still ahead this month)
   // v2.6.2 (Omar "Go go", Oct 20): the first segment reads "Upcoming" and its count equals the rows the list shows above "Show earlier":
   // dated today on + "No date yet", not done. Past days (this week too) and Completed fold behind "Show earlier".
@@ -4929,11 +4969,12 @@ RENDER.shifts = function(){
     return true;
   });
   var open = all.filter(function(s){ return isCalRow(s) || !s.done; }), done = seg === 'need' ? [] : all.filter(function(s){ return !isCalRow(s) && s.done; });
-  var headKey = [who, seg, isAdmin(), me, shiftPeopleKey, cnt.all, cnt.need, cnt.mine, pastMonth].join('|');
+  var headKey = [who, seg, isAdmin(), me, shiftPeopleKey, cnt.all, cnt.need, cnt.mine, pastMonth, deptVal()].join('|');
   var head = sec.querySelector(':scope > .view-head');
   var ae = document.activeElement, inHead = head && head.contains(ae);
   if (!head || (head._k !== headKey && !(inHead && isTexty(ae)))){
     var keepFk = inHead && ae.dataset ? ae.dataset.fk : null;
+    dfDrop(head);
     var segs = [['all', pastMonth ? 'All' : 'Upcoming', cnt.all], ['need', 'Need a PA', cnt.need]].concat(isAdmin() ? [] : [['mine', 'Mine', cnt.mine]]);
     var segEl = h('div', {class: 'seg sh-seg', role: 'group', 'aria-label': 'Show shifts'}, segs.map(function(x){
       return h('button', {type: 'button', 'data-fk': 'shseg:' + x[0], 'aria-pressed': !who && seg === x[0] ? 'true' : 'false', on: {click: function(){
@@ -4941,6 +4982,7 @@ RENDER.shifts = function(){
       }}}, h('span', {text: x[1]}), x[2] == null ? null : h('span', {class: 'seg-n', text: String(x[2])}));
     }));
     var nh = h('div', {class: 'view-head shifts-head'}, h('h2', {class: 'sr-only', id: 'shiftsH'}, 'PA shifts'), segEl,
+      deptFilterBtn('sfilter'),   // v2.7.2
       isAdmin() ? h('label', {class: 'sr-only', for: 'shPerson', text: 'Show shifts for'}) : null,
       isAdmin() ? personFilterSel('shPerson', 'shperson', who, function(v){ S.shiftPerson = v; if (v) S.shiftSeg = 'all'; invalidate('shifts'); }, 'Anyone') : null,
       isAdmin() ? h('button', {type: 'button', class: 'sh-add', 'data-fk': 'addshift', on: {click: addShift}}, icon('plus', 'sm'), h('span', {class: 'sh-add-t', text: 'Add shift'})) : null);
@@ -5014,6 +5056,8 @@ RENDER.shifts = function(){
   if (!all.length || (seg !== 'all' && !open.length && !done.length)){
     var msg, act = null;
     if (who) msg = personName(who) + ' has no PA shifts in ' + monthLabel(S.month) + '.';
+    else if (dep && !open.length && !done.length && (seg !== 'mine' || me)){ msg = 'No ' + dep + ' PA shifts' + (seg === 'need' ? ' that need a PA' : seg === 'mine' ? ' for you' : '') + ' in ' + monthLabel(S.month) + '.';
+      act = h('button', {type: 'button', class: 'link', 'data-fk': 'sfilteroff', on: {click: function(){ setDeptFilter('all'); cfFocusBtn('sfilter'); }}}, 'Show all departments'); }
     else if (seg === 'need') msg = 'Every program this month has a PA.';
     else if (seg === 'mine' && !me){ msg = 'Pick your name on My tasks to see your shifts.'; act = h('button', {type: 'button', 'data-fk': 'shpickme', on: {click: function(){ go({tab: 'person'}); }}}, 'Pick my name'); }
     else if (seg === 'mine') msg = 'You\u2019re not on any programs yet.';
@@ -5764,7 +5808,7 @@ function calFilter(s){
 /* v2.6.4 (judge signal: Anisha scanned 16 cards for coverage): "Needs a PA" shows only programs short of PAs, from today on.
    Kept per team on this device like the person and department filters. */
 function setCalNeed(v){ S.calNeed = !!v; lsSet('caln:' + S.team, S.calNeed || null);
-  if (v && S.calPerson){ S.calPerson = ''; S.calPersonSet = true; lsSet('calp:' + S.team, 'all'); }   /* v2.6.9: Needs a PA is about everyone's programs */ invalidate('cal'); announce(v ? 'Showing programs that need a PA' : 'Showing every program'); }
+  if (v && S.calPerson){ S.calPerson = ''; S.calPersonSet = true; lsSet('calp:' + S.team, 'all'); }   /* v2.6.9: Needs a PA is about everyone's programs */ invalidate('cal', 'board', 'shifts'); announce(v ? 'Showing programs that need a PA' : 'Showing every program'); }
 function needEmpty(what){
   return h('div', {class: 'cal-empty', id: 'calNeedEmpty'}, h('p', {class: 'ce-t', 'aria-hidden': 'true', text: 'Every program ' + what + ' has a PA.'}),
     h('button', {type: 'button', class: 'link', 'data-fk': 'cneedoff', on: {click: function(){ setCalFilter('all'); setTimeout(function(){ var b = fkEl('cfilter'); if (b) b.focus({preventScroll: true}); }, 60); }}}, 'Show every program'));
@@ -5804,10 +5848,15 @@ function revealPicked(sec){
     if (c.left < r.left || c.right > r.right - 36) row.scrollLeft += c.left - r.left - 8;
   });
 }
-function setCalDept(d){ S.calDept = d || ''; lsSet('cald:' + S.team, S.calDept || null); invalidate('cal'); announce(d ? 'Showing ' + d + ' only' : 'Showing every department'); }
+function setCalDept(d){ S.calDept = d || ''; lsSet('cald:' + S.team, S.calDept || null); invalidate('cal', 'board', 'shifts'); announce(d ? 'Showing ' + d + ' only' : 'Showing every department'); }   // v2.7.2: Board and PA shifts read it too
 /* ---------- v2.7.1 (Anisha, Oct 22): the department pills and the Needs a PA pill are ONE dropdown, one choice:
-   All departments | a department | Needs a PA. It goes through setCalDept / setCalNeed, so Mine/Everyone and the saved choice behave as before. ---------- */
+   All departments | a department | Needs a PA. It goes through setCalDept / setCalNeed, so Mine/Everyone and the saved choice behave as before.
+   v2.7.2 (Omar, Oct 22): departments are one shared filter. Board ('bfilter') and PA shifts ('sfilter') get the same dropdown,
+   departments only, reading and writing the same S.calDept. Calendar on Needs a PA = All departments there. ---------- */
 function calFilterVal(){ return S.calNeed ? 'need' : S.calDept && DEPT_CLASS[S.calDept] ? S.calDept : 'all'; }
+function deptVal(){ return S.calNeed ? 'all' : S.calDept && DEPT_CLASS[S.calDept] ? S.calDept : 'all'; }
+function deptOn(){ var v = deptVal(); return v === 'all' || !hasShifts() ? '' : v; }   // no calendar (Staff): no departments
+function setDeptFilter(v){ if (v === deptVal()) return; setCalFilter(v); }
 function setCalFilter(v){
   var me = calMe();
   if (v === 'need'){ if (!S.calNeed) S.cfMine = !!me && calPerson() === me; if (S.calDept) setCalDept(''); if (!S.calNeed) setCalNeed(true); return; }
@@ -5820,30 +5869,37 @@ function setCalFilter(v){
   if ((S.calDept || '') !== d) setCalDept(d);
 }
 function cfLabel(v, n){ return v === 'need' ? 'Needs a PA' : v === 'all' ? 'All departments' : v; }
-function calFilterBtn(n){
-  var v = calFilterVal();
-  return h('button', {type: 'button', class: 'cal-filter' + (v === 'all' ? '' : ' on') + (DEPT_CLASS[v] ? ' ' + DEPT_CLASS[v] : ''), 'data-fk': 'cfilter',
-    'aria-haspopup': 'menu', 'aria-expanded': 'false', 'aria-label': 'Filter: ' + cfLabel(v) + (v === 'need' && n ? ', ' + n + (n === 1 ? ' program' : ' programs') : ''),
-    on: {click: function(e){ calFilterMenu(e.currentTarget); }, keydown: function(e){ if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); calFilterMenu(e.currentTarget, e.key === 'ArrowUp' ? 'last' : null); } }}},
+/* one dropdown's settings: 'cfilter' (Calendar: departments + Needs a PA) | 'bfilter' (Board) | 'sfilter' (PA shifts) */
+function dfOpts(fk){
+  if (fk === 'cfilter') return {fk: fk, vals: ['all'].concat(DEPTS).concat(['-', 'need']), cur: calFilterVal(), n: calNeedCount(), set: setCalFilter, name: 'Filter'};
+  return {fk: fk, vals: ['all'].concat(DEPTS), cur: deptVal(), n: 0, set: setDeptFilter, name: 'Department'};
+}
+function calFilterBtn(n){ return deptFilterBtn('cfilter', n); }
+function deptFilterBtn(fk, n){
+  var o = dfOpts(fk), v = o.cur; if (n == null) n = o.n;
+  return h('button', {type: 'button', class: 'cal-filter' + (v === 'all' ? '' : ' on') + (DEPT_CLASS[v] ? ' ' + DEPT_CLASS[v] : ''), 'data-fk': fk,
+    'aria-haspopup': 'menu', 'aria-expanded': 'false', 'aria-label': o.name + ': ' + cfLabel(v) + (v === 'need' && n ? ', ' + n + (n === 1 ? ' program' : ' programs') : ''),
+    on: {click: function(e){ calFilterMenu(e.currentTarget, null, fk); }, keydown: function(e){ if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); calFilterMenu(e.currentTarget, e.key === 'ArrowUp' ? 'last' : null, fk); } }}},
     DEPT_CLASS[v] ? h('span', {class: 'cal__dot', 'aria-hidden': 'true'}) : null,
     h('span', {class: 'cf-t', text: cfLabel(v)}),
     v === 'need' && n ? h('span', {class: 'cal__n', 'aria-hidden': 'true', text: String(n)}) : null,
     icon('down', 'sm cf-chev'));
 }
 /* the options: a menu of radio items (arrows move, Enter/Space pick, Escape closes, focus goes back to the button) */
-function cfList(n, onPick){
-  var cur = calFilterVal(), items = [];
-  ['all'].concat(DEPTS).concat(['-', 'need']).forEach(function(v){
+function cfList(n, onPick, o){
+  o = o || dfOpts('cfilter');
+  var cur = o.cur, items = [];
+  o.vals.forEach(function(v){
     if (v === '-'){ items.push(h('div', {class: 'cf-sep', role: 'separator'})); return; }
     var on = v === cur;
     items.push(h('button', {type: 'button', class: 'cf-item' + (DEPT_CLASS[v] ? ' ' + DEPT_CLASS[v] : ''), role: 'menuitemradio', 'aria-checked': on ? 'true' : 'false', tabindex: on ? '0' : '-1',
-      'data-fk': 'cfilter:' + v, 'aria-label': cfLabel(v) + (v === 'need' && n ? ', ' + n + (n === 1 ? ' program' : ' programs') : ''), on: {click: function(){ onPick(v); }}},
+      'data-fk': o.fk + ':' + v, 'aria-label': cfLabel(v) + (v === 'need' && n ? ', ' + n + (n === 1 ? ' program' : ' programs') : ''), on: {click: function(){ onPick(v); }}},
       h('span', {class: 'cf-ck', 'aria-hidden': 'true'}, on ? icon('check', 'sm') : null),
       DEPT_CLASS[v] ? h('span', {class: 'cal__dot', 'aria-hidden': 'true'}) : null,
       h('span', {class: 'cf-t', text: cfLabel(v)}),
       v === 'need' && n ? h('span', {class: 'cal__n', 'aria-hidden': 'true', text: String(n)}) : null));
   });
-  var menu = h('div', {class: 'cf-list', role: 'menu', 'aria-label': 'Filter', on: {keydown: function(e){
+  var menu = h('div', {class: 'cf-list', role: 'menu', 'aria-label': o.name, on: {keydown: function(e){
     var bs = $$('.cf-item', menu), i = bs.indexOf(document.activeElement), j = -1;
     if (e.key === 'ArrowDown') j = i < 0 ? 0 : (i + 1) % bs.length;
     else if (e.key === 'ArrowUp') j = i < 0 ? bs.length - 1 : (i - 1 + bs.length) % bs.length;
@@ -5853,34 +5909,38 @@ function cfList(n, onPick){
   }}}, items);
   return menu;
 }
-var CF = {pop: null, btn: null};
-function cfFocusBtn(){ setTimeout(function(){ var b = fkEl('cfilter'); if (b) b.focus({preventScroll: true}); }, 60); }
+var DF = {pop: null, btn: null, fk: 'cfilter'};   // v2.7.2: was CF, which shared its name with the R-01 conflicts state in b_sync.js
+function cfFocusBtn(fk){ fk = fk || DF.fk || 'cfilter'; setTimeout(function(){ var b = fkEl(fk); if (b) b.focus({preventScroll: true}); }, 60); }
 function cfClose(refocus){
-  var p = CF.pop; if (!p) return;
-  CF.pop = null; p.remove();
+  var p = DF.pop; if (!p) return;
+  DF.pop = null; p.remove();
   document.removeEventListener('pointerdown', cfOutside, true); window.removeEventListener('resize', cfResize);
-  if (CF.btn && document.contains(CF.btn)) CF.btn.setAttribute('aria-expanded', 'false');
-  CF.btn = null;
+  if (DF.btn && document.contains(DF.btn)) DF.btn.setAttribute('aria-expanded', 'false');
+  DF.btn = null;
   if (refocus) cfFocusBtn();
 }
-function cfOutside(e){ if (CF.pop && !CF.pop.contains(e.target) && !(CF.btn && CF.btn.contains(e.target))) cfClose(false); }
+function cfOutside(e){ if (DF.pop && !DF.pop.contains(e.target) && !(DF.btn && DF.btn.contains(e.target))) cfClose(false); }
 function cfResize(){ cfClose(false); }
-function calFilterMenu(btn, at){
-  if (CF.pop){ var was = CF.btn; cfClose(false); if (was === btn) return; }
-  var n = calNeedCount();
-  var pick = function(v){ var phone = !CF.pop; setCalFilter(v); if (phone) closeSheet(); else cfClose(false); cfFocusBtn(); };
-  var list = cfList(n, pick);
+/* a view is being rebuilt: an open popover whose button is inside it closes (focus goes back to the new button if it was in the list) */
+function dfDrop(root){ if (DF.pop && DF.btn && root && root.contains(DF.btn)) cfClose(document.activeElement && DF.pop && DF.pop.contains(document.activeElement)); }
+function calFilterMenu(btn, at, fk){
+  fk = fk || 'cfilter';
+  if (DF.pop){ var was = DF.btn; cfClose(false); if (was === btn) return; }
+  var o = dfOpts(fk), n = o.n;
+  DF.fk = fk;
+  var pick = function(v){ var phone = !DF.pop; o.set(v); if (phone) closeSheet(); else cfClose(false); cfFocusBtn(fk); };
+  var list = cfList(n, pick, o);
   var first = function(){ var bs = $$('.cf-item', list); return at === 'last' ? bs[bs.length - 1] : list.querySelector('[aria-checked="true"]') || bs[0]; };
   btn.setAttribute('aria-expanded', 'true');
   if (matchMedia('(max-width:767px)').matches){
     // phones: the app's bottom sheet (Escape and the sheet's close button close it; focus goes back to the button)
-    openSheet({title: 'Filter', returnTo: btn, body: list, onClose: function(){ var b = fkEl('cfilter'); if (b) b.setAttribute('aria-expanded', 'false'); }});
+    openSheet({title: o.name, returnTo: btn, body: list, onClose: function(){ var b = fkEl(fk); if (b) b.setAttribute('aria-expanded', 'false'); }});
     $('#sheet').classList.add('cf-sheet');
     var f = first(); if (f){ $$('.cf-item', list).forEach(function(b){ b.tabIndex = b === f ? 0 : -1; }); f.focus(); }
     return;
   }
   // desktop: a popover anchored under the button
-  var pop = h('div', {class: 'cf-pop', id: 'calFilterPop', on: {keydown: function(e){
+  var pop = h('div', {class: 'cf-pop', id: fk === 'cfilter' ? 'calFilterPop' : fk + 'Pop', on: {keydown: function(e){
     if (e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); cfClose(true); }
     else if (e.key === 'Tab'){ e.preventDefault(); cfClose(true); }
   }}}, list);
@@ -5888,9 +5948,17 @@ function calFilterMenu(btn, at){
   var r = btn.getBoundingClientRect(), w = pop.offsetWidth;
   pop.style.top = Math.round(r.bottom + window.scrollY + 6) + 'px';
   pop.style.left = Math.round(Math.max(8, Math.min(r.left, document.documentElement.clientWidth - w - 8)) + window.scrollX) + 'px';
-  CF.pop = pop; CF.btn = btn;
+  DF.pop = pop; DF.btn = btn;
   document.addEventListener('pointerdown', cfOutside, true); window.addEventListener('resize', cfResize);
   var f2 = first(); if (f2){ $$('.cf-item', list).forEach(function(b){ b.tabIndex = b === f2 ? 0 : -1; }); f2.focus(); }
+}
+/* v2.7.2: a Board card's department is its paired calendar program's (same pairing as the PA board's day, time and place).
+   No paired program, or a program with no department: shown only under All departments. */
+function progDept(p){ var e = calPairs().byProg.get(p.id); return e ? deptOf(e) : ''; }
+function deptEmpty(what, fk){
+  var d = deptOn();
+  return h('div', {class: 'empty dept-empty', id: fk + 'Empty'}, h('p', {text: 'No ' + d + ' ' + what}),
+    h('button', {type: 'button', class: 'link', 'data-fk': fk + 'off', on: {click: function(){ setDeptFilter('all'); cfFocusBtn(fk); }}}, 'Show all departments'));
 }
 function fmtRange(a, b){ var x = pretty12(a), y = pretty12(b); if (!x || !y) return x || y || ''; return x.slice(-2) === y.slice(-2) ? x.slice(0, -3) + ' \u2013 ' + y : x + ' \u2013 ' + y; }
 function officeHours(pid, date){
@@ -5914,7 +5982,7 @@ function calBar(){
   var key = [S.calMode, pid, me, S.calDept, S.calNeed ? 1 : 0, nOpen, S.week, S.month, paPeople().map(function(p){ return p.id + p.name; }).join(',')].join('|');
   var old = $('#v-cal > .cal-bar');
   if (old && old._k === key) return old;
-  if (CF.pop && CF.btn && old && old.contains(CF.btn)) cfClose(document.activeElement && CF.pop && CF.pop.contains(document.activeElement));
+  dfDrop(old);
   var seg = pillGroup('Calendar view', 'cal-mode', [
     h('button', {type: 'button', class: 'cal__chip', 'aria-pressed': wk ? 'false' : 'true', 'data-fk': 'cmode:month', on: {click: function(){ go({mode: 'month'}); }}}, 'Month'),
     h('button', {type: 'button', class: 'cal__chip', 'aria-pressed': wk ? 'true' : 'false', 'data-fk': 'cmode:week', on: {click: function(){ go({mode: 'week'}); }}}, 'Week')]);
@@ -6841,6 +6909,7 @@ function startMonth(){ return ensureShifts(); }
 window.addEventListener('popstate', onHashChange);
 window.addEventListener('hashchange', onHashChange);
 function otherTeamNotice(team){
+  if (DEPT_TEAMS[team]) return;   // v2.7.2: old Grove/Bloom team links just open your team
   // a link to a team this sign-in can't open: say so instead of silently showing your own team (B9)
   var m = teamMeta(team);
   toast('That link is for ' + m.team_name + '. You\u2019re signed in to ' + S.teamName + '. ' + (S.teams.length > 1 ? 'Tap the team name to switch.' : 'Sign out and sign in to ' + m.team_name + ' to open it.'), {timeout: 9000});
@@ -6997,6 +7066,7 @@ function wireDrag(root){
   if (root._drag) return; root._drag = true;
   root.addEventListener('pointerdown', function(e){
     var hd = e.target.closest('[data-drag]'); if (!hd || e.button !== 0 || e.pointerType === 'touch') return;
+    if (hd.dataset.drag === 'card' && hd.closest('.dept-on')) return;   // v2.7.2: cards reorder only under All departments
     var kind = hd.dataset.drag, sel = kind === 'card' ? 'li.card' : 'li.task';
     var item = hd.closest(sel); if (!item) return;
     var list = item.parentElement;
@@ -7038,18 +7108,9 @@ function showLogin(msg){
   var stg = $('#stgTeam'); if (stg) stg.textContent = 'Sandbox or QA';   // signed out: either practice team (STAGING_TEAMS)
   S.accent = '#2f6b4f'; applyTheme();
   document.title = 'Sign in \u00b7 Roots PA Tasks';
-  var pick = $('#teamPick'), last = lsGet('pickTeam', null), user = $('#signinUser');
-  if (!pick.children.length){
-    // v2.5: quick-pick chips fill the username with the team id ("community"); the one form does the rest
-    PICKER.forEach(function(t){
-      pick.append(h('button', {type: 'button', class: 'tq', 'data-team': t.team, id: 'tp_' + t.team, 'aria-pressed': 'false', style: {'--tc': inkFor(t.accent)},
-        'aria-label': t.team_name + ' team login', on: {click: function(){ user.value = t.team; markTeamChip(); var pw = $('#signinPw'); pw.focus(); }}},
-        h('span', {class: 'tdot', 'aria-hidden': 'true'}), h('span', {text: t.team_name})));
-    });
-    user.addEventListener('input', markTeamChip);
-  }
+  var last = lsGet('pickTeam', null), user = $('#signinUser');
+  // v2.7.2 (Omar Oct 22): no team chips; every PA and YC signs in with her own email, bare usernames still map
   if (!user.value && last && PICKER.some(function(t){ return t.team === last; })) user.value = last;   // a shared team phone opens on its team
-  markTeamChip();
   var e = $('#signinErr');
   if (msg){ e.textContent = msg; e.hidden = false; } else e.hidden = true;
 }
@@ -7066,10 +7127,6 @@ function loginTeam(email){
   var m = new RegExp('^([a-z0-9._-]+)@' + DOMAIN.replace(/\./g, '\\.') + '$', 'i').exec(String(email || ''));
   return m ? PICKER.find(function(t){ return t.team === m[1].toLowerCase(); }) || null : null;
 }
-function markTeamChip(){
-  var t = loginTeam(loginEmail(($('#signinUser') || {}).value));
-  $$('#teamPick .tq').forEach(function(b){ b.setAttribute('aria-pressed', t && t.team === b.dataset.team ? 'true' : 'false'); });
-}
 function setBusy(btn, on, label){ btn.disabled = on; if (label) btn.textContent = on ? 'Signing in\u2026' : label; }
 $$('.pwtoggle').forEach(function(b){
   b.addEventListener('click', function(){
@@ -7083,7 +7140,7 @@ $('#signinForm').addEventListener('submit', async function(e){
   e.preventDefault();
   var err = $('#signinErr'), em = $('#signinUser'), pw = $('#signinPw'), btn = $('#signinSubmit');
   err.hidden = true;
-  if (!em.value.trim()){ err.textContent = 'Tap your team, or type your username or email.'; err.hidden = false; em.focus(); return; }
+  if (!em.value.trim()){ err.textContent = 'Type your username or email.'; err.hidden = false; em.focus(); return; }
   var email = loginEmail(em.value), team = loginTeam(email);          // username sign-in, e.g. "admin" or "community"
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ err.textContent = 'Type your email or username, like name@rootsdfw.org or admin.'; err.hidden = false; em.focus(); return; }
   if (!pw.value){ err.textContent = team ? 'Type your team password.' : 'Type your password.'; err.hidden = false; pw.focus(); return; }
@@ -7122,6 +7179,7 @@ async function afterSignIn(session, route){
     lsSet('teams:' + S.uid, teams);
   }
   teams.forEach(function(t){ if (TEAM_NAMES[t.team]) t.team_name = TEAM_NAMES[t.team]; });   // v2.6.9
+  teams = teams.filter(function(t){ return !DEPT_TEAMS[t.team]; });   // v2.7.2: The Grove / Bloom are departments, never teams
   if (STAGING) teams = teams.filter(function(t){ return STAGING_TEAMS.indexOf(t.team) >= 0; });   // staging never opens a real team
   S.teams = teams;
   if (!teams.length && STAGING){
@@ -7133,7 +7191,7 @@ async function afterSignIn(session, route){
     showLogin('This sign-in isn\u2019t on any team yet. Ask Anisha to add it.'); return;
   }
   var want = [route.team, lsGet('lastTeam:' + S.uid, null)].find(function(x){ return x && teams.some(function(t){ return t.team === x; }); }) || teams[0].team;
-  var notice = route.team && route.team !== want ? route.team : null;
+  var notice = route.team && route.team !== want && !DEPT_TEAMS[route.team] ? route.team : null;   // v2.7.2: an old Grove/Bloom link or saved team opens the login's own team, silently
   await enterTeam(want, route.team === want ? route : {});
   if (notice) otherTeamNotice(notice);
 }
@@ -7245,6 +7303,7 @@ window.__rootspa = {S: S, D: D, Q: Q, sb: sb, go: go, version: BUILD,
      setFields: setFields, agentOf: agentOf, poTag: poTag, deptOf: deptOf, isAdmin: isAdmin, myStaffPerson: myStaffPerson,
      todayIso: todayIso, mondayOf: mondayOf, isoToDate: isoToDate, niceDate: niceDate, shiftShown: shiftShown, isCalRow: isCalRow, shiftPAs: shiftPAs,
      isPaLogin: isPaLogin, myLoginPerson: myLoginPerson, myId: myId, isYC: isYC, paPeople: paPeople, paOnlyPeople: paOnlyPeople, specialTemplate: specialTemplate, activeTemplates: activeTemplates, templateFor: templateFor,   // v2.6.6
+     progDept: progDept, deptVal: deptVal, calPairs: calPairs, boardPrograms: boardPrograms,   // v2.7.2
      repCommon: repCommon, repCommonIx: repCommonIx, openFor: function(pid){ return tasksFor(pid).filter(function(t){ return !personDone(t, pid); }).map(function(t){ return normTask(t.task); }); }}};   // v2.5b probe hooks (read-only)
 })();
 
