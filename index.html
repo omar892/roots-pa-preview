@@ -736,6 +736,11 @@ button.icon{border-radius:50%}
 .rtile.compact .cal__tag .tag-t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rtile.compact .cal__tag .cal__dot{margin-top:0;align-self:center}
 .cal__tag.need{background:var(--warn-bg);border-color:var(--bloom-yellow);color:var(--warn);font-weight:650}
+/* v2.7.0: an open program a PA/YC can take */
+.cal__tag.su{background:var(--action);border-color:var(--action);color:var(--on-action);font-weight:650}
+.cal__tag.su .ic{width:14px;height:14px}
+.cal__n{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;margin-left:2px;border-radius:999px;background:var(--warn-bg);color:var(--warn);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.cal__chip[aria-pressed="true"] .cal__n{background:var(--on-action);color:var(--action)}
 .cal__tag.none{color:var(--muted)}
 .rt-tasks{font-size:13px;color:var(--muted)}
 .rtile.gone{background:var(--tint-2)}
@@ -1565,7 +1570,8 @@ dialog{border-radius:var(--r-card)}
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.6.9';   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
+var BUILD = '2.7.0';   // v2.7.0: PA/YC calendar pills are Mine + Everyone only; open programs say "Sign up"; Needs a PA shows a count
+// v2.6.9:   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
 // v2.6.8:   // v2.6.8: team switcher label no longer vanishes on hover, no "Open now"   // v2.6.7: "View as" a PA or YC for admins in Sandbox / QA
 // v2.6.6: Anisha's Oct 21 feedback (Common tasks in Templates, Add task box on Enter, no Waiting on, today's task in today's box), per-person PA/YC logins, youth coordinators   // v2.6.5: less is more (Omar Oct 21): no how-to captions, source notes, eyebrow caps or repeated counts; no A2HS banner
 var TZ = 'America/Chicago';   // Roots' clock: "today", "overdue" and "this week" follow Central time on every device
@@ -5615,7 +5621,9 @@ function needEmpty(what){
 function calMe(){ return isPaLogin() ? myId() || '' : ''; }   // v2.6.9: the signed-in PA/YC (or the one an admin views as)
 function calPerson(){
   var id = S.calPerson;
-  if (!id && !S.calPersonSet && !S.calNeed) id = calMe();   // v2.6.9: a PA's or YC's calendar opens on her own programs
+  var me = calMe();
+  if (me && id && id !== me) id = '';   // v2.7.0: a PA/YC filters by Mine or Everyone only
+  if (!id && !S.calPersonSet && !S.calNeed) id = me;   // v2.6.9: a PA's or YC's calendar opens on her own programs
   var p = id && D.people.get(id); return p && !p.deleted_at && !p.is_staff ? id : '';
 }
 function setCalPerson(pid){
@@ -5623,9 +5631,17 @@ function setCalPerson(pid){
   if (pid && S.calNeed){ S.calNeed = false; lsSet('caln:' + S.team, null); }   // v2.6.9: a person's programs, not just the short ones
   invalidate('cal'); announce(pid ? (pid === calMe() ? 'Showing your programs' : 'Showing ' + personName(pid) + '\u2019s programs') : 'Showing everyone');
 }
+/* v2.7.0: programs short of PAs in the period on screen (department filter applied, person filter not): the Needs a PA count */
+function calNeedCount(){
+  var a, z; if (S.calMode === 'week'){ a = S.week; z = addDays(S.week, 6); } else { a = S.month + '-01'; z = addDays(addMonths(S.month, 1) + '-01', -1); }
+  var today = todayIso();
+  return eventsIn(a, z).filter(function(s){ return needsPA(s, today) && (!S.calDept || deptOf(s) === S.calDept); }).length;
+}
 function mineEmpty(what){
+  var n = calNeedCount();   // v2.7.0: the next step is finding one to sign up for
   return h('div', {class: 'cal-empty', id: 'calMineEmpty'}, h('p', {class: 'ce-t', text: 'Nothing you\u2019re signed up for ' + what + '.'}),
-    h('button', {type: 'button', class: 'link', 'data-fk': 'cmineoff', on: {click: function(){ setCalPerson(''); setTimeout(function(){ var b = fkEl('cwho:all'); if (b) b.focus({preventScroll: true}); }, 60); }}}, 'Show everyone'));
+    n ? h('button', {type: 'button', class: 'link', 'data-fk': 'cmineneed', on: {click: function(){ setCalNeed(true); setTimeout(function(){ var b = fkEl('cneed'); if (b) b.focus({preventScroll: true}); }, 60); }}}, 'See ' + n + ' that need a PA')
+      : h('button', {type: 'button', class: 'link', 'data-fk': 'cmineoff', on: {click: function(){ setCalPerson(''); setTimeout(function(){ var b = fkEl('cwho:all'); if (b) b.focus({preventScroll: true}); }, 60); }}}, 'Show everyone'));
 }
 /* v2.6.9: on a phone the pill rows scroll sideways; bring the picked pill into view when the bar is rebuilt */
 function revealPicked(sec){
@@ -5655,13 +5671,14 @@ function pillGroup(label, cls, items){ return h('div', {class: 'cal__chips ' + (
 function calBar(){
   var pid = calPerson(), wk = S.calMode === 'week';
   var me = calMe();
-  var key = [S.calMode, pid, me, S.calDept, S.calNeed ? 1 : 0, paPeople().map(function(p){ return p.id + p.name; }).join(',')].join('|');
+  var nOpen = calNeedCount();
+  var key = [S.calMode, pid, me, S.calDept, S.calNeed ? 1 : 0, nOpen, S.week, S.month, paPeople().map(function(p){ return p.id + p.name; }).join(',')].join('|');
   var old = $('#v-cal > .cal-bar');
   if (old && old._k === key) return old;
   var seg = pillGroup('Calendar view', 'cal-mode', [
     h('button', {type: 'button', class: 'cal__chip', 'aria-pressed': wk ? 'false' : 'true', 'data-fk': 'cmode:month', on: {click: function(){ go({mode: 'month'}); }}}, 'Month'),
     h('button', {type: 'button', class: 'cal__chip', 'aria-pressed': wk ? 'true' : 'false', 'data-fk': 'cmode:week', on: {click: function(){ go({mode: 'week'}); }}}, 'Week')]);
-  var whoList = me ? [{id: me, name: 'Mine'}, {id: '', name: 'Everyone'}].concat(paPeople().filter(function(p){ return p.id !== me; }))   // v2.6.9: her own pill first
+  var whoList = me ? [{id: me, name: 'Mine'}, {id: '', name: 'Everyone'}]   // v2.7.0 (Omar): PAs and YCs get Mine and Everyone; names are an admin tool
     : [{id: '', name: 'Everyone'}].concat(paPeople());
   var who = pillGroup('Whose programs', 'cal-who', whoList.map(function(p){
     var on = (pid || '') === p.id;
@@ -5673,7 +5690,8 @@ function calBar(){
       on: {click: function(){ setCalDept(on && d ? '' : d); }}}, d ? h('span', {class: 'cal__dot', 'aria-hidden': 'true'}) : null, d || 'All departments');
   }));
   var need = pillGroup('Coverage', 'cal-need', [h('button', {type: 'button', class: 'cal__chip', 'aria-pressed': S.calNeed ? 'true' : 'false', 'data-fk': 'cneed',
-    on: {click: function(){ setCalNeed(!S.calNeed); }}}, 'Needs a PA')]);
+    'aria-label': 'Needs a PA' + (nOpen ? ', ' + nOpen + (nOpen === 1 ? ' program' : ' programs') : ''),
+    on: {click: function(){ setCalNeed(!S.calNeed); }}}, 'Needs a PA', nOpen ? h('span', {class: 'cal__n', 'aria-hidden': 'true', text: String(nOpen)}) : null)]);   // v2.7.0: how many to sign up for
   var bar = h('div', {class: 'cal-bar'}, seg, need, who, depts);
   bar._k = key; bar._fresh = true;
   return bar;
@@ -5746,18 +5764,19 @@ function tileTitle(name, location){
 /* mode: 'week' (with the tasks line), 'list' (phone month list), 'compact' (month strip) */
 function calTile(s, fk, mode){
   var info = paInfo(s), gone = s.cal_status === 'gone', name = (s.program || '').trim() || 'Untitled event', compact = mode === 'compact';
-  var tag = gone ? 'Cancelled' : info.short || 'No PA needed', tt = mode === 'week' ? tileTasks(s) : '';
+  var su = !gone && isPaLogin() && shiftState(s).st === 'signup';   // v2.7.0: she can take this one
+  var tag = gone ? 'Cancelled' : su ? info.short.replace(/Need \d+( more)?$/, 'Sign up') : info.short || 'No PA needed', tt = mode === 'week' ? tileTasks(s) : '';
   var p = mode === 'week' && weekReady(s) ? calPairs().byEv.get(s.id) : null;
   /* v2.6: location on every calendar tile (week, phone month list, desktop month grid), never inside the title */
   var where = locText(s.location), shown = where ? tileTitle(name, where) : name;
   return h('button', {type: 'button', class: 'rtile ' + (deptClass(s) || 'dept-other') + (compact ? ' compact' : '') + (gone ? ' gone' : '') + (info.miss && !gone ? ' needs' : ''),
     'data-fk': fk + ':' + s.id, 'data-id': s.id, 'data-prog': p ? p.id : null, title: compact ? name + (where ? ' \u00b7 ' + where : '') : null,
-    'aria-label': niceDate(s.date) + (shiftTime(s) ? ', ' + shiftTime(s) : '') + ': ' + shown + (deptOf(s) ? ' (' + deptOf(s) + ')' : '') + (where ? ', ' + where : '') + '. ' + (gone ? 'Cancelled on the calendar. ' : '') + info.full + '. ' + (tt ? tt + '. ' : '') + 'Open details',
+    'aria-label': niceDate(s.date) + (shiftTime(s) ? ', ' + shiftTime(s) : '') + ': ' + shown + (deptOf(s) ? ' (' + deptOf(s) + ')' : '') + (where ? ', ' + where : '') + '. ' + (gone ? 'Cancelled on the calendar. ' : '') + info.full + '. ' + (tt ? tt + '. ' : '') + (su ? 'Open to sign up' : 'Open details'),
     on: {click: function(e){ eventSheet(s.id, e.currentTarget); }}},
     h('span', {class: 'rt-time', text: (compact ? shortTime(s) : shiftTime(s)) || 'Time TBC'}),
     h('span', {class: 'rt-name', text: compact ? shortProg({program: shown}) : shown}),
     where ? h('span', {class: 'rt-loc'}, icon('pin', 'sm'), h('span', {class: 'rt-loc-t', text: where})) : null,
-    h('span', {class: 'cal__tag' + (info.miss && !gone ? ' need' : '') + (!gone && !info.short ? ' none' : '')}, h('span', {class: 'cal__dot', 'aria-hidden': 'true'}), h('span', {class: 'tag-t', text: tag})),
+    h('span', {class: 'cal__tag' + (su ? ' su' : info.miss && !gone ? ' need' : '') + (!gone && !info.short ? ' none' : '')}, su ? icon('plus', 'sm') : h('span', {class: 'cal__dot', 'aria-hidden': 'true'}), h('span', {class: 'tag-t', text: tag})),
     tt ? h('span', {class: 'rt-tasks', text: tt}) : null);
 }
 
