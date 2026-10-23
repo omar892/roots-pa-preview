@@ -1495,7 +1495,7 @@ dialog{border-radius:var(--r-card)}
 .cf-pop{position:absolute;z-index:60;min-width:240px;background:var(--surface-raised,var(--white));border:1px solid var(--line);border-radius:var(--radius-md,12px);box-shadow:var(--shadow-2,0 8px 24px rgba(0,0,0,.14));padding:6px}
 .cf-list{display:flex;flex-direction:column;gap:2px}
 .cf-item{display:flex;align-items:center;gap:10px;width:100%;min-height:40px;padding:0 12px 0 8px;border:0;border-radius:var(--r-s,8px);background:transparent;color:var(--ink);font:500 16px/1.2 var(--font);text-align:left;cursor:pointer}
-.cf-item:hover,.cf-item:focus-visible{background:var(--roots-white)}
+.cf-item:hover,.cf-item:focus-visible{background:var(--roots-white);color:var(--ink)}   /* v2.8.0: colour too (the global button:hover turned the label the same cream as the fill) */
 .cf-item[aria-checked=true]{font-weight:650;color:var(--heading,var(--ink))}
 .cf-item .cf-ck{display:inline-flex;width:18px;height:18px;flex:none;color:var(--action,var(--roots-herb))}
 .cf-item .cf-ck .ic{width:18px;height:18px}
@@ -1538,6 +1538,71 @@ button.take:hover{background:var(--action,var(--roots-herb));color:var(--on-acti
 :is(button,.btn,a[href],summary,[role="button"],[role="option"],label.cb,label.rt-cb,label.sw25):active:not(:disabled):not([aria-disabled="true"]){box-shadow:inset 0 0 0 100vmax rgba(0,0,0,.1)!important;transition:none}
 /* a shift row opens on a tap anywhere (its status pill too); darken the row only when no control inside it is the thing pressed. Own rule, so a browser without :has() still keeps the one above. */
 li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-shadow:inset 0 0 0 100vmax rgba(0,0,0,.1)!important;transition:none}
+
+
+/* ---------- v2.8.0 (Oct 23 PA call) ---------- */
+/* D: the header's week range is a dropdown button (the arrows stay) */
+.wnav h2{display:flex;justify-content:center;min-width:0}
+.wk-pick{display:inline-flex;align-items:center;gap:6px;min-height:40px;max-width:100%;padding:0 10px 0 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface-raised,var(--white));color:var(--heading,var(--ink));font:700 var(--fs,16px)/1.2 var(--font);cursor:pointer;white-space:nowrap}
+.wk-pick:hover{background:var(--roots-white);color:var(--heading,var(--ink))}   /* colour too: the global button:hover would turn the label white */
+.wk-pick .wk-t{overflow:hidden;text-overflow:ellipsis}
+.wk-pick .cf-chev{width:16px;height:16px;flex:none;color:var(--muted)}
+.wk-pick[aria-expanded=true] .cf-chev{transform:rotate(180deg)}
+@media (pointer:coarse),(max-width:767px){ .wk-pick{min-height:44px} }
+.cf-item .cf-sub{flex:none;width:5.8em;font-size:var(--fs-s,14px);font-weight:500;color:var(--muted)}
+#wkpickPop{min-width:260px}
+@media print{ #wnav #wkPick{display:inline-flex !important;border:0;padding:0} .wk-pick .cf-chev{display:none} }   /* the header's other buttons hide in print; the week stays */
+/* D: month week labels read the range on two lines ("Sep 28" / "– Oct 4") */
+.mhead{grid-template-columns:64px repeat(7,minmax(0,1fr))}
+.mweek{grid-template-columns:64px minmax(0,1fr)}
+.wklabel{padding:10px 2px;font-size:12px;line-height:1.3;text-align:center}
+.wklabel .wl-a,.wklabel .wl-z{display:block;white-space:nowrap}
+.wklabel .wl-a{font-size:13px;font-weight:700}
+@media (max-width:767px){ .mhead{grid-template-columns:repeat(7,minmax(0,1fr))} .mweek{grid-template-columns:minmax(0,1fr)} }
+
+/* A: My tasks by program (program first, its tasks under it, tap to fold) */
+#v-person .pv-groups{list-style:none;margin:0 0 var(--sp3);padding:0;display:grid;gap:var(--sp2);max-width:760px}
+.pgroup{background:var(--surface-raised,var(--white));border:1px solid var(--line);border-radius:var(--r-card);overflow:hidden}
+.pgroup.c25{border-left:6px solid var(--dc,var(--d-other))}
+.pgroup.is-today{border-color:var(--heading);box-shadow:inset 0 0 0 1px var(--heading)}
+.pgroup.pg-day,.pgroup.pg-none{background:var(--surface-raised,var(--white))}
+.pg-h{margin:0;font-size:inherit}
+.pg-head{display:flex;align-items:flex-start;gap:8px;width:100%;min-height:var(--tap,44px);padding:10px 12px;border:0;border-radius:0;background:transparent;color:var(--ink);text-align:left;font:inherit;cursor:pointer}
+.pg-head:hover{background:var(--roots-white);color:var(--ink)}
+.pg-head .pg-chev{flex:none;width:18px;height:18px;margin-top:2px;color:var(--muted)}
+.pg-head .pg-sp{display:inline-block}
+.pg-head .cal__dot{display:none}
+.pg-tx{flex:1 1 auto;min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+.pg-name{font-size:16px;font-weight:700;color:var(--heading,var(--ink));overflow-wrap:anywhere}
+.pg-when{font-size:var(--fs-s,14px);font-weight:500;color:var(--muted)}
+.pg-head .rd-today{flex:none;margin-top:1px}
+.pg-n{flex:none;font-size:var(--fs-s,14px);font-weight:600;color:var(--ink);margin-top:1px}
+.pg-tasks{border-top:1px solid var(--line2);margin:0;padding:4px 12px 8px}
+.pg-done{list-style:none}
+@media (max-width:767px){ .pg-tx{flex-direction:column;align-items:flex-start;gap:2px} }
+@media print{ .pg-tasks[hidden]{display:grid !important} .pg-chev{display:none} }
+
+/* B/C: open tasks with nobody on them, next to the progress (admin and PA cards) */
+.progress .need-n{display:inline-flex;align-items:center;gap:4px;flex:none;font-size:var(--fs-s,14px);font-weight:650;color:var(--warn,#8a4b00)}
+.progress .need-n .ic{width:14px;height:14px}
+/* C: department colour on board cards, as on the calendar */
+.card.c28{border-left:6px solid var(--dc)}
+.card.c28 .card-head{background:var(--dt)}
+/* C: the PA/YC board, cards folded to one summary row */
+.pa-bhead .pb-who{flex:none}
+.pb28 .pb-h{margin:0;padding:0;font-size:inherit;font-weight:inherit}
+.pb-sum{display:flex;align-items:flex-start;gap:8px;width:100%;min-height:var(--tap,44px);padding:10px 12px;border:0;border-radius:0;background:transparent;color:var(--ink);text-align:left;font:inherit;cursor:pointer}
+.pb-sum:hover{background:rgba(255,255,255,.35);color:var(--ink)}
+.pb-sum .pb-chev{flex:none;width:18px;height:18px;margin-top:3px;color:var(--muted)}
+.pb-tx{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.pb-tx .pa-pname{display:block}
+.pb-tx .pa-meta{display:block;margin:0}
+.pb-pas{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-s,14px);font-weight:500;color:var(--ink)}
+.pb-pas .ic{width:14px;height:14px;color:var(--muted)}
+.pb-tx .progress{padding:0;margin-top:4px;flex-wrap:wrap}
+.pb28 ul.tasks{border-top:1px solid var(--line2)}
+.pa-note{margin:4px 0 0;font-size:var(--fs-s,14px);line-height:1.35;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}
+@media print{ .pb28 ul.tasks[hidden]{display:block !important} }
 
 </style>
 </head>
@@ -1618,7 +1683,7 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.7.3';   // v2.7.3: pressed feedback on every tappable control (Hallmark review, Omar Oct 23)
+var BUILD = '2.8.0';   // v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
 // was 2.7.2: // v2.7.2: departments are one shared filter (Calendar, Board, PA shifts), never a team; no team chips at sign-in
 // v2.7.1: Calendar filter is one dropdown (departments + Needs a PA); Board tab for PAs/YCs with Take it
 // v2.6.9:   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
@@ -1774,6 +1839,13 @@ function niceDate(iso){ if (!iso) return ''; var d = isoToDate(iso); if (isNaN(d
 function weekLabel(iso){
   var d = isoToDate(iso), y = d.getFullYear() !== new Date().getFullYear() ? ', ' + d.getFullYear() : '';
   return 'Week of ' + MON_SHORT[d.getMonth()] + ' ' + d.getDate() + y;
+}
+/* v2.8.0 (Oct 23 call, L40/L47): a week as its range, "Oct 19 \u2013 25" or "Oct 26 \u2013 Nov 1"; the year only when it isn't this year.
+   For the header and the week dropdown; sentences keep weekLabel(). */
+function weekRange(iso){
+  var a = isoToDate(iso), z = isoToDate(addDays(iso, 6)), cy = isoToDate(todayIso()).getFullYear();
+  var s = MON_SHORT[a.getMonth()] + ' ' + a.getDate() + ' \u2013 ' + (z.getMonth() === a.getMonth() ? '' : MON_SHORT[z.getMonth()] + ' ') + z.getDate();
+  return a.getFullYear() !== cy || z.getFullYear() !== cy ? s + ', ' + z.getFullYear() : s;
 }
 function weekSub(iso){
   var tw = thisWeek();
@@ -3481,10 +3553,11 @@ function moveTaskSheet(id){
   function draw(){
     var cur = D.tasks.get(id); if (!cur) return true;
     var c = weekProgChoices(), list = c.list.filter(function(x){ return !(x.p && x.p.id === cur.program_id); });
-    var cal = list.filter(function(x){ return x.s; }), other = list.filter(function(x){ return !x.s; });
+    var cal = list.filter(function(x){ return x.s && !x.up; }), other = list.filter(function(x){ return !x.s; }), soon = list.filter(function(x){ return x.up; });
     box.replaceChildren.apply(box, [].concat(
       cal.length ? h('div', {class: 'optgroup-h', text: 'On the calendar this week'}) : [], cal.map(opt),
       other.length ? h('div', {class: 'optgroup-h', text: 'Other programs this week'}) : [], other.map(opt),
+      soon.length ? h('div', {class: 'optgroup-h', text: 'Coming up'}) : [], soon.map(opt),   // v2.8.0
       !c.ready ? h('p', {class: 'muted', role: 'status', text: 'Loading the calendar\u2026'}) : !list.length ? h('p', {class: 'muted', text: 'There are no other programs this week.'}) : []));
     return c.ready;
   }
@@ -3574,7 +3647,17 @@ function metaText(p){
 /* ---------- card + task rows ---------- */
 function headSig(p){
   var ts = tasksOf(p.id), dn = ts.filter(taskDone).length;
-  return [p.name, p.date, (p.locations || []).join(','), p.offsite, (p.lead_ids || []).map(personName).join(','), dn, ts.length, todayIso(), pastelFor(p), p.template_id ? flowUrl(D.templates.get(p.template_id)) : ''].join('\u0001');
+  return [p.name, p.date, (p.locations || []).join(','), p.offsite, (p.lead_ids || []).map(personName).join(','), dn, ts.length, todayIso(), pastelFor(p), p.template_id ? flowUrl(D.templates.get(p.template_id)) : '', needN(p), cardDept(p)].join('\u0001');
+}
+/* v2.8.0 (Oct 23 call, Item B/C; L65): open tasks on a card with nobody on them, and the card's department colour (same as the calendar) */
+function needN(p){ return tasksOf(p.id).filter(function(t){ return !taskDone(t) && !liveAssignees(t.id).length; }).length; }
+function needFlag(n){ return n ? h('span', {class: 'need-n'}, h('span', {class: 'sr-only', text: ', '}), icon('warn', 'sm'), n + ' need someone') : null; }   // the hidden comma: "0 of 3, 1 need someone", not "0 of 31 need someone"
+function cardDept(p){ var d = hasShifts() ? progDept(p) : ''; return d && DEPT_CLASS[d] ? d : ''; }
+/* the card's colour: its department's, or the neutral one when it has none (teams with a calendar; Staff keeps its pastels) */
+function deptCls(dc){ return dc ? ' c28 ' + DEPT_CLASS[dc] : hasShifts() ? ' c28 dept-other' : ''; }
+function progressEl(ts, dn, need){
+  var pct = ts.length ? Math.round(dn * 100 / ts.length) : 0;
+  return ts.length ? h('div', {class: 'progress'}, h('span', {text: dn + ' of ' + ts.length}), h('span', {class: 'bar', 'aria-hidden': 'true'}, h('i', {style: {width: pct + '%'}})), needFlag(need)) : null;
 }
 function cardHead(p){
   var lbl = progLabel(p);
@@ -3595,7 +3678,7 @@ function cardHead(p){
   return h('div', {class: 'card-head'},
     h('div', {class: 'ch-row'}, drag, name, more),
     fl ? h('div', {class: 'flowrow'}, meta, fl) : meta,
-    ts.length ? h('div', {class: 'progress'}, h('span', {text: dn + ' of ' + ts.length}), h('span', {class: 'bar', 'aria-hidden': 'true'}, h('i', {style: {width: pct + '%'}}))) : null);
+    progressEl(ts, dn, needN(p)));
 }
 function taskSig(t){
   var as = assigneesOf(t.id).map(function(x){ var per = D.people.get(x.person_id); return x.person_id + ':' + (per ? per.name + (per.deleted_at ? '~' : '') : '') + ':' + (x.done ? 1 : 0); }).join(',');
@@ -3645,7 +3728,8 @@ function addTaskForm(p){
 function cardEl(p, old){
   var li = old && old.tagName === 'LI' && old.classList.contains('card') && !old.classList.contains('pending') ? old : h('li', {class: 'card'});
   // only touch what changed: re-setting the same style or class still makes the browser restyle the whole card
-  setIf(li, 'class', 'card' + (p.date && p.date === todayIso() ? ' is-today' : ''));
+  var dc = cardDept(p);   // v2.8.0: the department colour, as on the calendar
+  setIf(li, 'class', 'card' + (p.date && p.date === todayIso() ? ' is-today' : '') + deptCls(dc));
   if (li.hasAttribute('aria-busy')) li.removeAttribute('aria-busy');
   setIf(li, 'style', '--pastel:' + pastelFor(p));
   setIf(li, 'data-id', p.id);
@@ -3827,41 +3911,79 @@ function paTaskEl(t, me){
   var take = mine ? null : h('button', {type: 'button', class: 'take', 'data-fk': 'take:' + t.id, 'aria-label': 'Take it: ' + lbl, 'aria-haspopup': ask ? 'dialog' : null,
     on: {click: function(e){ var m = myId(); if (m) takeTask(t, m); else takeWhoSheet(t, e.currentTarget); }}}, icon('plus', 'sm'), 'Take it');
   var due = t.due ? h('span', {class: 'mk due-ro'}, icon('cal', 'sm'), h('span', {text: DUE_SHORT[t.due] || dayName(t.due)})) : null;
+  var note = (t.notes || '').trim();   // v2.8.0 (Ummehani L80): every task's note, read-only, so a supervisor sees the program in one place
   return h('li', {class: 'task pa-task' + (done ? ' done' : ''), 'data-id': t.id},
     h('div', {class: 'trow'}, h('p', {class: 'ttext', text: lbl})),
+    note ? h('p', {class: 'pa-note', text: note}) : null,
     h('div', {class: 'tmeta'}, due, chips, take));
+}
+/* v2.8.0 (Oct 23 call, Item C; L65, L68-70): the PA/YC board. Mine | Everyone (one state with the Calendar's), cards folded to one summary row. */
+function pbFoldMap(){ var m = lsGet('pbopen:' + S.team, null); return m && typeof m === 'object' ? m : {}; }
+function pbOpen(p){ return !!pbFoldMap()[p.id]; }
+function pbToggle(p){
+  var m = pbFoldMap(); if (m[p.id]) delete m[p.id]; else m[p.id] = 1;
+  var ks = Object.keys(m); if (ks.length > 300) ks.slice(0, ks.length - 300).forEach(function(x){ delete m[x]; });
+  lsSet('pbopen:' + S.team, m); invalidate('board');
+}
+function paCardPAs(p){ var e = paEvent(p); return e ? livePAs(e).map(function(x){ return firstName(x.person_id || x); }).filter(Boolean) : []; }
+function isMyCard(p, me){
+  if (!me) return true;
+  var e = paEvent(p); if (e && D.sp.has(e.id + '|' + me)) return true;
+  return tasksOf(p.id).some(function(t){ return D.tp.has(t.id + '|' + me); });
 }
 function paCardSig(p, me){
   var e = paEvent(p);
-  return ['pa', me || '', noNameYet() ? 1 : 0, headSig(p), e ? e.id + e.date + shiftTime(e) + (e.location || '') : '', tasksOf(p.id).map(taskSig).join('\u0002')].join('\u0003');
+  return ['pa', me || '', noNameYet() ? 1 : 0, headSig(p), e ? e.id + e.date + shiftTime(e) + (e.location || '') : '', paCardPAs(p).join(','), pbOpen(p) ? 1 : 0, tasksOf(p.id).map(taskSig).join('\u0002')].join('\u0003');
 }
 function paCardEl(p, me){
-  var lbl = progLabel(p), ts = tasksOf(p.id), dn = ts.filter(taskDone).length, pct = ts.length ? Math.round(dn * 100 / ts.length) : 0, mt = paMeta(p);
-  var head = h('div', {class: 'card-head'},
-    h('h3', {class: 'pa-pname', text: lbl}),
-    mt ? h('p', {class: 'pa-meta', text: mt}) : null,
-    ts.length ? h('div', {class: 'progress'}, h('span', {text: dn + ' of ' + ts.length}), h('span', {class: 'bar', 'aria-hidden': 'true'}, h('i', {style: {width: pct + '%'}}))) : null);
-  return h('li', {class: 'card pa-card' + (p.date && p.date === todayIso() ? ' is-today' : ''), style: '--pastel:' + pastelFor(p), 'data-id': p.id, 'aria-label': lbl},
-    head, ts.length ? h('ul', {class: 'tasks', 'aria-label': 'Tasks for ' + lbl}, ts.map(function(t){ return paTaskEl(t, me); })) : null);
+  var lbl = progLabel(p), ts = tasksOf(p.id), dn = ts.filter(taskDone).length, mt = paMeta(p), open = pbOpen(p), dc = cardDept(p);
+  var pas = paCardPAs(p), need = needN(p), lid = 'pbl_' + p.id;
+  var sum = h('button', {type: 'button', class: 'pb-sum', 'data-fk': 'pbs:' + p.id, 'aria-expanded': open ? 'true' : 'false', 'aria-controls': ts.length ? lid : null,
+    on: {click: function(){ pbToggle(p); setTimeout(function(){ var b = fkEl('pbs:' + p.id); if (b) b.focus({preventScroll: true}); }, 60); }}},
+    icon(open ? 'down' : 'chevR', 'sm pb-chev'),
+    h('span', {class: 'pb-tx'},
+      h('span', {class: 'pa-pname', text: lbl}),
+      mt ? h('span', {class: 'pa-meta', text: mt}) : null,
+      pas.length ? h('span', {class: 'pb-pas'}, icon('user', 'sm'), h('span', {text: pas.join(', ')})) : null,
+      progressEl(ts, dn, need)));
+  return h('li', {class: 'card pa-card pb28' + (open ? ' open' : '') + (p.date && p.date === todayIso() ? ' is-today' : '') + deptCls(dc), style: '--pastel:' + pastelFor(p), 'data-id': p.id, 'aria-label': lbl},
+    h('h3', {class: 'card-head pb-h'}, sum),
+    ts.length ? h('ul', {class: 'tasks', id: lid, 'aria-label': 'Tasks for ' + lbl, hidden: !open}, open ? ts.map(function(t){ return paTaskEl(t, me); }) : []) : null);
+}
+function pbMine(){ var me = calMe(); return !!me && calPerson() === me; }
+function pbWhoBar(me){
+  if (!me) return null;
+  var mine = pbMine();
+  return pillGroup('Whose programs', 'cal-who pb-who', [{id: me, name: 'Mine'}, {id: '', name: 'Everyone'}].map(function(x){
+    var on = (x.id ? mine : !mine);
+    return h('button', {type: 'button', class: 'cal__chip', 'aria-pressed': on ? 'true' : 'false', 'data-fk': 'bwho:' + (x.id ? 'mine' : 'all'), on: {click: function(){ if (!on) setCalPerson(x.id); }}}, x.name);
+  }));
 }
 function paBoard(sec){
   if (hasShifts()) ensureShifts();   // day, time and place come from the calendar
-  var all = boardPrograms(), me = myId(), dep = deptOn();
+  var all = boardPrograms(), me = myId(), dep = deptOn(), mine = pbMine();
   if (!all.length){
     setKids(sec, [h('h2', {class: 'sr-only'}, 'Board'), h('div', {class: 'empty pa-empty'}, h('h2', {text: 'Nothing on the board for ' + weekLabel(S.week).replace('Week of', 'the week of') + ' yet'}))]);
     return;
   }
-  var progs = paOrder(dep ? all.filter(function(p){ return progDept(p) === dep; }) : all);
-  // v2.7.2: the shared department filter at the top
-  var head = sec.querySelector(':scope > .view-head'), hk = 'pa|' + deptVal();
+  var shown = dep ? all.filter(function(p){ return progDept(p) === dep; }) : all;
+  if (mine) shown = shown.filter(function(p){ return isMyCard(p, calMe()); });
+  var progs = paOrder(shown);
+  // v2.7.2: the shared department filter at the top; v2.8.0: Mine | Everyone beside it
+  var head = sec.querySelector(':scope > .view-head'), hk = 'pa|' + deptVal() + '|' + calMe() + '|' + (mine ? 1 : 0);
   if (!head || head._k !== hk){
     dfDrop(head);
-    var nh = h('div', {class: 'view-head board-head pa-bhead'}, h2Board(sec), deptFilterBtn('bfilter'));
+    var nh = h('div', {class: 'view-head board-head pa-bhead'}, h2Board(sec), deptFilterBtn('bfilter'), pbWhoBar(calMe()));
     nh._k = hk;
     if (head && head.parentNode) head.replaceWith(nh);
     head = nh;
   }
   if (!progs.length){
+    if (mine){
+      setKids(sec, [head, h('div', {class: 'empty dept-empty', id: 'bmineEmpty'}, h('p', {text: 'Nothing you\u2019re signed up for this week'}),
+        h('button', {type: 'button', class: 'link', 'data-fk': 'bmineoff', on: {click: function(){ setCalPerson(''); setTimeout(function(){ var b = fkEl('bwho:all'); if (b) b.focus({preventScroll: true}); }, 60); }}}, 'Everyone'))]);
+      return;
+    }
     var oe = sec.querySelector(':scope > #bfilterEmpty');
     setKids(sec, [head, oe && oe.textContent.indexOf(dep + ' ') >= 0 && oe.textContent.indexOf(weekLabel(S.week).replace('Week of ', '')) >= 0 ? oe : deptEmpty('programs ' + weekLabel(S.week).replace('Week of', 'the week of'), 'bfilter')]);
     return;
@@ -3983,7 +4105,10 @@ function whoAmISheet(s, ret){
     setMe(p.id);
     var cur = D.shifts.get(s.id) || s;
     if (D.sp.has(cur.id + '|' + p.id)) toast('You\u2019re already on ' + lbl + '.');
-    else { signUp(cur, p.id); toast('Signed up for ' + lbl + '. This device will remember you\u2019re ' + p.name + '.'); }
+    else {   // v2.8.0: one toast, with the tasks she got
+      var said = function(n){ toast('Signed up for ' + lbl + (n ? ' \u00b7 ' + nTasks(n) + (n === 1 ? ' is' : ' are') + ' yours' : '') + '. This device will remember you\u2019re ' + p.name + '.'); };
+      var r = signUp(cur, p.id, {quiet: true}); if (r && r.then) r.then(said); else said(r);
+    }
     invalidate('shifts', 'cal', 'person', 'pas');
     closeSheet();
     // from a PA shifts row (no sheet behind): focus goes back to that row
@@ -4195,12 +4320,34 @@ function weekProgChoices(){
     var when = (niceDate(s.date) + (shiftTime(s) ? ' \u00b7 ' + shiftTime(s) : '')).replace(/\s+/g, ' ');
     out.push({v: 'ev:' + s.id, s: s, p: p, date: s.date, name: name, when: when, label: when + ' \u00b7 ' + name});
   });
+  // v2.8.0 (Oct 23 call, L102/L114): "Coming up", the calendar programs of the next 4 weeks (Fall Fest while working on it this week).
+  // A lead-up card already made for one stands for it (one choice per event).
+  var a = addDays(S.week, 7), z = addDays(S.week, 34), soonOk = !hasShifts() || shiftsReady(monthsOfRange(a, z)), lead = new Map();
+  boardPrograms().forEach(function(p){ if (isLeadUp(p)){ var le = leadEvent(p); if (le && le.date >= a && le.date <= z && !lead.has(le.id)){ lead.set(le.id, p); used.add(p.id); } } });
+  if (hasShifts() && soonOk) eventsIn(a, z).forEach(function(s){
+    if (s.cal_status === 'gone') return;
+    var nm = (s.program || '').trim() || 'Untitled event', where = locText(s.location), name = where ? tileTitle(nm, where) : nm;
+    var when = (niceDate(s.date) + (shiftTime(s) ? ' \u00b7 ' + shiftTime(s) : '')).replace(/\s+/g, ' ');
+    out.push({v: 'up:' + s.id, s: s, up: true, p: lead.get(s.id) || null, date: s.date, name: name, when: when, label: when + ' \u00b7 ' + name});
+  });
   boardPrograms().forEach(function(p){ if (!used.has(p.id)) out.push({v: 'p:' + p.id, p: p, date: validIso(p.date) ? p.date : '', name: progLabel(p), when: validIso(p.date) ? niceDate(p.date) : '', label: progLabel(p)}); });
-  return {list: out, ready: ready};
+  return {list: out, ready: ready, soonOk: soonOk};
 }
 function progValueOf(t){
   var p = t && D.programs.get(t.program_id); if (!p || p.personal) return '';
-  var ev = calPairs().byProg.get(p.id); return ev ? 'ev:' + ev.id : 'p:' + p.id;
+  var ev = calPairs().byProg.get(p.id); if (ev) return 'ev:' + ev.id;
+  var le = isLeadUp(p) ? leadEvent(p) : null; if (le && le.date > addDays(S.week, 6) && le.date <= addDays(S.week, 34)) return 'up:' + le.id;
+  return 'p:' + p.id;
+}
+/* v2.8.0: the ONE lead-up card in this week for a later calendar program (same name + same date, not archived); never template tasks */
+function leadUpCard(s){
+  var name = (s.program || '').trim() || 'Program';
+  var p = weekPrograms().filter(function(x){ return !x.personal && x.date === s.date && (x.name || '').trim() === name; })[0];
+  if (p) return {p: p, made: false};
+  p = insertRow('programs', {id: newId('prog_'), team: S.team, week: S.week, name: name, template_id: null, custom_name: true, force_pick: false,
+    personal: false, date: s.date, locations: [], offsite: '', lead_ids: [], sort: nextSort(weekPrograms())}, name);
+  invalidate('cal', 'board', 'person');
+  return {p: p, made: true};
 }
 function progSelect(id, cur, onChange){
   var c = null;
@@ -4209,22 +4356,30 @@ function progSelect(id, cur, onChange){
   sel.hint = hint;   // the caller puts it under the select
   function fill(v){
     c = weekProgChoices();
-    var cal = c.list.filter(function(x){ return x.s; }), other = c.list.filter(function(x){ return !x.s; });
+    var cal = c.list.filter(function(x){ return x.s && !x.up; }), other = c.list.filter(function(x){ return !x.s; }), soon = c.list.filter(function(x){ return x.up; });
     var o = function(x){ return h('option', {value: x.v, text: x.label}); };
     sel.replaceChildren.apply(sel, [h('option', {value: '', text: 'No program (personal task)'}),
       cal.length ? h('optgroup', {label: 'On the calendar this week'}, cal.map(o)) : null,
       other.length ? h('optgroup', {label: 'Other programs this week'}, other.map(o)) : null,
+      soon.length ? h('optgroup', {label: 'Coming up'}, soon.map(o)) : null,
       !c.ready ? h('option', {value: '-', disabled: true, text: 'Loading the calendar\u2026'}) : null].filter(Boolean));
     // v2.6.3 (audit F-06): say why the list is short in a week with nothing on the calendar
     var none = c.ready && hasShifts() && !cal.length;
     hint.hidden = !none; if (none) sel.setAttribute('aria-describedby', id + 'None'); else sel.removeAttribute('aria-describedby');
     if (v && !c.list.some(function(x){ return x.v === v; })){
-      var p = v.indexOf('p:') === 0 ? D.programs.get(v.slice(2)) : calPairs().byEv.get(v.slice(3));
+      var p = v.indexOf('p:') === 0 ? D.programs.get(v.slice(2)) : v.indexOf('up:') === 0 ? null : calPairs().byEv.get(v.slice(3));
       sel.append(h('option', {value: v, text: p ? progLabel(p) : 'This program'}));
     }
     sel.value = v || '';
   }
   fill(cur);
+  // v2.8.0: the next 4 weeks for "Coming up" load quietly, then the list fills in
+  if (hasShifts() && !c.soonOk){
+    var sm = monthsOfRange(addDays(S.week, 7), addDays(S.week, 34)).filter(function(m){ return !S.shiftMonths.has(m) && !S.shiftLoading.has(m); });
+    var soonFill = function(){ var n = 0, tm2 = setInterval(function(){ if (!document.contains(sel) || ++n > 60){ clearInterval(tm2); return; } if (document.activeElement === sel) return;
+      if (shiftsReady(monthsOfRange(addDays(S.week, 7), addDays(S.week, 34))) && c.ready){ clearInterval(tm2); fill(sel.value === '-' ? '' : sel.value); } }, 400); };
+    if (sm.length) loadMonth(true, sm).then(soonFill); else soonFill();
+  }
   // the calendar may still be loading when the sheet opens: fill the list in as soon as it's here (not while it's open under a finger)
   if (!c.ready){
     if (hasShifts()) ensureShifts();
@@ -4239,6 +4394,10 @@ function progSelect(id, cur, onChange){
 /* the program for a choice, making the event's card when it has none yet (one card per event, same as the calendar) */
 function progForChoice(v){
   if (!v) return null;
+  if (v.indexOf('up:') === 0){   // v2.8.0: a later program -> its lead-up card in this week
+    var u = D.shifts.get(v.slice(3)); if (!u){ toast('That program is no longer on the calendar.'); return undefined; }
+    return leadUpCard(u);
+  }
   if (v.indexOf('ev:') === 0){
     var s = D.shifts.get(v.slice(3)); if (!s){ toast('That program is no longer on the calendar.'); return undefined; }
     if (!weekReady(s)){ toast('This week is still loading. Try again in a moment.'); return undefined; }
@@ -4521,6 +4680,101 @@ function pvWatching(pid){
   // open first, done last
   return watch.filter(function(x){ return !x.done; }).concat(watch.filter(function(x){ return x.done; }));
 }
+/* ---------- v2.8.0 (Oct 23 call, Item A: Zaynab L102-106, L115; Ummehani L81-82; L114): My tasks by program ----------
+   Program first (name, then day · time · place as context), her tasks under it, tap to fold. Personal tasks sit under their day,
+   tasks with no day in "No day set" last. A lead-up card (a later program, e.g. Fall Fest, worked on this week) groups under its
+   name with its real date, placed by her tasks' days. Folds are remembered per device (per team). */
+function isLeadUp(p){ return !!p && !p.personal && validIso(p.date) && (p.date < p.week || p.date > addDays(p.week, 6)); }
+/* the calendar program a lead-up card is for, when its month is loaded (same name rule as the pairing) */
+function leadEvent(p){
+  if (!validIso(p.date)) return null;
+  var best = null, bs = 0;
+  D.shifts.forEach(function(s){ if (s.date !== p.date || !shiftShown(s)) return; var sc = matchScore(s.program, p.name); if (sc >= 0.8 && sc > bs){ best = s; bs = sc; } });
+  return best;
+}
+function pvFoldMap(){ var m = lsGet('pvfold:' + S.team, null); return m && typeof m === 'object' ? m : {}; }
+function pvFoldSet(k, folded){
+  var m = pvFoldMap(); delete m[k]; m[k] = folded ? 1 : 0;
+  var ks = Object.keys(m); if (ks.length > 300) ks.slice(0, ks.length - 300).forEach(function(x){ delete m[x]; });
+  lsSet('pvfold:' + S.team, m);
+}
+function pvDueIso(t){ var i = DAYS.indexOf(t.due); return i >= 0 ? addDays(S.week, i) : ''; }
+function pvGroups(pid, skip, wkOk){
+  var wk = S.week, wz = addDays(wk, 6), pairs = calPairs(), groups = new Map();
+  function grp(k, o){ var g = groups.get(k); if (!g){ g = Object.assign({k: k, tasks: []}, o); groups.set(k, g); } return g; }
+  // the calendar programs she's signed up for this week, even with no tasks
+  if (hasShifts() && wkOk) eventsIn(wk, wz).forEach(function(s){
+    if (!D.sp.has(s.id + '|' + pid)) return;
+    var p = pairs.byEv.get(s.id) || null;
+    grp(p ? 'p:' + p.id : 'ev:' + s.id, {kind: 'prog', ev: s, p: p, date: s.date, min: shiftMinutes(s)});
+  });
+  tasksFor(pid).forEach(function(t){
+    if (skip && skip.has(t.id)) return;
+    var p = D.programs.get(t.program_id);
+    if (!p || p.personal){ var d = pvDueIso(t); (d ? grp('d:' + d, {kind: 'day', date: d, min: 24 * 60 + 1}) : grp('none:' + wk, {kind: 'none', date: '', min: 0})).tasks.push(t); return; }
+    var g = groups.get('p:' + p.id);
+    if (!g){
+      var ev = pairs.byProg.get(p.id) || null;
+      if (ev) g = grp('p:' + p.id, {kind: 'prog', ev: ev, p: p, date: ev.date, min: shiftMinutes(ev)});
+      else if (validIso(p.date) && p.date >= wk && p.date <= wz) g = grp('p:' + p.id, {kind: 'prog', p: p, date: p.date, min: 24 * 60});
+      else g = grp('p:' + p.id, {kind: 'prog', p: p, lead: isLeadUp(p), date: '', min: 24 * 60});
+    }
+    g.tasks.push(t);
+  });
+  // lead-up and undated cards (Weekly Tasks): placed by the first day her tasks on it are due
+  groups.forEach(function(g){ if (g.kind === 'prog' && !g.date){ var ds = g.tasks.map(pvDueIso).filter(Boolean).sort(); g.date = ds[0] || ''; g.placed = true; } });
+  var di = function(t){ var i = DAYS.indexOf(t.due); return i < 0 ? 9 : i; };
+  groups.forEach(function(g){ g.tasks.sort(function(a, b){ return (personDone(a, pid) ? 1 : 0) - (personDone(b, pid) ? 1 : 0) || di(a) - di(b) || bySort(a, b); }); });
+  var rank = function(g){ return g.kind === 'none' ? 2 : g.date ? 0 : 1; };
+  return Array.from(groups.values()).sort(function(a, b){ return rank(a) - rank(b) || a.date.localeCompare(b.date) || a.min - b.min || String(a.k).localeCompare(String(b.k)); });
+}
+function pvGroupHead(g){
+  if (g.kind === 'day') return {name: dayLong(g.date), when: '', ev: null};
+  if (g.kind === 'none') return {name: 'No day set', when: '', ev: null};
+  var s = g.ev, p = g.p;
+  if (s){
+    var nm = (s.program || '').trim() || 'Untitled event', where = locText(s.location);
+    return {name: where ? tileTitle(nm, where) : nm, when: [niceDate(s.date), shiftTime(s), where, s.cal_status === 'gone' ? 'Cancelled' : ''].filter(Boolean).join(' \u00b7 '), ev: s};
+  }
+  var le = g.lead ? leadEvent(p) : null;
+  return {name: progLabel(p), when: [validIso(p.date) ? niceDate(p.date) : '', le ? shiftTime(le) : ''].filter(Boolean).join(' \u00b7 '), ev: le};
+}
+function pvGroupEl(g, pid){
+  var today = todayIso(), fold = pvFoldMap(), base = 'pg_' + String(g.k).replace(/[^a-z0-9_]/gi, '_');
+  var open = g.tasks.filter(function(t){ return !personDone(t, pid); }), done = g.tasks.filter(function(t){ return personDone(t, pid); });
+  // past days and all-done groups START folded: the default is taken once per session, so ticking a group's last task doesn't fold it away
+  if (!S.pvFoldDflt) S.pvFoldDflt = new Map();
+  var fk0 = S.team + '|' + g.k;
+  if (!S.pvFoldDflt.has(fk0)) S.pvFoldDflt.set(fk0, !!(g.date && g.date < today) || (g.tasks.length > 0 && !open.length));
+  var dflt = S.pvFoldDflt.get(fk0);
+  var folded = g.tasks.length ? (Object.prototype.hasOwnProperty.call(fold, g.k) ? !!fold[g.k] : dflt) : false;
+  var hd = pvGroupHead(g), isToday = g.date === today && !g.placed;   // a lead-up/undated card placed by its tasks' day isn't "today"
+  var dot = hd.ev ? h('span', {class: 'cal__dot', 'aria-hidden': 'true'}) : null;
+  var txt = h('span', {class: 'pg-tx'}, h('b', {class: 'pg-name', text: hd.name}), hd.when ? h('span', {class: 'pg-when', text: hd.when}) : null);
+  var tag = isToday ? h('span', {class: 'rd-today'}, 'Today') : null;
+  var head;
+  if (g.tasks.length){
+    head = h('button', {type: 'button', class: 'pg-head', id: base + 'h', 'data-fk': 'pgh:' + g.k, 'aria-expanded': folded ? 'false' : 'true', 'aria-controls': base + 'l',
+      on: {click: function(){ pvFoldSet(g.k, !folded); invalidate('person'); }}},
+      icon(folded ? 'chevR' : 'down', 'sm pg-chev'), dot, txt, tag, folded && open.length ? h('span', {class: 'pg-n', text: open.length + ' open'}) : null);
+  } else {
+    // a program she's signed up for with no tasks of hers: the header opens the program
+    head = h('button', {type: 'button', class: 'pg-head pg-ev', id: base + 'h', 'data-fk': 'pgh:' + g.k, 'aria-haspopup': 'dialog', on: {click: function(e){ eventSheet(hd.ev.id, e.currentTarget); }}},
+      h('span', {class: 'pg-chev pg-sp', 'aria-hidden': 'true'}), dot, txt, tag);
+  }
+  var body = null;
+  if (g.tasks.length){
+    var opt = {noWhere: true, day: g.kind !== 'day'}, rows = open.map(function(t){ return taskLine(t, pid, 'pv', opt); });
+    var dk = 'g:' + g.k, dOpen = !open.length || !!(S.pvDoneOpen && S.pvDoneOpen.has(dk));
+    if (done.length && open.length) rows.push(h('li', {class: 'pg-done'}, h('button', {type: 'button', class: 'link rd-done', 'aria-expanded': dOpen ? 'true' : 'false', 'data-fk': 'pvdone:' + (g.kind === 'day' ? g.date : g.k),
+      on: {click: function(){ if (!S.pvDoneOpen) S.pvDoneOpen = new Set(); if (S.pvDoneOpen.has(dk)) S.pvDoneOpen.delete(dk); else S.pvDoneOpen.add(dk); invalidate('person'); }}},
+      icon(dOpen ? 'down' : 'chevR', 'sm'), done.length + ' done')));
+    if (dOpen) done.forEach(function(t){ rows.push(taskLine(t, pid, 'pv', opt)); });
+    body = h('ul', {class: 'rtasks pg-tasks', id: base + 'l', 'aria-labelledby': base + 'h', hidden: folded}, rows);
+  }
+  return h('li', {class: 'pgroup pg-' + g.kind + (hd.ev ? ' c25 ' + (deptClass(hd.ev) || 'dept-other') : '') + (isToday ? ' is-today' : '') + (folded ? ' folded' : '') + (g.lead ? ' pg-lead' : ''),
+    id: g.kind === 'day' ? 'pd_' + g.date : null, 'data-date': g.date || null, 'data-k': g.k}, h('h3', {class: 'pg-h'}, head), body);
+}
 RENDER.person = function(){
   var sec = $('#v-person');
   if (S.weekLoaded !== S.week || !S.sharedLoaded){
@@ -4575,23 +4829,22 @@ RENDER.person = function(){
         var v = inp.value.trim(); inp.value = ''; addTaskSheet({pid: pid, text: v, ret: e.currentTarget}); }}}, icon('plus', 'sm'), 'Add task'));
     addf.dataset.pid = pid;
   }
-  // 1. Overdue (only when there are any). v2.6.6 (Anisha): a task due today sits in today's box, checked or not
+  // 1. Overdue (only when there are any, viewing this week). v2.6.6 (Anisha): a task due today sits in today's group, checked or not
   var needs = ts.filter(function(t){ return !personDone(t, pid) && isOverdue(t); });
   var needIds = new Set(needs.map(function(t){ return t.id; }));
   var needSec = needs.length ? h('section', {class: 'pv-need', 'aria-labelledby': 'pvNeedH'}, h('h2', {class: 'pv-h', id: 'pvNeedH'}, 'Overdue', h('span', {class: 'muted', text: needs.length + ' open'})),
     h('ul', {class: 'rtasks wide'}, needs.map(function(t){ return taskLine(t, pid, 'pn', {day: true}); }))) : null;
-  // 2. this week the calendar way: only days with a program or a task for this person
+  // 2. v2.8.0 (Oct 23 call, Item A): the week by program. One group per program she's on (tasks or a sign-up), personal tasks under their day,
+  //    "No day set" last. In-office and setup lines stay on the Calendar.
   var wkOk = !hasShifts() || shiftsReady(monthsOfRange(S.week, addDays(S.week, 6)));
-  var evsP = hasShifts() && wkOk ? eventsIn(S.week, addDays(S.week, 6)).filter(function(s){ return D.sp.has(s.id + '|' + pid); }) : [];
-  var box = weekStrip(S.week, evsP, pid, 'pv', {hideEmpty: true, skip: needIds, collapseDone: true});
-  if (box) box.classList.add('pv-days');
-  var noneT = personDayTasks(pid).none;
+  var groups = pvGroups(pid, needIds, wkOk);
+  var box = groups.length ? h('ol', {class: 'pv-groups pv-days', 'aria-labelledby': 'pvTasksH'}, groups.map(function(g){ return pvGroupEl(g, pid); })) : null;
   var openN = ts.filter(function(t){ return !personDone(t, pid); }).length;
   var tasksH = h('h2', {class: 'pv-h', id: 'pvTasksH'}, tw ? 'This week' : weekLabel(S.week),
     openN ? h('span', {class: 'muted', text: openN + ' open'}) : null);
-  var quiet = !box && !noneT.length ? h('p', {class: 'muted pv-quiet', text: needs.length ? 'Nothing else on ' + personName(pid) + '\u2019s week.' : 'Nothing on ' + personName(pid) + '\u2019s week yet.' + (wkOk ? '' : ' Loading the calendar\u2026')}) : null;
-  var noneEl = noneT.length ? h('section', {class: 'wother pv-none', 'aria-labelledby': 'pvNoneH'}, h('h3', {id: 'pvNoneH', text: 'No day set'}),
-    h('ul', {class: 'rtasks wide'}, noneT.map(function(t){ return taskLine(t, pid, 'pv'); }))) : null;
+  var quiet = !box ? h('p', {class: 'muted pv-quiet', text: needs.length ? 'Nothing else on ' + personName(pid) + '\u2019s week.' : 'Nothing on ' + personName(pid) + '\u2019s week yet.' + (wkOk ? '' : ' Loading the calendar\u2026')}) : null;
+  var noneEl = null;
+
   // 3. programs for the next two weeks: one line each, their tasks under it only when there are any
   var ntw = null;
   if (hasShifts()){
@@ -4620,7 +4873,7 @@ RENDER.person = function(){
         x.live ? h('button', {type: 'button', class: 'grow w-open', 'data-fk': 'pwm:' + x.t.id, 'aria-haspopup': 'dialog', on: {click: function(e){ taskSheet(x.t.id, pid, e.currentTarget); }}}, txt) : h('span', {class: 'grow', text: txt}),
         x.done ? h('span', {class: 'mk full'}, icon('check'), 'Done') : null);
     })) : h('p', {class: 'muted small', text: 'Nothing yet.'})) : null;
-  setKids(sec, [top, addf, staffView ? watchSec : null, needSec, tasksH, estLine(pid, S.week), box, quiet, noneEl, ntw, staffView ? null : watchSec]);
+  setKids(sec, [top, addf, staffView ? watchSec : null, needSec, tasksH, estLine(pid, S.week), box, quiet, ntw, staffView ? null : watchSec]);
 };
 
 
@@ -4675,20 +4928,94 @@ function shiftStatus(s){
   if (have >= need) return h('span', {class: 'mk full'}, icon('check'), 'Full', h('span', {class: 'sr-only', text: ' (' + have + ' of ' + need + ')'}));
   return h('span', {class: 'mk need'}, icon('warn'), 'Needs ' + (need - have), h('span', {class: 'sr-only', text: ' (' + have + ' of ' + need + ')'}));
 }
-function signUp(s, pid){
+/* v2.8.0 (Oct 23 call, Item B; Anisha L123-124, L64): signing up assigns that program's tasks. Every sign-up path goes through signUp(),
+   every take-off through signOff(), and both through shiftCard(): the event's board card (its week fetched when it isn't the one loaded;
+   a week with no card yet does nothing, Po assigns when it makes the card). A shift needing 1 PA or none: she gets every open task with
+   nobody on it. 2 or more: nothing, the tasks stay open for Take it. Returns the answer now when the week is loaded, else a Promise. */
+function shiftCard(s, fn){
+  var wk = eventWeek(s);
+  if (!wk) return fn(null, []);
+  if (wk === S.week && S.weekLoaded === S.week){ var p = calPairs().byEv.get(s.id) || null; return fn(p, p ? tasksOf(p.id) : []); }
+  // the other month of a week that spans two (never the shift's own: reloading it could bring back a sign-up still on its way out)
+  var team = S.team, miss = monthsOfRange(wk, addDays(wk, 6)).filter(function(m){ return !S.shiftMonths.has(m) && !S.shiftLoading.has(m) && m !== s.month; });
+  return Promise.resolve(miss.length ? loadMonth(true, miss) : null).then(function(){ return fetchWeek(team, wk); }).then(function(res){
+    if (team !== S.team || !res || res[0].error) return fn(null, []);
+    var progs = (res[0].data || []).filter(function(p){ return !p.deleted_at; }), byP = new Map();
+    progs.forEach(function(p){
+      byP.set(p.id, (p.tasks || []).filter(function(t){ return !t.deleted_at; }).map(function(t){
+        // her week isn't on screen: keep this card's assignments where deleteRow/Undo can find them
+        (t.task_people || []).forEach(function(x){ var k = x.task_id + '|' + x.person_id; if (!D.tp.has(k)) D.tp.set(k, x); });
+        var o = Object.assign({}, t); delete o.task_people; delete o.task_watchers; o._tp = (t.task_people || []).map(function(x){ return x.person_id; }); return o;
+      }));
+    });
+    IX = null;
+    var p = pairWeek(eventsIn(wk, addDays(wk, 6)), progs).byEv.get(s.id) || null;
+    return fn(p, p ? byP.get(p.id) || [] : []);
+  }).catch(function(){ return fn(null, []); });
+}
+function nobodyOn(t){
+  var ids = t._tp || assigneesOf(t.id).map(function(x){ return x.person_id; });
+  return !ids.some(function(id){ var x = D.people.get(id); return x && !x.deleted_at; });
+}
+function signupTasks(s, pid){
+  return shiftCard(s, function(p, ts){
+    var cur = D.shifts.get(s.id) || s;
+    if (!p || (+cur.pa_needed || 0) > 1 || !D.sp.has(s.id + '|' + pid)) return [];
+    var out = [];
+    ts.forEach(function(t){
+      if (t.done || !nobodyOn(t) || D.tp.has(t.id + '|' + pid)) return;
+      if (D.tasks.has(t.id)) assignPerson(D.tasks.get(t.id), pid);
+      else insertRow('task_people', {task_id: t.id, person_id: pid, team: S.team, done: false}, taskLabel(t));
+      out.push(t.id);
+    });
+    if (out.length) invalidate('board', 'person', 'cal');
+    return out;
+  });
+}
+function signoffTasks(s, pid, gone){
+  return shiftCard(s, function(p, ts){
+    if (!p || gone.cancelled) return [];
+    var out = [];
+    ts.forEach(function(t){
+      var k = t.id + '|' + pid, x = D.tp.get(k); if (!x || x.done || t.done) return;
+      var prev = Object.assign({}, x);
+      if (D.tasks.has(t.id)) unassignPerson(D.tasks.get(t.id), pid); else deleteRow('task_people', k, taskLabel(t));
+      out.push({row: prev, label: taskLabel(t)});
+    });
+    if (out.length) invalidate('board', 'person', 'cal');
+    return out;
+  });
+}
+function nTasks(n){ return n + (n === 1 ? ' task' : ' tasks'); }
+function signUp(s, pid, o){
+  o = o || {};
   var key = s.id + '|' + pid;
-  if (D.sp.has(key)) return;
+  if (D.sp.has(key)) return 0;
   insertRow('shift_people', {shift_id: s.id, person_id: pid, team: S.team}, shiftLabel(s));
   invalidate('shifts', 'person', 'cal', 'pas');
-  announce(personName(pid) + ' signed up for ' + shiftLabel(s));
+  var lbl = shiftLabel(s), say = function(ids){
+    var n = ids.length;
+    if (o.quiet) return n;
+    if (!n) announce(o.line || personName(pid) + ' signed up for ' + lbl);
+    else toast(pid === myId() ? 'Signed up for ' + lbl + ' \u00b7 ' + nTasks(n) + (n === 1 ? ' is' : ' are') + ' yours' : personName(pid) + ' is on ' + lbl + ' \u00b7 ' + nTasks(n) + ' assigned');
+    return n;
+  };
+  var r = signupTasks(s, pid);
+  return r && r.then ? r.then(say) : say(r);
 }
 function signOff(s, pid){
   var key = s.id + '|' + pid;
   if (!D.sp.has(key)) return;
   deleteRow('shift_people', key, shiftLabel(s));
   invalidate('shifts', 'person', 'cal', 'pas');
+  var gone = {cancelled: false, rows: []};
+  var r = signoffTasks(s, pid, gone), keep = function(rows){ gone.rows = rows; };
+  if (r && r.then) r.then(keep); else keep(r);
   toast('Took ' + personName(pid) + ' off ' + shiftLabel(s) + '.', {action: {label: 'Undo', fn: function(){
-    if (!D.sp.has(key)) insertRow('shift_people', {shift_id: s.id, person_id: pid, team: S.team}, shiftLabel(s)); invalidate('shifts', 'person', 'cal', 'pas'); refreshSheet();
+    gone.cancelled = true;
+    if (!D.sp.has(key)) insertRow('shift_people', {shift_id: s.id, person_id: pid, team: S.team}, shiftLabel(s));
+    gone.rows.forEach(function(x){ var k = x.row.task_id + '|' + x.row.person_id; if (!D.tp.has(k)) insertRow('task_people', {task_id: x.row.task_id, person_id: x.row.person_id, team: S.team, done: !!x.row.done}, x.label); });
+    invalidate('shifts', 'person', 'cal', 'pas', 'board'); refreshSheet();
   }}});
 }
 function setNeeded(s, n){
@@ -4706,7 +5033,7 @@ function shiftPicker(s){
     selected: function(){ return shiftPAs(s.id).map(function(x){ return x.person_id; }); },
     toggle: function(pid, on){
       var key = s.id + '|' + pid;
-      if (on){ if (!D.sp.has(key)) insertRow('shift_people', {shift_id: s.id, person_id: pid, team: S.team}, shiftLabel(s)); announce(personName(pid) + ' is on ' + shiftLabel(s)); }
+      if (on){ if (!D.sp.has(key)) signUp(s, pid, {line: personName(pid) + ' is on ' + shiftLabel(s)}); else announce(personName(pid) + ' is on ' + shiftLabel(s)); }   // v2.8.0: assigns the tasks too
       else if (D.sp.has(key)) signOff(s, pid);
       invalidate('shifts', 'person', 'cal', 'pas'); refreshSheet();
     }
@@ -5833,7 +6160,7 @@ function calPerson(){
 function setCalPerson(pid){
   S.calPerson = pid || ''; S.calPersonSet = true; lsSet('calp:' + S.team, pid || 'all');
   if (pid && S.calNeed){ S.calNeed = false; lsSet('caln:' + S.team, null); }   // v2.6.9: a person's programs, not just the short ones
-  invalidate('cal'); announce(pid ? (pid === calMe() ? 'Showing your programs' : 'Showing ' + personName(pid) + '\u2019s programs') : 'Showing everyone');
+  invalidate('cal', 'board'); announce(pid ? (pid === calMe() ? 'Showing your programs' : 'Showing ' + personName(pid) + '\u2019s programs') : 'Showing everyone');
 }
 /* v2.7.0: programs short of PAs in the period on screen (person filter not applied): the Needs a PA count.
    v2.7.1: every department, since Needs a PA and a department are one choice now (picking Needs a PA shows them all) */
@@ -5880,6 +6207,7 @@ function setCalFilter(v){
 function cfLabel(v, n){ return v === 'need' ? 'Needs a PA' : v === 'all' ? 'All departments' : v; }
 /* one dropdown's settings: 'cfilter' (Calendar: departments + Needs a PA) | 'bfilter' (Board) | 'sfilter' (PA shifts) */
 function dfOpts(fk){
+  if (fk === 'wkpick') return wkOpts();   // v2.8.0: the header's week dropdown
   if (fk === 'cfilter') return {fk: fk, vals: ['all'].concat(DEPTS).concat(['-', 'need']), cur: calFilterVal(), n: calNeedCount(), set: setCalFilter, name: 'Filter'};
   return {fk: fk, vals: ['all'].concat(DEPTS), cur: deptVal(), n: 0, set: setDeptFilter, name: 'Department'};
 }
@@ -5897,15 +6225,16 @@ function deptFilterBtn(fk, n){
 /* the options: a menu of radio items (arrows move, Enter/Space pick, Escape closes, focus goes back to the button) */
 function cfList(n, onPick, o){
   o = o || dfOpts('cfilter');
-  var cur = o.cur, items = [];
+  var cur = o.cur, items = [], lab = o.label || cfLabel;
   o.vals.forEach(function(v){
     if (v === '-'){ items.push(h('div', {class: 'cf-sep', role: 'separator'})); return; }
     var on = v === cur;
     items.push(h('button', {type: 'button', class: 'cf-item' + (DEPT_CLASS[v] ? ' ' + DEPT_CLASS[v] : ''), role: 'menuitemradio', 'aria-checked': on ? 'true' : 'false', tabindex: on ? '0' : '-1',
-      'data-fk': o.fk + ':' + v, 'aria-label': cfLabel(v) + (v === 'need' && n ? ', ' + n + (n === 1 ? ' program' : ' programs') : ''), on: {click: function(){ onPick(v); }}},
+      'data-fk': o.fk + ':' + v, 'aria-label': lab(v) + (v === 'need' && n ? ', ' + n + (n === 1 ? ' program' : ' programs') : ''), on: {click: function(){ onPick(v); }}},
       h('span', {class: 'cf-ck', 'aria-hidden': 'true'}, on ? icon('check', 'sm') : null),
       DEPT_CLASS[v] ? h('span', {class: 'cal__dot', 'aria-hidden': 'true'}) : null,
-      h('span', {class: 'cf-t', text: cfLabel(v)}),
+      o.sub ? h('span', {class: 'cf-sub', text: o.sub(v) || ''}) : null,   // v2.8.0: an empty one too, so the ranges line up
+      h('span', {class: 'cf-t', text: o.sub ? o.range(v) : lab(v)}),
       v === 'need' && n ? h('span', {class: 'cal__n', 'aria-hidden': 'true', text: String(n)}) : null));
   });
   var menu = h('div', {class: 'cf-list', role: 'menu', 'aria-label': o.name, on: {keydown: function(e){
@@ -5917,6 +6246,25 @@ function cfList(n, onPick, o){
     if (j >= 0){ e.preventDefault(); bs.forEach(function(b, k){ b.tabIndex = k === j ? 0 : -1; }); bs[j].focus(); }
   }}}, items);
   return menu;
+}
+/* v2.8.0 (Oct 23 call, L40/L114): the week dropdown. This week, the 3 before, the 8 after (plus the week on screen when it's further out). */
+function wkSubOf(w){ var tw = thisWeek(); return w === tw ? 'This week' : w === addDays(tw, 7) ? 'Next week' : w === addDays(tw, -7) ? 'Last week' : ''; }
+function wkOpts(){
+  var tw = thisWeek(), vals = [];
+  for (var i = -3; i <= 8; i++) vals.push(addDays(tw, i * 7));
+  if (vals.indexOf(S.week) < 0){ vals.push(S.week); vals.sort(); }
+  return {fk: 'wkpick', vals: vals, cur: S.week, n: 0, name: 'Week', set: function(v){ if (v !== S.week) go({week: v}); },
+    sub: wkSubOf, range: weekRange, label: function(v){ var s = wkSubOf(v); return (s ? s + ', ' : '') + weekRange(v); }};
+}
+function wkPickBtn(){
+  var b = $('#wkPick');
+  if (!b) b = h('button', {type: 'button', class: 'wk-pick', id: 'wkPick', 'data-fk': 'wkpick', 'aria-haspopup': 'menu', 'aria-expanded': 'false',
+    on: {click: function(e){ calFilterMenu(e.currentTarget, null, 'wkpick'); }, keydown: function(e){ if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); calFilterMenu(e.currentTarget, e.key === 'ArrowUp' ? 'last' : null, 'wkpick'); } }}},
+    h('span', {class: 'wk-t'}), icon('down', 'sm cf-chev'));
+  var r = weekRange(S.week), s = wkSubOf(S.week);
+  b.querySelector('.wk-t').textContent = r;
+  b.setAttribute('aria-label', r + (s ? ', ' + s.toLowerCase() : '') + '. Change week');
+  return b;
 }
 var DF = {pop: null, btn: null, fk: 'cfilter'};   // v2.7.2: was CF, which shared its name with the R-01 conflicts state in b_sync.js
 function cfFocusBtn(fk){ fk = fk || DF.fk || 'cfilter'; setTimeout(function(){ var b = fkEl(fk); if (b) b.focus({preventScroll: true}); }, 60); }
@@ -5963,7 +6311,7 @@ function calFilterMenu(btn, at, fk){
 }
 /* v2.7.2: a Board card's department is its paired calendar program's (same pairing as the PA board's day, time and place).
    No paired program, or a program with no department: shown only under All departments. */
-function progDept(p){ var e = calPairs().byProg.get(p.id); return e ? deptOf(e) : ''; }
+function progDept(p){ var e = calPairs().byProg.get(p.id); if (!e && isLeadUp(p)) e = leadEvent(p); return e ? deptOf(e) : ''; }   // v2.8.0: a lead-up card takes its event's department
 function deptEmpty(what, fk){
   var d = deptOn();
   return h('div', {class: 'empty dept-empty', id: fk + 'Empty'}, h('p', {text: 'No ' + d + ' ' + what}),
@@ -6105,8 +6453,8 @@ function personDayTasks(pid){
 function taskLine(t, pid, fk, opts){
   opts = opts || {};
   var on = personDone(t, pid), lbl = taskLabel(t), p = D.programs.get(t.program_id), note = (t.notes || '').replace(/\s+/g, ' ').trim();
-  var meta = [h('span', {class: 'rt-where', text: p && !p.personal ? progLabel(p) : 'Personal'})];
-  if (opts.day && t.due) meta.push(' \u00b7 ', h('span', {text: dayName(t.due)}));
+  var meta = opts.noWhere ? [] : [h('span', {class: 'rt-where', text: p && !p.personal ? progLabel(p) : 'Personal'})];   // v2.8.0: My tasks groups say the program once, on the header
+  if (opts.day && t.due) meta.push(meta.length ? ' \u00b7 ' : null, h('span', {text: dayName(t.due)}));
   var mk = [];
   if (!on && isOverdue(t)) mk.push(h('span', {class: 'mk overdue'}, icon('warn'), 'Overdue'));
   var ws = watchersOf(t.id);
@@ -6214,10 +6562,11 @@ function calMonth(sec){
             more ? h('li', null, h('button', {type: 'button', class: 'more', 'data-fk': 'cmore:' + d, 'aria-label': more + ' more on ' + dayLong(d) + '. Open the week',
               on: {click: function(dd){ return function(){ go({mode: 'week', week: mondayOf(isoToDate(dd)), day: dd}); }; }(d)}}, '+' + more + ' more')) : null) : null));
       }
-      var wl = isoToDate(w), sun = addDays(w, 6);
+      var wl = isoToDate(w), sun = addDays(w, 6), wz = isoToDate(sun);
+      // v2.8.0 (Oct 23 call, L47): the week's range, "Sep 28 \u2013 Oct 4", on two lines
       rows.push(h('div', {class: 'mweek', role: 'group', 'aria-label': 'Week of ' + shortDate(w)},
-        h('button', {type: 'button', class: 'wklabel', 'data-fk': 'cwk:' + w, 'aria-label': 'Open the week of ' + shortDate(w), on: {click: function(){ if (isAdmin()) S.calSel = sun > mEnd ? mEnd : sun < m + '-01' ? m + '-01' : sun; go({mode: 'week', week: w}); }}},
-          h('span', {text: MON_SHORT[wl.getMonth()]}), h('b', {text: String(wl.getDate())})),
+        h('button', {type: 'button', class: 'wklabel', 'data-fk': 'cwk:' + w, 'aria-label': 'Open the week of ' + weekRange(w), on: {click: function(){ if (isAdmin()) S.calSel = sun > mEnd ? mEnd : sun < m + '-01' ? m + '-01' : sun; go({mode: 'week', week: w}); }}},
+          h('span', {class: 'wl-a', text: MON_SHORT[wl.getMonth()] + ' ' + wl.getDate()}), ' ', h('span', {class: 'wl-z', text: '\u2013 ' + (wz.getMonth() === wl.getMonth() ? '' : MON_SHORT[wz.getMonth()] + ' ') + wz.getDate()})),
         h('ol', {class: 'mdays'}, cells)));
     })(w);
   }
@@ -6849,10 +7198,12 @@ function renderHeader(){
   var wn = $('#wnav'), lab = $('#navLabel'), isMonth = monthNav(), isWeek = !!WEEK_TABS[S.tab] || (S.tab === 'cal' && !isMonth);
   wn.hidden = !(isWeek || isMonth);
   if (isWeek){
-    lab.textContent = weekLabel(S.week);
+    // v2.8.0 (Oct 23 call): the range ("Oct 19 \u2013 25") as a dropdown of weeks; the arrows stay
+    var wb = wkPickBtn(); if (lab.childNodes.length !== 1 || lab.firstChild !== wb) lab.replaceChildren(wb);
     $('#navPrev').setAttribute('aria-label', 'Previous week'); $('#navNext').setAttribute('aria-label', 'Next week');
     $('#navToday').textContent = 'This week'; $('#navToday').hidden = S.week === thisWeek();
   } else if (isMonth){
+    if (DF.fk === 'wkpick' && DF.pop) cfClose(false);
     lab.textContent = monthLabel(S.month);
     $('#navPrev').setAttribute('aria-label', 'Previous month'); $('#navNext').setAttribute('aria-label', 'Next month');
     $('#navToday').textContent = 'This month'; $('#navToday').hidden = S.month === thisMonth();
