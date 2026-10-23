@@ -1531,6 +1531,14 @@ button.take:hover{background:var(--action,var(--roots-herb));color:var(--on-acti
 @media (pointer:coarse){ button.take,.pa-task .mk.due-ro{min-height:44px} }
 .btabs .bt span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 
+/* v2.7.3 (Omar Oct 23, Hallmark review): pressed feedback. The phone's own tap highlight is off (style.css), so a tap showed nothing
+   until the action finished and a PA could tap "Take it" twice. Every tappable control darkens about 10% while pressed, no animation.
+   An inset shadow darkens any fill, transparent ones included, and follows the corner radius. Children with their own fill (tags) keep it.
+   !important because view rules like #v-shifts.v26 .s-open set box-shadow at ID weight; it only applies while a finger is down. */
+:is(button,.btn,a[href],summary,[role="button"],[role="option"],label.cb,label.rt-cb,label.sw25):active:not(:disabled):not([aria-disabled="true"]){box-shadow:inset 0 0 0 100vmax rgba(0,0,0,.1)!important;transition:none}
+/* a shift row opens on a tap anywhere (its status pill too); darken the row only when no control inside it is the thing pressed. Own rule, so a browser without :has() still keeps the one above. */
+li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-shadow:inset 0 0 0 100vmax rgba(0,0,0,.1)!important;transition:none}
+
 </style>
 </head>
 <body>
@@ -1610,7 +1618,8 @@ button.take:hover{background:var(--action,var(--roots-herb));color:var(--on-acti
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.7.2';   // v2.7.2: departments are one shared filter (Calendar, Board, PA shifts), never a team; no team chips at sign-in
+var BUILD = '2.7.3';   // v2.7.3: pressed feedback on every tappable control (Hallmark review, Omar Oct 23)
+// was 2.7.2: // v2.7.2: departments are one shared filter (Calendar, Board, PA shifts), never a team; no team chips at sign-in
 // v2.7.1: Calendar filter is one dropdown (departments + Needs a PA); Board tab for PAs/YCs with Take it
 // v2.6.9:   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
 // v2.6.8:   // v2.6.8: team switcher label no longer vanishes on hover, no "Open now"   // v2.6.7: "View as" a PA or YC for admins in Sandbox / QA
@@ -6677,6 +6686,8 @@ RENDER.links = function(){
 /* remember whether the last thing used was the keyboard, so focus moved by the app (a sheet closing) still shows its ring */
 document.addEventListener('keydown', function(e){ if (e.key === 'Tab' || e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key.indexOf('Arrow') === 0) document.documentElement.setAttribute('data-kb', ''); }, true);
 document.addEventListener('pointerdown', function(){ document.documentElement.removeAttribute('data-kb'); }, true);
+/* v2.7.3: iOS Safari only applies :active (the pressed look) when a touchstart listener exists. Passive, does nothing else. */
+document.addEventListener('touchstart', function(){}, {passive: true});
 /* ==========================================================================
    HEADER, TABS, ROUTING
    ========================================================================== */
