@@ -1050,6 +1050,38 @@ a.tplflow{position:absolute;top:0;right:14px;height:48px;display:flex;align-item
   .cal__dot{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 
+/* ---------- v2.9.0 (Oct 23 call): E PA arrival time, G program lead ---------- */
+/* PA shifts row: "Arrive 4 PM" leads the meta line, same muted 13px as the time; the location gives way first */
+#v-shifts.v26 .s-arr{flex:none;font-variant-numeric:tabular-nums}
+#v-shifts.v26 .s-sep{flex:none}
+/* the lead slot: a second line under the program name (phones, tablets); its own column right of the PA status from 1024px */
+#v-shifts.v26 .shift.v26.has-lead{grid-template-rows:auto auto}
+#v-shifts.v26 .shift.v26.has-lead > .s-open{grid-column:1;grid-row:1;padding-bottom:4px}
+#v-shifts.v26 .shift.v26.has-lead > .s-act{grid-column:2;grid-row:1}
+#v-shifts.v26 .shift.v26.has-lead > .s-lead{grid-column:1 / -1;grid-row:2;justify-content:flex-start;padding:0 0 10px calc(5rem + 16px)}
+#v-shifts.v26 .s-lead{display:flex;align-items:center;min-width:0}
+#v-shifts.v26 .s-lead-t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:400 13px/1.3 var(--font);color:var(--muted)}
+#v-shifts.v26 .s-lead-t b{font-weight:600;color:var(--ink)}
+#v-shifts.v26 .s-lead-btn{min-height:40px;padding:0 14px;gap:4px;border:1px solid var(--line-accent);border-radius:var(--r-tag,6px);background:var(--white);color:var(--action);font:600 14px/1.2 var(--font);white-space:nowrap}
+#v-shifts.v26 .s-lead-btn:hover{background:var(--ok-bg);color:var(--action)}   /* colour too: the global button:hover fill */
+#v-shifts.v26 .s-lead-btn.on{background:var(--ok-bg);color:var(--ok)}
+#v-shifts.v26 .s-lead-btn .ic{width:14px;height:14px;flex:none}
+@media (max-width:767px){ #v-shifts.v26 .shift.v26.has-lead > .s-lead{padding-left:calc(3.75rem + 8px)} }
+@media (max-width:380px){ #v-shifts.v26 .shift.v26.has-lead > .s-lead{padding-left:calc(3.6rem + 8px)} }
+@media (min-width:1024px){
+  #v-shifts.v26:has(.shift.has-lead) .shift.v26{grid-template-columns:minmax(0,1fr) 8.75rem 8.75rem}   /* every row keeps the same PA-status column */
+  #v-shifts.v26 .shift.v26.has-lead{grid-template-rows:auto}
+  #v-shifts.v26 .shift.v26.has-lead > .s-open{padding-bottom:0}
+  #v-shifts.v26 .shift.v26.has-lead > .s-lead{grid-column:3;grid-row:1;justify-content:flex-end;padding:0}
+}
+@media (pointer:coarse){ #v-shifts.v26 .s-lead-btn{min-height:44px} }
+/* the Shift sheet: "PA arrives" (admins) sits under PAs needed, same row look; the Lead section uses the Who's on list */
+#sheet .sh-sheet .sh-arr{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:var(--space-3);padding-top:var(--space-3);border-top:1px solid var(--line2)}
+#sheet .sh-sheet .sh-arr select{width:auto;max-width:62%;min-height:var(--control-md);font-size:16px}
+#sheet .sh-sheet .sh-lead-me{justify-self:start}
+#sheet .sh-sheet .sh-leadsec select.su-sel{width:100%;max-width:none;min-height:var(--control-md);border-radius:var(--r-field,8px)}
+@media (pointer:coarse){ #sheet .sh-sheet .sh-arr select,#sheet .sh-sheet .sh-leadsec select.su-sel,#sheet .sh-sheet .sh-lead-me{min-height:44px} }
+
 /* ==========================================================================
    v2.3: Roots Design System v3 component layer. Loaded last; mirrors
    design/roots_ds_v3/styles/components.css (.rt-btn, .rt-input, .rt-chip,
@@ -1683,7 +1715,7 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.8.0';   // v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
+var BUILD = '2.9.0';   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
 // was 2.7.2: // v2.7.2: departments are one shared filter (Calendar, Board, PA shifts), never a team; no team chips at sign-in
 // v2.7.1: Calendar filter is one dropdown (departments + Needs a PA); Board tab for PAs/YCs with Take it
 // v2.6.9:   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
@@ -1937,7 +1969,8 @@ var S = {
 var D = {
   people: new Map(), templates: new Map(), links: new Map(), programs: new Map(), tasks: new Map(),
   tp: new Map(), notes: new Map(), shifts: new Map(), sp: new Map(), members: new Map(), tw: new Map(), oh: new Map(),
-  est: new Map(), pnotes: new Map()
+  est: new Map(), pnotes: new Map(),
+  sl: new Map(), rep: new Map()   // v2.9.0: shift_leads (program leads), repeat_tasks (repeating admin tasks)
 };
 var T = {
   people: {map: function(){ return D.people; }, pk: ['id']},
@@ -1952,7 +1985,9 @@ var T = {
   task_watchers: {map: function(){ return D.tw; }, pk: ['task_id', 'person_id']},
   office_hours: {map: function(){ return D.oh; }, pk: ['id']},
   task_estimates: {map: function(){ return D.est; }, pk: ['task_id']},
-  pa_notes: {map: function(){ return D.pnotes; }, pk: ['id']}
+  pa_notes: {map: function(){ return D.pnotes; }, pk: ['id']},
+  shift_leads: {map: function(){ return D.sl; }, pk: ['shift_id', 'person_id']},   // v2.9.0
+  repeat_tasks: {map: function(){ return D.rep; }, pk: ['id']}                      // v2.9.0
 };
 /* Task time estimates: who sees them. 'admins' until Anisha approves them for PAs, then 'everyone'.
    This is the only switch: with it off for a login, estimates aren't loaded, subscribed to or shown. */
@@ -2443,7 +2478,7 @@ function updateSaveState(){
 var CF_FIELD = {task: 'task', notes: 'note', waiting_on: 'waiting on', name: 'name', program: 'program', location: 'location', time_text: 'time',
   pa_needed: 'PAs needed', due: 'day', label: 'label', url: 'link', folder: 'folder', date: 'date', grp: 'group', dept: 'department',
   manual_url: 'program flow link', start_time: 'start time', end_time: 'end time', program_id: 'program', lead_ids: 'leads', locations: 'locations',
-  offsite: 'offsite place', template_id: 'template', text: 'note', minutes: 'time estimate'};
+  offsite: 'offsite place', template_id: 'template', text: 'note', minutes: 'time estimate', arrive_min: 'PA arrival'};   // v2.9.0: +arrive_min
 function cfKeyFor(team){ return 'conflicts:' + S.uid + ':' + team; }
 function cfLoad(){
   var k = S.uid && S.team ? cfKeyFor(S.team) : null;
@@ -2582,7 +2617,8 @@ async function loadShared(){
     sb.from('links').select('*').eq('team', team).is('deleted_at', null),
     sb.from('members').select('user_id,label,role').eq('team', team),
     // task time estimates: only for logins that may see them (SHOW_ESTIMATES); never fetched otherwise
-    estOn() ? sb.from('task_estimates').select('task_id,team,minutes,kind,source,for_text,updated_at').eq('team', team).limit(5000) : Promise.resolve({data: []})
+    estOn() ? sb.from('task_estimates').select('task_id,team,minutes,kind,source,for_text,updated_at').eq('team', team).limit(5000) : Promise.resolve({data: []}),
+    sb.from('repeat_tasks').select('*').eq('team', team).is('deleted_at', null)   // v2.9.0
   ]);
   if (team !== S.team) return;
   var err = res.find(function(r){ return r.error; });
@@ -2592,6 +2628,7 @@ async function loadShared(){
   D.links.clear(); res[2].data.forEach(function(r){ D.links.set(r.id, r); });
   D.members.clear(); res[3].data.forEach(function(r){ D.members.set(r.user_id, r); });
   D.est.clear(); if (!res[4].error) (res[4].data || []).forEach(function(r){ D.est.set(r.task_id, r); });
+  D.rep.clear(); if (!res[5].error) (res[5].data || []).forEach(function(r){ D.rep.set(r.id, r); });   // v2.9.0
   S.sharedLoaded = true; IX = null;
   applyQueueToState();      // people, Master programs and links added offline stay on screen through a refresh (review P12)
 }
@@ -2681,7 +2718,7 @@ async function loadMonth(quiet, only){
   var from = months[0] + '-01', to = addDays(addMonths(months[months.length - 1], 1) + '-01', -1);
   try {
     var both = await Promise.all([
-      sb.from('shifts').select('*, shift_people(*)').eq('team', team).in('month', months).is('deleted_at', null),
+      sb.from('shifts').select('*, shift_people(*), shift_leads(*)').eq('team', team).in('month', months).is('deleted_at', null),
       sb.from('office_hours').select('*').eq('team', team).gte('date', from).lte('date', to).is('deleted_at', null)
     ]);
     res = both[0]; oh = both[1];
@@ -2690,15 +2727,17 @@ async function loadMonth(quiet, only){
   months.forEach(function(m){ S.shiftLoading.delete(m); });
   if (team !== S.team){ replayBuffer(); return; }
   if (res.error){ if (!quiet) S.monthError = res.error; replayBuffer(); invalidate('shifts', 'person', 'cal'); return; }
-  var shifts = new Map(), sp = new Map(), mset = new Set(months);
-  res.data.forEach(function(s){ var xs = s.shift_people || []; delete s.shift_people; shifts.set(s.id, s);
-    xs.forEach(function(x){ sp.set(x.shift_id + '|' + x.person_id, x); }); });
+  var shifts = new Map(), sp = new Map(), sl = new Map(), mset = new Set(months);
+  res.data.forEach(function(s){ var xs = s.shift_people || [], ls = s.shift_leads || []; delete s.shift_people; delete s.shift_leads; shifts.set(s.id, s);
+    xs.forEach(function(x){ sp.set(x.shift_id + '|' + x.person_id, x); });
+    ls.forEach(function(x){ sl.set(x.shift_id + '|' + x.person_id, x); }); });   // v2.9.0: program leads
   if (oh && !oh.error){
     var ohm = new Map(); (oh.data || []).forEach(function(r){ ohm.set(r.id, r); });
     mergeScope('office_hours', ohm, function(r){ return mset.has(monthOf(r.date)); });
   }
   mergeScope('shifts', shifts, function(r){ return mset.has(r.month); });
   mergeScope('shift_people', sp, function(r){ var x = D.shifts.get(r.shift_id); return !x || mset.has(x.month); });
+  mergeScope('shift_leads', sl, function(r){ var x = D.shifts.get(r.shift_id); return !x || mset.has(x.month); });   // v2.9.0
   months.forEach(function(m){ S.shiftMonths.add(m); });
   S.monthLoaded = S.month; S.monthError = null; IX = null;
   applyQueueToState(); replayBuffer();
@@ -2729,7 +2768,7 @@ function scheduleResync(){
 /* ==========================================================================
    REALTIME: merge incoming rows; never overwrite a field being edited
    ========================================================================== */
-var RT_TABLES = ['people', 'templates', 'links', 'programs', 'tasks', 'task_people', 'task_watchers', 'week_notes', 'shifts', 'shift_people', 'office_hours'];
+var RT_TABLES = ['people', 'templates', 'links', 'programs', 'tasks', 'task_people', 'task_watchers', 'week_notes', 'shifts', 'shift_people', 'office_hours', 'shift_leads', 'repeat_tasks'];   // v2.9.0: +shift_leads, repeat_tasks
 function subscribe(){
   if (S.channel){ try { sb.removeChannel(S.channel); } catch (e){} S.channel = null; }
   if (S.session) try { sb.realtime.setAuth(S.session.access_token); } catch (e){}
@@ -2737,7 +2776,7 @@ function subscribe(){
   (estOn() ? RT_TABLES.concat(['task_estimates']) : RT_TABLES).forEach(function(t){
     ch.on('postgres_changes', {event: '*', schema: 'public', table: t, filter: 'team=eq.' + team}, function(p){ onRemote(t, p); });
   });
-  ['task_people', 'task_watchers', 'shift_people'].forEach(function(t){
+  ['task_people', 'task_watchers', 'shift_people', 'shift_leads'].forEach(function(t){
     ch.on('postgres_changes', {event: 'DELETE', schema: 'public', table: t}, function(p){ onRemote(t, p); });
   });
   ch.subscribe(function(status){
@@ -2778,6 +2817,7 @@ function onRemote(t, p){
   // elsewhere, moved here): fetch its tasks and people too, not just the bare row (review M4)
   if (ev === 'UPDATE' && !map.has(key) && !row.deleted_at && (t === 'programs' || t === 'tasks' || t === 'shifts')) scheduleResync();
   if (t === 'shift_people' && !D.shifts.has(row.shift_id)) return;
+  if (t === 'shift_leads' && !D.shifts.has(row.shift_id)) return;   // v2.9.0
   if (t === 'week_notes' && row.week !== S.week) return;
   if (mergeRow(t, key, row)) invalidateFor(t);
 }
@@ -2805,7 +2845,8 @@ function invalidateFor(t){
   else if (t === 'templates') invalidate('master', 'board', 'cal');
   else if (t === 'links') invalidate('links');
   else if (t === 'week_notes') invalidate('notes');
-  else if (t === 'shifts' || t === 'shift_people') invalidate('shifts', 'person', 'cal', 'pas');
+  else if (t === 'shifts' || t === 'shift_people' || t === 'shift_leads') invalidate('shifts', 'person', 'cal', 'pas');   // v2.9.0: +shift_leads
+  else if (t === 'repeat_tasks') invalidate('master');   // v2.9.0
   else if (t === 'office_hours') invalidate('cal', 'person', 'pas');
   else if (t === 'task_estimates') invalidate('board', 'person', 'cal', 'pas');
   if (S.tab === 'history') scheduleHistoryRefresh();
@@ -4728,13 +4769,14 @@ function pvGroups(pid, skip, wkOk){
   var rank = function(g){ return g.kind === 'none' ? 2 : g.date ? 0 : 1; };
   return Array.from(groups.values()).sort(function(a, b){ return rank(a) - rank(b) || a.date.localeCompare(b.date) || a.min - b.min || String(a.k).localeCompare(String(b.k)); });
 }
-function pvGroupHead(g){
+function pvGroupHead(g, pid){
   if (g.kind === 'day') return {name: dayLong(g.date), when: '', ev: null};
   if (g.kind === 'none') return {name: 'No day set', when: '', ev: null};
   var s = g.ev, p = g.p;
   if (s){
     var nm = (s.program || '').trim() || 'Untitled event', where = locText(s.location);
-    return {name: where ? tileTitle(nm, where) : nm, when: [niceDate(s.date), shiftTime(s), where, s.cal_status === 'gone' ? 'Cancelled' : ''].filter(Boolean).join(' \u00b7 '), ev: s};
+    var arr = pid && D.sp.has(s.id + '|' + pid) ? arriveAt(s) : '';   // v2.9.0 (Oct 23 call, L23-24): when she should be there, on programs she's on
+    return {name: where ? tileTitle(nm, where) : nm, when: [niceDate(s.date), shiftTime(s), arr ? 'arrive ' + arr : '', where, s.cal_status === 'gone' ? 'Cancelled' : ''].filter(Boolean).join(' \u00b7 '), ev: s};
   }
   var le = g.lead ? leadEvent(p) : null;
   return {name: progLabel(p), when: [validIso(p.date) ? niceDate(p.date) : '', le ? shiftTime(le) : ''].filter(Boolean).join(' \u00b7 '), ev: le};
@@ -4748,7 +4790,7 @@ function pvGroupEl(g, pid){
   if (!S.pvFoldDflt.has(fk0)) S.pvFoldDflt.set(fk0, !!(g.date && g.date < today) || (g.tasks.length > 0 && !open.length));
   var dflt = S.pvFoldDflt.get(fk0);
   var folded = g.tasks.length ? (Object.prototype.hasOwnProperty.call(fold, g.k) ? !!fold[g.k] : dflt) : false;
-  var hd = pvGroupHead(g), isToday = g.date === today && !g.placed;   // a lead-up/undated card placed by its tasks' day isn't "today"
+  var hd = pvGroupHead(g, pid), isToday = g.date === today && !g.placed;   // a lead-up/undated card placed by its tasks' day isn't "today"
   var dot = hd.ev ? h('span', {class: 'cal__dot', 'aria-hidden': 'true'}) : null;
   var txt = h('span', {class: 'pg-tx'}, h('b', {class: 'pg-name', text: hd.name}), hd.when ? h('span', {class: 'pg-when', text: hd.when}) : null);
   var tag = isToday ? h('span', {class: 'rd-today'}, 'Today') : null;
@@ -5018,6 +5060,162 @@ function signOff(s, pid){
     invalidate('shifts', 'person', 'cal', 'pas', 'board'); refreshSheet();
   }}});
 }
+/* ---------- v2.9.0 (Oct 23 call, Item E: Zaynab L21-28, Anisha L24): when the PA should be there ----------
+   shifts.arrive_min (an admin's override for one event) ?? the program's Template arrive_min ?? 60 minutes before the start.
+   The calendar keeps the program's own time; the arrival shows on PA shifts rows, My tasks headers and a person's calendar. */
+var ARRIVE_DFLT = 60, ARRIVE_CHOICES = [30, 60, 90, 120, 150, 180];
+function arriveNum(v){ return v == null || v === '' || isNaN(+v) ? null : Math.max(0, Math.round(+v)); }
+function arriveWords(m){ m = arriveNum(m) || 0; if (m < 60) return m + ' min'; if (m % 30 === 0) return (m / 60) + ' hr'; return Math.floor(m / 60) + ' hr ' + (m % 60) + ' min'; }
+/* the event's Template: its paired board card's, else the one the app/Po pick for that program name */
+function arriveTpl(s){
+  var X = ix(); if (!X.arrTpl) X.arrTpl = new Map();
+  if (X.arrTpl.has(s.id)) return X.arrTpl.get(s.id);
+  var p = weekReady(s) ? calPairs().byEv.get(s.id) : null, t = p && p.template_id ? D.templates.get(p.template_id) : null;
+  t = t && !t.deleted_at ? t : templateFor(s) || null;
+  X.arrTpl.set(s.id, t); return t;
+}
+function tplArriveMin(s){ var t = arriveTpl(s); return t ? arriveNum(t.arrive_min) : null; }
+function arriveMin(s){ var v = arriveNum(s && s.arrive_min); if (v != null) return v; v = tplArriveMin(s); return v != null ? v : ARRIVE_DFLT; }
+/* "4 PM", "4:30 PM"; nothing for a row with no start time or a cancelled one */
+function arriveAt(s){
+  if (!s || !s.start_time || s.cal_status === 'gone') return '';
+  var p = String(s.start_time).split(':'), m = (+p[0]) * 60 + (+p[1] || 0);
+  if (isNaN(m)) return '';
+  m = Math.max(0, m - arriveMin(s));
+  return pretty12(pad2(Math.floor(m / 60)) + ':' + pad2(m % 60));
+}
+/* the admin's override, in the Shift sheet: Default (the Template's or 1 hr) / 30 min .. 3 hr before */
+function arriveSelect(s, id){
+  var tm = tplArriveMin(s), cur = arriveNum(s.arrive_min), lbl = shiftLabel(s);
+  var sel = h('select', {id: id, class: 'sh-arr-sel', 'data-fk': 'sarr:' + s.id, on: {change: function(e){
+    var c = D.shifts.get(s.id) || s, v = e.target.value === '' ? null : +e.target.value;
+    setFields('shifts', s.id, {arrive_min: v}, shiftLabel(c)); invalidate('shifts', 'person', 'cal', 'pas');
+    var at = arriveAt(D.shifts.get(s.id) || c);
+    announce(at ? 'PA arrives ' + at : 'PA arrives ' + arriveWords(arriveMin(D.shifts.get(s.id) || c)) + ' before');
+  }}}, h('option', {value: '', text: 'Default (' + arriveWords(tm != null ? tm : ARRIVE_DFLT) + ' before)'}),
+    ARRIVE_CHOICES.concat(cur != null && ARRIVE_CHOICES.indexOf(cur) < 0 ? [cur] : []).map(function(m){ return h('option', {value: String(m), text: arriveWords(m) + ' before'}); }));
+  sel.value = cur == null ? '' : String(cur);
+  sel.setAttribute('aria-describedby', id + '_at');
+  return sel;
+}
+
+/* ---------- v2.9.0 (Oct 23 call, Item G: L152-153, Yousef L150-151): program lead sign-up ----------
+   A lead slot on PA shifts rows of these departments (and on any row that already has a lead). Leads are shift_leads rows, so they
+   never fill a PA slot. Becoming lead makes her a watcher on every task of the program's board card; leaving takes those rows off. */
+var LEAD_DEPTS = ['The Grove'];
+function leadsOf(sid){
+  var X = ix();
+  if (!X.slByShift){ X.slByShift = new Map(); D.sl.forEach(function(x){ var a = X.slByShift.get(x.shift_id); if (!a) X.slByShift.set(x.shift_id, a = []); a.push(x.person_id); }); }
+  return (X.slByShift.get(sid) || []).filter(function(id){ var p = D.people.get(id); return p && !p.deleted_at; })
+    .sort(function(a, b){ return bySort(D.people.get(a), D.people.get(b)); });
+}
+function hasLeadSlot(s){ return LEAD_DEPTS.indexOf(deptOf(s)) >= 0 || leadsOf(s.id).length > 0; }
+/* who "Lead it" is for: a YC (her own login, or an admin viewing as her), or an admin with her own person (e.g. Aadil) */
+function leadMe(){
+  if (isAdmin()) return myStaffPerson() || null;
+  var me = shiftMe(), p = me && D.people.get(me); return p && isYC(p) ? me : null;
+}
+function leadNames(ids){ return ids.length ? firstName(ids[0]) + (ids.length > 1 ? ' +' + (ids.length - 1) : '') : ''; }
+/* the program card's tasks, any week (shiftCard reads another week when needed), with her watcher rows on them known */
+function leadCard(s, pid, fn){
+  return shiftCard(s, function(p, ts){
+    var miss = p ? ts.filter(function(t){ return !D.tasks.has(t.id); }).map(function(t){ return t.id; }) : [];
+    if (!miss.length) return fn(p, ts);
+    return sb.from('task_watchers').select('*').eq('person_id', pid).in('task_id', miss).then(function(r){
+      (r.data || []).forEach(function(x){ var k = x.task_id + '|' + x.person_id; if (!D.tw.has(k)){ D.tw.set(k, x); IX = null; } });
+      return fn(p, ts);
+    }, function(){ return fn(p, ts); });
+  });
+}
+/* on: watch every task of the card she isn't watching yet; off: stop watching them all. Returns the rows it changed. */
+function leadWatch(s, pid, on){
+  return leadCard(s, pid, function(p, ts){
+    var out = [];
+    if (!p) return out;
+    ts.forEach(function(t){
+      var k = t.id + '|' + pid, lbl = taskLabel(t);
+      if (on){ if (D.tw.has(k)) return; insertRow('task_watchers', {task_id: t.id, person_id: pid, team: S.team}, lbl); }
+      else { if (!D.tw.has(k)) return; deleteRow('task_watchers', k, lbl); }
+      out.push({task_id: t.id, label: lbl});
+    });
+    if (out.length) invalidate('board', 'person', 'cal');
+    return out;
+  });
+}
+function leadOn(s, pid){
+  var key = s.id + '|' + pid, lbl = shiftLabel(s);
+  if (D.sl.has(key)) return 0;
+  insertRow('shift_leads', {shift_id: s.id, person_id: pid, team: S.team}, lbl);
+  invalidate('shifts', 'person', 'cal', 'pas');
+  var say = function(rows){
+    rows = rows || [];
+    toast((pid === leadMe() ? 'You\u2019re leading ' : personName(pid) + ' is leading ') + lbl + (rows.length ? ' \u00b7 watching ' + nTasks(rows.length) : ''), {action: {label: 'Undo', fn: function(){
+      if (D.sl.has(key)) deleteRow('shift_leads', key, lbl);
+      rows.forEach(function(x){ var k = x.task_id + '|' + pid; if (D.tw.has(k)) deleteRow('task_watchers', k, x.label); });
+      invalidate('shifts', 'person', 'cal', 'pas', 'board'); refreshSheet();
+    }}});
+    return rows.length;
+  };
+  var r = leadWatch(s, pid, true);
+  return r && r.then ? r.then(say) : say(r);
+}
+function leadOff(s, pid){
+  var key = s.id + '|' + pid, lbl = shiftLabel(s);
+  if (!D.sl.has(key)) return 0;
+  deleteRow('shift_leads', key, lbl);
+  invalidate('shifts', 'person', 'cal', 'pas');
+  var say = function(rows){
+    rows = rows || [];
+    toast((pid === leadMe() ? 'You stopped leading ' : personName(pid) + ' stopped leading ') + lbl + '.', {action: {label: 'Undo', fn: function(){
+      if (!D.sl.has(key)) insertRow('shift_leads', {shift_id: s.id, person_id: pid, team: S.team}, lbl);
+      rows.forEach(function(x){ var k = x.task_id + '|' + pid; if (!D.tw.has(k)) insertRow('task_watchers', {task_id: x.task_id, person_id: pid, team: S.team}, x.label); });
+      invalidate('shifts', 'person', 'cal', 'pas', 'board'); refreshSheet();
+    }}});
+    return rows.length;
+  };
+  var r = leadWatch(s, pid, false);
+  return r && r.then ? r.then(say) : say(r);
+}
+/* the row's lead slot (right of the PA status): "Lead it" / "Lead: You" (a toggle) for a YC, else "Lead: Yousef" */
+function leadSlotEl(s, lbl){
+  if (!hasLeadSlot(s)) return null;
+  var ids = leadsOf(s.id), me = leadMe(), mine = !!me && ids.indexOf(me) >= 0;
+  var open = s.cal_status !== 'gone' && !(s.date && s.date < todayIso()) && (isCalRow(s) || !s.done);
+  if (me && (mine || (open && !ids.length)))
+    return h('span', {class: 's-lead'}, h('button', {type: 'button', class: 's-lead-btn' + (mine ? ' on' : ''), 'data-fk': 'slead:' + s.id, 'aria-pressed': mine ? 'true' : 'false', 'aria-label': 'Lead ' + lbl,
+      on: {click: function(){
+        var c = D.shifts.get(s.id) || s; if (D.sl.has(c.id + '|' + me)) leadOff(c, me); else leadOn(c, me);
+        setTimeout(function(){ var el = fkEl('slead:' + s.id) || fkEl('sho:' + s.id); if (el) el.focus({preventScroll: true}); }, 80);
+      }}}, icon(mine ? 'check' : 'plus', 'sm'), mine ? 'Lead: You' : 'Lead it'));
+  if (!ids.length) return null;
+  return h('span', {class: 's-lead'}, h('span', {class: 's-lead-t'}, 'Lead: ', h('b', {text: leadNames(ids)}), h('span', {class: 'sr-only', text: ids.length > 1 ? ' (' + ids.map(personName).join(', ') + ')' : ''})));
+}
+/* the Shift sheet's Lead section: who leads (Remove for admins and for herself), Lead it for a YC, Add a lead (admins) */
+function leadSection(s, base, lbl){
+  if (!hasLeadSlot(s)) return null;
+  var ids = leadsOf(s.id), me = leadMe(), gone = s.cal_status === 'gone', past = !!s.date && s.date < todayIso();
+  var list = ids.length ? h('ul', {class: 'sh-people sh-leads', 'aria-label': 'Leads of ' + lbl}, ids.map(function(id){
+    var per = D.people.get(id), rm = isAdmin() || id === me;
+    return h('li', {class: 'chip su sh-person'}, avatar(per), h('span', {class: 'nm', text: per.name}), id === me ? h('span', {class: 'sub', text: 'you'}) : null,
+      rm ? h('button', {type: 'button', class: 'chip-x sh-rm', 'data-fk': 'slx:' + s.id + ':' + id, 'aria-label': 'Take ' + per.name + ' off as lead of ' + lbl, on: {click: function(){
+        leadOff(D.shifts.get(s.id) || s, id);
+        setTimeout(function(){ var el = fkEl('slme:' + s.id) || fkEl('sladd:' + s.id) || $('#sheetTitle'); if (el) el.focus({preventScroll: true}); }, 90);
+      }}}, 'Remove') : null);
+  })) : null;
+  var self = me && !gone && !past && ids.indexOf(me) < 0 ? h('button', {type: 'button', class: 'sh-lead-me', 'data-fk': 'slme:' + s.id, 'aria-label': 'Lead ' + lbl, on: {click: function(){
+    leadOn(D.shifts.get(s.id) || s, me);
+    setTimeout(function(){ var el = fkEl('slx:' + s.id + ':' + me) || $('#sheetTitle'); if (el) el.focus({preventScroll: true}); }, 90);
+  }}}, icon('plus', 'sm'), 'Lead it') : null;
+  var free = isAdmin() && !gone ? activePeople().filter(function(p){ return ids.indexOf(p.id) < 0; }) : [];
+  var add = free.length ? h('select', {class: 'su-sel', id: base + '_ld', 'data-fk': 'sladd:' + s.id, 'aria-label': 'Add a lead to ' + lbl, on: {change: function(e){
+    var pid = e.target.value; if (!pid) return;
+    e.target.blur(); leadOn(D.shifts.get(s.id) || s, pid);
+    setTimeout(function(){ var el = fkEl('sladd:' + s.id); if (el) el.focus({preventScroll: true}); }, 90);
+  }}}, h('option', {value: '', text: 'Add a lead\u2026'}), personOptions(free)) : null;
+  if (!list && !self && !add) return null;
+  return h('section', {class: 'ev-sec sh-leadsec', 'aria-labelledby': base + '_lh'}, h('h3', {id: base + '_lh', text: 'Lead'}),
+    h('div', {class: 's-pa'}, list, self, add));
+}
 function setNeeded(s, n){
   n = Math.max(0, Math.min(9, n));
   setFields('shifts', s.id, {pa_needed: n}, shiftLabel(s)); invalidate('shifts', 'person', 'cal', 'pas');
@@ -5067,7 +5265,8 @@ var shiftPeopleKey = '';
 function shiftSig(s){
   return [s.date, s.date_text, s.start_time, s.end_time, s.time_text, s.program, s.location, s.dept, s.pa_needed, s.done ? 1 : 0, s.month, s.cal_event_id || '', s.cal_status || '',
     isAdmin() ? 'a' : '', 'v26', shiftPeopleKey, todayIso() > (s.date || '9') ? 'p' : '', isPaLogin() ? myId() || '' : '',   // v2.5b: "Sign me up" follows who "me" is
-    shiftPAs(s.id).map(function(x){ return x.person_id + personName(x.person_id) + (isArchivedPerson(x.person_id) ? '~' : ''); }).join(',')].join('\u0001');
+    shiftPAs(s.id).map(function(x){ return x.person_id + personName(x.person_id) + (isArchivedPerson(x.person_id) ? '~' : ''); }).join(','),
+    arriveAt(s), hasLeadSlot(s) ? leadMe() + ':' + leadsOf(s.id).map(personName).join(',') : ''].join('\u0001');   // v2.9.0: arrival, leads
 }
 /* who's on it: chips with a remove x, and a "Sign up" list of the team's people (anyone signed in can use it) */
 function signupBox(s, lbl, base, pre, opt){
@@ -5138,7 +5337,7 @@ function shiftState(s){
 function shiftRowEl(s){
   var lbl = shiftLabel(s), st = shiftState(s), cal = isCalRow(s), gone = s.cal_status === 'gone', past = !!s.date && s.date < todayIso();
   var name = (s.program || '').trim() || (cal ? 'Untitled event' : 'New shift'), where = (s.location || '').trim(), d = deptOf(s);
-  var shown = where ? tileTitle(name, where) : name, t = startTime(s);
+  var shown = where ? tileTitle(name, where) : name, t = startTime(s), arr = arriveAt(s), lead = leadSlotEl(s, lbl), ldIds = leadsOf(s.id);   // v2.9.0
   var who = st.on.length ? h('span', {class: 's-who'},
     h('span', {class: 's-avs', 'aria-hidden': 'true'}, st.on.slice(0, 2).map(function(pid){ return avatar(D.people.get(pid)); })),
     h('span', {class: 's-names', text: firstName(st.on[0]) + (st.on.length > 1 ? ' +' + (st.on.length - 1) : '')})) : null;
@@ -5156,8 +5355,9 @@ function shiftRowEl(s){
   else if (st.st === 'covered') act = h('span', {class: 's-pill full'}, icon('check', 'sm'), 'Full');
   else act = h('span', {class: 's-pill quiet'}, 'No PA needed');
   var aria = (s.date ? niceDate(s.date) : (s.date_text || 'No date yet')) + ', ' + (shiftTime(s) || 'time to be confirmed') + ': ' + shown + (where ? ', ' + where : '') + (d ? '. ' + d : '') + '. ' +
-    (gone ? 'Cancelled on the calendar. ' : '') + (st.st === 'mine' ? 'You\u2019re on it. ' : '') + (s.done && !cal ? 'Done. ' : '') + paInfo(s).full + '. Open details';
-  return h('li', {class: 'shift v26 ' + (cal ? 'cal' : 'manual') + ' st-' + st.st + ' ' + (deptClass(s) || 'dept-other') + (gone ? ' gone' : '') + (past ? ' past' : '') + (s.done && !cal ? ' done' : ''),
+    (gone ? 'Cancelled on the calendar. ' : '') + (st.st === 'mine' ? 'You\u2019re on it. ' : '') + (s.done && !cal ? 'Done. ' : '') + (arr ? 'PA arrives ' + arr + '. ' : '') + paInfo(s).full + '. ' +
+    (ldIds.length ? 'Lead: ' + ldIds.map(personName).join(', ') + '. ' : '') + 'Open details';
+  return h('li', {class: 'shift v26 ' + (cal ? 'cal' : 'manual') + ' st-' + st.st + ' ' + (deptClass(s) || 'dept-other') + (gone ? ' gone' : '') + (past ? ' past' : '') + (s.done && !cal ? ' done' : '') + (lead ? ' has-lead' : ''),
       'data-id': s.id, 'data-cal': cal ? '1' : null,
       on: {click: function(e){ if (e.target.closest('button, a, input, select, label')) return; var b = e.currentTarget.querySelector('.s-open'); shiftSheet(s.id, b); }}},   // a tap on the status pill opens it too
     h('button', {type: 'button', class: 's-open', 'data-fk': 'sho:' + s.id, 'aria-haspopup': 'dialog', 'aria-label': aria, on: {click: function(e){ shiftSheet(s.id, e.currentTarget); }}},
@@ -5166,9 +5366,11 @@ function shiftRowEl(s){
         h('span', {class: 's-prog', text: shown}),
         h('span', {class: 's-meta'},
           d ? h('span', {class: 's-dept'}, h('span', {class: 's-ddot'}), h('span', {class: 'sr-only', text: 'Department: ' + d})) : null,
+          arr ? h('span', {class: 's-arr', text: 'Arrive ' + arr}) : null,
+          arr && where ? h('span', {class: 's-sep', 'aria-hidden': 'true', text: '\u00b7'}) : null,
           where ? h('span', {class: 's-where', text: where}) : null)),
       who),
-    h('span', {class: 's-act'}, act));
+    h('span', {class: 's-act'}, act), lead);
 }
 function calShiftEl(s){ return shiftRowEl(s); }
 function shiftEl(s){ return shiftRowEl(s); }
@@ -5183,8 +5385,9 @@ function shiftSheet(id, ret, focusFk){
     var keep = document.activeElement && body.contains(document.activeElement) ? document.activeElement.dataset.fk : null;
     var lbl = shiftLabel(s), gone = s.cal_status === 'gone', cal = isCalRow(s), base = 'hs_' + s.id.replace(/[^a-z0-9_]/gi, ''), edit = !cal && isAdmin();
     var where = (s.location || '').trim(), d = deptOf(s), need = +s.pa_needed || 0;
+    var arr = arriveAt(s);   // v2.9.0: when the PA should be there, next to the program's own time
     var facts = h('dl', {class: 'ev-facts'},
-      h('dt', {text: 'When'}), h('dd', {text: (s.date ? dayLong(s.date) : (s.date_text || 'No date yet')) + (shiftTime(s) ? ' \u00b7 ' + shiftTime(s) : '')}),
+      h('dt', {text: 'When'}), h('dd', {id: base + '_arr_at', text: (s.date ? dayLong(s.date) : (s.date_text || 'No date yet')) + (shiftTime(s) ? ' \u00b7 ' + shiftTime(s) : '') + (arr ? ' \u00b7 arrive ' + arr : '')}),
       where ? [h('dt', {text: 'Where'}), h('dd', {text: where})] : null,
       d ? [h('dt', {text: 'Department'}), h('dd', null, h('span', {class: 'sh-dept ' + (deptClass(s) || 'dept-other')}, h('span', {class: 'cal__dot', 'aria-hidden': 'true'}), d))] : null);
     var src = null;   // v2.6.5: no source note
@@ -5220,9 +5423,10 @@ function shiftSheet(id, ret, focusFk){
         h('button', {type: 'button', class: 'icon', 'data-fk': 'snm:' + s.id, 'aria-label': 'One fewer PA needed', disabled: need <= 0, on: {click: function(){ var c = D.shifts.get(s.id) || s; setNeeded(c, (+c.pa_needed || 0) - 1); }}}, icon('minus', 'sm')),
         h('span', {class: 'nv', text: String(need)}),
         h('button', {type: 'button', class: 'icon', 'data-fk': 'snp:' + s.id, 'aria-label': 'One more PA needed', disabled: need >= 9, on: {click: function(){ var c = D.shifts.get(s.id) || s; setNeeded(c, (+c.pa_needed || 0) + 1); }}}, icon('plus', 'sm')))) : null;
+    var arrRow = isAdmin() && !gone && s.start_time ? h('div', {class: 'sh-arr'}, h('label', {class: 'sh-need-l', for: base + '_arr', text: 'PA arrives'}), arriveSelect(s, base + '_arr')) : null;   // v2.9.0
     var whoSec = h('section', {class: 'ev-sec sh-whosec', 'aria-labelledby': base + '_wh'},
       h('div', {class: 'sh-who-h'}, h('h3', {id: base + '_wh', text: 'Who\u2019s on'}), shiftStatus(s)),
-      h('div', {class: 's-pa', role: 'group', 'aria-labelledby': base + '_wh'}, people, meBtn, sel), step);
+      h('div', {class: 's-pa', role: 'group', 'aria-labelledby': base + '_wh'}, people, meBtn, sel), step, arrRow);
     var editSec = null;
     if (edit){
       var date = h('input', {type: 'date', id: base + '_d', value: s.date || '', 'data-fk': 'sd:' + s.id, on: {change: function(e){
@@ -5250,7 +5454,7 @@ function shiftSheet(id, ret, focusFk){
           h('button', {type: 'button', class: 'sh-arch', 'data-fk': 'sm:' + s.id, on: {click: function(){ closeSheet(); archiveShift(s.id); }}}, icon('archive', 'sm'), 'Archive')));
     }
     body.className = 'ev-sheet sh-sheet ' + (deptClass(s) || 'dept-other') + (gone ? ' gone' : '');
-    body.replaceChildren.apply(body, [src, gone ? h('p', {class: 'warnbox', text: 'Cancelled on the Roots calendar. It stays here because someone signed up.'}) : null, facts, whoSec, editSec].filter(Boolean));
+    body.replaceChildren.apply(body, [src, gone ? h('p', {class: 'warnbox', text: 'Cancelled on the Roots calendar. It stays here because someone signed up.'}) : null, facts, whoSec, leadSection(s, base, lbl), editSec].filter(Boolean));
     if (keep){ var el = body.querySelector('[data-fk="' + cssEsc(keep) + '"]'); if (el) el.focus({preventScroll: true}); }
   }
   render();
@@ -5766,7 +5970,7 @@ async function loadHistory(older){
   S.hist.forEach(function(e){
     var x = e.new || e.old || {};
     if ((e.tbl === 'task_people' || e.tbl === 'task_watchers') && !D.tasks.has(x.task_id) && !S.histNames.tasks[x.task_id]) needT.add(x.task_id);
-    if (e.tbl === 'shift_people' && !D.shifts.has(x.shift_id) && !S.histNames.shifts[x.shift_id]) needS.add(x.shift_id);
+    if ((e.tbl === 'shift_people' || e.tbl === 'shift_leads') && !D.shifts.has(x.shift_id) && !S.histNames.shifts[x.shift_id]) needS.add(x.shift_id);
     if (e.tbl === 'tasks' && x.program_id && !D.programs.has(x.program_id) && !(x.program_id in S.histNames.programs)) needP.add(x.program_id);
   });
   var jobs = [];
@@ -5850,12 +6054,19 @@ function describe(e){
       if (x.cal_event_id && !e.user_id && ch.every(function(k){ return k === 'cal_synced_at'; })) return null;
       if (arch) return who + ' ' + arch + ' the shift ' + sn;
       if (ch.indexOf('done') >= 0) return who + (n.done ? ' marked the shift ' + sn + ' completed' : ' marked the shift ' + sn + ' not completed');
+      if (ch.length === 1 && ch[0] === 'arrive_min') return who + ' set the PA arrival for ' + sn + ' to ' + (n.arrive_min == null ? 'the default (' + arriveWords(tplArriveMin(x) != null ? tplArriveMin(x) : ARRIVE_DFLT) + ' before)' : arriveWords(n.arrive_min) + ' before');   // v2.9.0
       return who + ' changed the ' + fields() + ' of the shift ' + sn;
     }
     case 'shift_people': {
       var pp = personName(x.person_id), shn = histShiftName(x.shift_id);
       if (e.op === 'INSERT') return who + ' signed ' + pp + ' up for ' + shn;
       if (e.op === 'DELETE') return who + ' took ' + pp + ' off ' + shn;
+      return null;
+    }
+    case 'shift_leads': {   // v2.9.0: "Yousef signed up to lead Grove Orientation"
+      var lp = personName(x.person_id), lsn = histShiftName(x.shift_id), self = who === lp || (who || '').split(/\s+/)[0] === (lp || '').split(/\s+/)[0];
+      if (e.op === 'INSERT') return self ? lp + ' signed up to lead ' + lsn : who + ' signed ' + lp + ' up to lead ' + lsn;
+      if (e.op === 'DELETE') return self ? lp + ' stopped leading ' + lsn : who + ' took ' + lp + ' off as lead of ' + lsn;
       return null;
     }
     case 'people': {
@@ -6420,18 +6631,21 @@ function tileTitle(name, location){
   return (par.indexOf(loc) >= 0 || loc.indexOf(par) >= 0) && name.slice(0, m.index).trim() ? name.slice(0, m.index).trim() : name;
 }
 /* mode: 'week' (with the tasks line), 'list' (phone month list), 'compact' (month strip) */
+/* v2.9.0 (Oct 23 call, L24): the arrival shows on a tile only when the calendar shows one person (Mine, or an admin's person pick)
+   and she's on that program. Everyone keeps the program's own time only. */
+function calArrive(s){ var cp = calPerson(); return cp && D.sp.has(s.id + '|' + cp) ? arriveAt(s) : ''; }
 function calTile(s, fk, mode){
-  var info = paInfo(s), gone = s.cal_status === 'gone', name = (s.program || '').trim() || 'Untitled event', compact = mode === 'compact';
+  var info = paInfo(s), gone = s.cal_status === 'gone', name = (s.program || '').trim() || 'Untitled event', compact = mode === 'compact', arr = calArrive(s);
   var su = !gone && isPaLogin() && shiftState(s).st === 'signup';   // v2.7.0: she can take this one
   var tag = gone ? 'Cancelled' : su ? info.short.replace(/Need \d+( more)?$/, 'Sign up') : info.short || 'No PA needed', tt = mode === 'week' ? tileTasks(s) : '';
   var p = mode === 'week' && weekReady(s) ? calPairs().byEv.get(s.id) : null;
   /* v2.6: location on every calendar tile (week, phone month list, desktop month grid), never inside the title */
   var where = locText(s.location), shown = where ? tileTitle(name, where) : name;
   return h('button', {type: 'button', class: 'rtile ' + (deptClass(s) || 'dept-other') + (compact ? ' compact' : '') + (gone ? ' gone' : '') + (info.miss && !gone ? ' needs' : ''),
-    'data-fk': fk + ':' + s.id, 'data-id': s.id, 'data-prog': p ? p.id : null, title: compact ? name + (where ? ' \u00b7 ' + where : '') : null,
-    'aria-label': niceDate(s.date) + (shiftTime(s) ? ', ' + shiftTime(s) : '') + ': ' + shown + (deptOf(s) ? ' (' + deptOf(s) + ')' : '') + (where ? ', ' + where : '') + '. ' + (gone ? 'Cancelled on the calendar. ' : '') + info.full + '. ' + (tt ? tt + '. ' : '') + (su ? 'Open to sign up' : 'Open details'),
+    'data-fk': fk + ':' + s.id, 'data-id': s.id, 'data-prog': p ? p.id : null, title: compact ? name + (where ? ' \u00b7 ' + where : '') + (arr ? ' \u00b7 arrive ' + arr : '') : null,
+    'aria-label': niceDate(s.date) + (shiftTime(s) ? ', ' + shiftTime(s) : '') + (arr ? ', PA arrives ' + arr : '') + ': ' + shown + (deptOf(s) ? ' (' + deptOf(s) + ')' : '') + (where ? ', ' + where : '') + '. ' + (gone ? 'Cancelled on the calendar. ' : '') + info.full + '. ' + (tt ? tt + '. ' : '') + (su ? 'Open to sign up' : 'Open details'),
     on: {click: function(e){ eventSheet(s.id, e.currentTarget); }}},
-    h('span', {class: 'rt-time', text: (compact ? shortTime(s) : shiftTime(s)) || 'Time TBC'}),
+    h('span', {class: 'rt-time', text: ((compact ? shortTime(s) : shiftTime(s)) || 'Time TBC') + (arr && !compact ? ' \u00b7 arrive ' + arr : '')}),
     h('span', {class: 'rt-name', text: compact ? shortProg({program: shown}) : shown}),
     where ? h('span', {class: 'rt-loc'}, icon('pin', 'sm'), h('span', {class: 'rt-loc-t', text: where})) : null,
     h('span', {class: 'cal__tag' + (su ? ' su' : info.miss && !gone ? ' need' : '') + (!gone && !info.short ? ' none' : '')}, su ? icon('plus', 'sm') : h('span', {class: 'cal__dot', 'aria-hidden': 'true'}), h('span', {class: 'tag-t', text: tag})),
@@ -6711,7 +6925,8 @@ function eventSheet(id, ret, focusFk){
     var facts = h('dl', {class: 'ev-facts'},
       h('dt', {text: 'When'}), h('dd', {text: (s.date ? dayLong(s.date) : (s.date_text || 'No date')) + (shiftTime(s) ? ' \u00b7 ' + shiftTime(s) : '')}),
       (s.location || '').trim() ? [h('dt', {text: 'Where'}), h('dd', {text: s.location.trim()})] : null,
-      deptOf(s) ? [h('dt', {text: 'Department'}), h('dd', null, deptPill(s))] : null);
+      deptOf(s) ? [h('dt', {text: 'Department'}), h('dd', null, deptPill(s))] : null,
+      leadsOf(s.id).length ? [h('dt', {text: 'Lead'}), h('dd', {class: 'ev-lead', text: leadsOf(s.id).map(personName).join(', ')})] : null);   // v2.9.0 (L152-153)
     var src = flow ? h('p', {class: 'ev-src small'}, flow) : null;
     var pa = h('section', {class: 'ev-sec', 'aria-labelledby': 'esPaH'}, h('h3', {id: 'esPaH', text: 'PA support'}),
       h('span', {class: 'sr-only', id: 'es_' + s.id + '_pal', text: 'PA support for ' + lbl}), signupBox(s, lbl, 'es_' + s.id, 'e'));
@@ -6742,6 +6957,9 @@ function eventSheet(id, ret, focusFk){
   $('#sheet').classList.add('evsheet');
   if (focusFk){ var fe = $('#sheet').querySelector('[data-fk="' + cssEsc(focusFk) + '"]'); if (fe) fe.focus({preventScroll: false}); }
 }
+/* v2.9.0: a removed program lead can be restored from History, like a PA sign-up (restore_row knows shift_leads).
+   Set here, after e_views.js made RESTORABLE, so the History line in e_views.js stays as it was. */
+RESTORABLE.shift_leads = 1;
 
 /* ==========================================================================
    v2.2 P1: task time estimates (admins only for now), PAs tab + profile, Links folders
