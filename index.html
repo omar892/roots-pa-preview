@@ -854,6 +854,7 @@ button.dnum:hover{background:var(--roots-white)}
 .mtiles .more:hover{background:var(--roots-white)}
 .dots{display:none}
 .agenda{display:none}
+@media (min-width:768px){.cal-empty.ce-past{display:none}}   /* v2.11.1: the all-sign-ups-are-past note belongs to the phone agenda */
 
 /* ---------- below the strip ---------- */
 .wother{margin-top:var(--sp5)}
@@ -1805,7 +1806,7 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.11.0';   // v2.11.0: Anisha Oct 27 (month +more in place, Common tasks pick list, admin My tasks trimmed, Add task on group headers, done tasks to the bottom). Was 2.10.0:   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
+var BUILD = '2.11.1';   // v2.11.1: Calendar month, Mine: when all of the person's sign-ups are before today the empty note and "See N that need a PA" show above the "Show N earlier days" link. Was 2.11.0:   // v2.11.0: Anisha Oct 27 (month +more in place, Common tasks pick list, admin My tasks trimmed, Add task on group headers, done tasks to the bottom). Was 2.10.0:   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
 // was 2.7.2: // v2.7.2: departments are one shared filter (Calendar, Board, PA shifts), never a team; no team chips at sign-in
 // v2.7.1: Calendar filter is one dropdown (departments + Needs a PA); Board tab for PAs/YCs with Take it
 // v2.6.9:   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
@@ -7187,8 +7188,10 @@ function calMonth(sec){
         h('h3', {id: 'agh_' + x[0]}, h('span', {text: dayLong(x[0])}), x[0] === today ? h('span', {class: 'rd-today'}, 'Today') : null),
         h('ul', {class: 'rtiles'}, x[1].map(function(s){ return h('li', null, calTile(s, 'ca', 'list')); })));
     }) : h('p', {class: 'muted', text: pid ? personName(pid) + ' hasn\u2019t signed up for anything this month.' : 'No programs this month.'}));
-  var nEmpty = S.calNeed && !agDays.length ? needEmpty('this month') : pid && pid === calMe() && !agDays.length ? mineEmpty('this month') : null;   // v2.6.9
-  if (nEmpty) agenda = h('div', {class: 'agenda'}, h('h2', {class: 'sr-only', text: 'Programs in ' + monthLabel(m)}));
+  // v2.6.9; v2.11.1: "Mine" is empty when no day is left after the past fold (agDays.length - past), not only when the month has none; the "Show N earlier days" link stays under the grid
+  var nEmpty = S.calNeed && !agDays.length ? needEmpty('this month') : pid && pid === calMe() && agDays.length - past <= 0 ? mineEmpty('this month') : null;
+  if (nEmpty) agenda = h('div', {class: 'agenda'}, h('h2', {class: 'sr-only', text: 'Programs in ' + monthLabel(m)}), earlier);
+  if (nEmpty && past) nEmpty.classList.add('ce-past');   // v2.11.1: the fold is a phone list; at 768px+ the grid itself shows her past days, so the note is phone-only (CSS, survives a rotation)
   return [h('p', {class: 'cal-line sr-only', id: 'calLine', role: 'status', text: monthLine(evs, pid)}), pid ? hoursLine(pid) : null, nEmpty, grid, pid ? null : whoPanel(), agenda];
 }
 
