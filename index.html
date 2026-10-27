@@ -4454,8 +4454,8 @@ function myLoginPerson(){
   if (!S.team || isTeamLogin() || isSharedAdmin()) return null;
   return personForLabel(((D.members && D.members.get(S.uid)) || {}).label || '', false);
 }
-function newPersonalProgram(label){
-  return insertRow('programs', {id: newId('prog_'), team: S.team, week: S.week, name: '', template_id: null, custom_name: false, force_pick: false, personal: true,
+function newPersonalProgram(label, week){
+  return insertRow('programs', {id: newId('prog_'), team: S.team, week: week || S.week, name: '', template_id: null, custom_name: false, force_pick: false, personal: true,
     date: '', locations: [], offsite: '', lead_ids: [], sort: nextSort(weekPrograms())}, label);
 }
 /* Every program on the calendar this week (all of them, not only ones with a card or a sign-up),
@@ -4615,10 +4615,10 @@ function projSelect(id, cur, onChange){
    could only be given next week's days ("isn't showing any dates for this week, only next"). The week is now
    passed in, named on the legend, and switchable from a small segmented control. Two options always
    (This week / Next week); a third only when the sheet was opened from another week. */
-function dayChips(id, cur, onPick, week){
+function dayChips(id, cur, onPick, week, onWeek, lock){
   var base = thisWeek(), nxt = addDays(base, 7);
-  var weeks = [base, nxt];
-  if (week && weeks.indexOf(week) < 0) weeks.push(week);
+  var weeks = lock ? [week || base] : [base, nxt];
+  if (!lock && week && weeks.indexOf(week) < 0) weeks.push(week);
   var sel = weeks.indexOf(week) >= 0 ? week : base;
   var curDay = cur || '';
   var legend = h('legend');
@@ -4645,11 +4645,11 @@ function dayChips(id, cur, onPick, week){
   function setWeek(w){
     // the chosen day is a weekday, so it stays chosen in the new week (its date moves with the week)
     var a = document.activeElement, back = a && chips.contains(a) ? a.value : null;
-    sel = w; draw(back);
+    sel = w; if (onWeek) onWeek(w); draw(back);
     announce('Days for ' + wkName(w) + ': ' + shortDate(w) + ' \u2013 ' + shortDate(addDays(w, 6)));
   }
   draw();
-  return h('fieldset', {class: 'f25 dayfield'}, legend, seg, chips);
+  return h('fieldset', {class: 'f25 dayfield'}, legend, lock ? null : seg, chips);
 }
 /* People as toggle chips: the chosen ones first; "Someone else" opens everyone (PAs, then Staff) */
 function peopleChips(o){
@@ -4732,7 +4732,7 @@ function addTaskSheet(o){
   if (me && (!D.people.has(me) || D.people.get(me).deleted_at)) me = null;
   // v2.9.0 (F, Anisha L135-137): one Watchers control for everyone (PAs and YCs too), the adder first as "Me".
   // A task for someone else starts with the adder watching (L137), unless she turned that off last time.
-  var st = {who: pid ? [pid] : [], prog: '', proj: '', due: S.week === thisWeek() ? DAYS[todayIdx()] : '', watchers: [], wTouched: false};
+  var st = {who: pid ? [pid] : [], prog: '', proj: '', due: S.week === thisWeek() ? DAYS[todayIdx()] : '', wk: S.week, watchers: [], wTouched: false};
   var forOther = function(){ return !!me && st.who.some(function(x){ return x !== me; }); };
   var autoMe = function(){
     if (!me || st.wTouched) return;
@@ -4754,7 +4754,7 @@ function addTaskSheet(o){
     toggle: function(x, on){ st.who = st.who.filter(function(y){ return y !== x; }); if (on) st.who.push(x);
       var had = st.watchers.slice().sort().join(); autoMe(); if (more && st.watchers.slice().sort().join() !== had) more.draw(); }});
   // v2.10.0: the chips show the week being viewed, and can be pointed at this week (or next) from the sheet itself
-  var dayBox = dayChips('atDay', st.due, function(d){ st.due = d; }, S.week);
+  var dayBox = dayChips('atDay', st.due, function(d){ st.due = d; }, S.week, function(w){ st.wk = w; });
   // v2.6.4 (judge signal: a Thursday Soul Food task was filed on Tuesday): picking a program sets Day to that program's day
   // (still editable). "No program" leaves Day alone. Replaces the v2.5 default "the day stays on today".
   var prog = progSelect('atProg', st.prog, function(v, c){
@@ -4780,7 +4780,9 @@ function addTaskSheet(o){
     if (!st.who.length){ err.textContent = 'Choose who it\u2019s for.'; err.hidden = false; var c = $('#sheet [data-fk="atWhomore"]'); if (c) c.focus(); return; }
     if (tooSoon('atsave')) return;
     var r = progForChoice(st.prog); if (r === undefined) return;
-    var p = r ? r.p : newPersonalProgram(text), madeProg = r ? r.made : true;
+    // v2.10.0: a day picked in another week files the task in THAT week (its own personal card), not the week on screen
+    var targetWk = st.wk || S.week;
+    var p = r ? r.p : newPersonalProgram(text, targetWk), madeProg = r ? r.made : true;
     var t = insertRow('tasks', {id: newId('t_'), team: S.team, program_id: p.id, project_id: st.proj || null, task: text, notes: note.value.trim(), due: st.due || '', done: false, sort: nextSort(tasksOf(p.id))}, text);
     st.who.forEach(function(x){ insertRow('task_people', {task_id: t.id, person_id: x, team: S.team, done: false}, text); });
     var ws = st.watchers.filter(function(x, i, a){ return a.indexOf(x) === i && D.people.has(x); });
@@ -4788,6 +4790,7 @@ function addTaskSheet(o){
     invalidate('person', 'board', 'cal');
     lsSet(sheetDraftKey(), null);
     closeSheet();
+    if (!st.prog && targetWk !== S.week) go({week: targetWk});
     var names = st.who.map(personName);
     // v2.6.4 (judge signal): the toast names the watcher(s), so it's clear one was set
     var wn = ws.map(personName), wline = !wn.length ? '' : ' ' + (wn.length > 2 ? wn.slice(0, 2).join(', ') + ' +' + (wn.length - 2) + ' are' : wn.length === 2 ? wn.join(' and ') + ' are' : wn[0] + ' is') + ' watching.';
@@ -4867,7 +4870,7 @@ function taskSheet(id, pid, ret){
     var prog = progSelect('tdProg', progValueOf(cur), function(v){ moveTaskTo(id, v); });
     // v2.10.0 (Anisha): Project under Program. Saves as you pick; the sheet stays where it is.
     var proj = projSelect('tdProj', cur.project_id || '', function(v){ setTaskProject(id, v); });
-    var days = dayChips('tdDay', cur.due, function(d){ setTaskDue(id, d); invalidate('cal'); }, S.week);
+    var days = dayChips('tdDay', cur.due, function(d){ setTaskDue(id, d); invalidate('cal'); }, S.week, null, true);
     var e = estOn() && isAdmin() ? estOf(id) : null;
     var est = estOn() && isAdmin() ? h('div', {class: 'td-est'}, h('span', {class: 'field', text: 'Time estimate'}),
       h('span', {class: 'grow', text: e ? (e.source === 'admin' ? '' : 'About ') + minsWords(e.minutes) : 'Not set'}),
