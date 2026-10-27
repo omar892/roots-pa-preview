@@ -666,6 +666,27 @@ a.lname .lt{text-decoration:underline;font-weight:650;word-break:break-word}
 .tpl-arrive select{width:auto;min-width:220px;max-width:100%}
 
 /* ==========================================================================
+   v2.10.0 (Engineer B): day chips name and switch their week; Project under Program
+   ========================================================================== */
+/* the week the chips are showing: two small buttons (This week / Next week), a third only when the
+   sheet was opened from another week. .seg carries the pill look; this only sizes it for a sheet. */
+.dayfield .wkseg{display:inline-flex;margin:0 0 var(--sp2) 0;max-width:100%}
+.dayfield .wkseg button{min-height:32px;padding:0 12px;font-size:var(--fs-s);font-weight:600;white-space:nowrap}
+/* the Project field and its inline "New project..." name box */
+.proj-field{min-width:0}
+.proj-field>select.pill-sel{max-width:100%}
+.proj-new{display:flex;gap:var(--sp2);align-items:center;flex-wrap:wrap}
+.proj-new input{flex:1 1 12rem;min-width:0}
+.proj-new[hidden]{display:none}
+@media (max-width:767px),(pointer:coarse){
+  .dayfield .wkseg{display:flex;flex-wrap:wrap;gap:6px}
+  .dayfield .wkseg button{flex:1 1 auto;justify-content:center;min-height:44px;padding:0 10px}
+  .dayfield .wkseg button+button{margin-left:0}
+  .proj-new input{font-size:16px}
+  .proj-new button{min-height:44px}
+}
+
+/* ==========================================================================
    v2.2: Roots brand (Roots Brand & Website Design System v3) + Calendar
    ========================================================================== */body{background:var(--bg)}
 h1,h2,h3,h4{color:var(--heading)}
@@ -1659,6 +1680,35 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 .pa-note{margin:4px 0 0;font-size:var(--fs-s,14px);line-height:1.35;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}
 @media print{ .pb28 ul.tasks[hidden]{display:block !important} }
 
+/* ---------- v2.10.0 (Anisha, Oct 26 7:52pm): My tasks as day columns ----------
+   The week reads left to right, Monday to Sunday, only the days that have something on them, "No day set" last.
+   Under each day: one header per program (or project, or "(Misc.)"), folded until she taps it.
+   Same idiom as .rstrip in cal.css: a grid of day columns on a wide screen, one stacked column under 1100px. */
+#v-person .pv-wk{grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px;max-width:none;align-items:start}
+#v-person .pv-day{min-width:0;display:flex;flex-direction:column;gap:8px;list-style:none}
+#v-person .pv-dayh{position:sticky;top:var(--stick,0px);z-index:3;margin:0 -2px;padding:8px 2px 6px;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 6px;background:var(--bg);border-bottom:1px solid var(--line);font:600 15px/1.3 var(--font);color:var(--heading)}
+#v-person .pv-dayn{font-size:16px;font-weight:700;color:var(--heading)}
+#v-person .pv-dayd{font-size:var(--fs-s,14px);font-weight:500;color:var(--muted)}
+#v-person .pv-day.is-today .pv-dayh{border-bottom-color:var(--heading);box-shadow:inset 0 -2px 0 var(--heading)}
+#v-person .pv-day-none .pv-dayn{color:var(--muted)}
+#v-person .pv-dayg{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp2);align-content:start}
+#v-person .pv-day .pgroup{margin:0;min-width:0}
+/* a column is narrow: the header's name wraps, the context line stops at two lines, the count stays on the name's line */
+#v-person .pv-day .pg-head{padding:8px 10px;min-height:var(--tap,44px)}
+#v-person .pv-day .pg-name{font-size:15px}
+#v-person .pv-day .pg-when{font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#v-person .pv-day .pg-tasks{padding:2px 10px 8px}
+#v-person .pv-day .rtask{padding-left:0;padding-right:0}
+@media (max-width:1099px){
+  #v-person .pv-wk{grid-template-columns:minmax(0,1fr);gap:14px}
+  #v-person .pv-dayh{position:static}
+  #v-person .pv-day .pg-when{-webkit-line-clamp:none;display:block;overflow:visible}
+}
+@media print{
+  #v-person .pv-wk{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  #v-person .pv-dayh{position:static}
+}
+
 </style>
 </head>
 <body>
@@ -1738,7 +1788,7 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.9.0';   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
+var BUILD = '2.10.0';   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
 // was 2.7.2: // v2.7.2: departments are one shared filter (Calendar, Board, PA shifts), never a team; no team chips at sign-in
 // v2.7.1: Calendar filter is one dropdown (departments + Needs a PA); Board tab for PAs/YCs with Take it
 // v2.6.9:   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
@@ -1993,7 +2043,8 @@ var D = {
   people: new Map(), templates: new Map(), links: new Map(), programs: new Map(), tasks: new Map(),
   tp: new Map(), notes: new Map(), shifts: new Map(), sp: new Map(), members: new Map(), tw: new Map(), oh: new Map(),
   est: new Map(), pnotes: new Map(),
-  sl: new Map(), rep: new Map()   // v2.9.0: shift_leads (program leads), repeat_tasks (repeating admin tasks)
+  sl: new Map(), rep: new Map(),   // v2.9.0: shift_leads (program leads), repeat_tasks (repeating admin tasks)
+  projects: new Map()              // v2.10.0: a team's own project list (Monthly Calendar, Operations...), not per week
 };
 var T = {
   people: {map: function(){ return D.people; }, pk: ['id']},
@@ -2010,7 +2061,8 @@ var T = {
   task_estimates: {map: function(){ return D.est; }, pk: ['task_id']},
   pa_notes: {map: function(){ return D.pnotes; }, pk: ['id']},
   shift_leads: {map: function(){ return D.sl; }, pk: ['shift_id', 'person_id']},   // v2.9.0
-  repeat_tasks: {map: function(){ return D.rep; }, pk: ['id']}                      // v2.9.0
+  repeat_tasks: {map: function(){ return D.rep; }, pk: ['id']},                     // v2.9.0
+  projects: {map: function(){ return D.projects; }, pk: ['id']}                      // v2.10.0
 };
 /* Task time estimates: who sees them. 'admins' until Anisha approves them for PAs, then 'everyone'.
    This is the only switch: with it off for a login, estimates aren't loaded, subscribed to or shown. */
@@ -2501,7 +2553,7 @@ function updateSaveState(){
 var CF_FIELD = {task: 'task', notes: 'note', waiting_on: 'waiting on', name: 'name', program: 'program', location: 'location', time_text: 'time',
   pa_needed: 'PAs needed', due: 'day', label: 'label', url: 'link', folder: 'folder', date: 'date', grp: 'group', dept: 'department',
   manual_url: 'program flow link', start_time: 'start time', end_time: 'end time', program_id: 'program', lead_ids: 'leads', locations: 'locations',
-  offsite: 'offsite place', template_id: 'template', text: 'note', minutes: 'time estimate', arrive_min: 'PA arrival'};   // v2.9.0: +arrive_min
+  offsite: 'offsite place', template_id: 'template', text: 'note', minutes: 'time estimate', arrive_min: 'PA arrival', project_id: 'project'};   // v2.9.0: +arrive_min; v2.10.0: +project_id
 function cfKeyFor(team){ return 'conflicts:' + S.uid + ':' + team; }
 function cfLoad(){
   var k = S.uid && S.team ? cfKeyFor(S.team) : null;
@@ -2641,10 +2693,13 @@ async function loadShared(){
     sb.from('members').select('user_id,label,role').eq('team', team),
     // task time estimates: only for logins that may see them (SHOW_ESTIMATES); never fetched otherwise
     estOn() ? sb.from('task_estimates').select('task_id,team,minutes,kind,source,for_text,updated_at').eq('team', team).limit(5000) : Promise.resolve({data: []}),
-    sb.from('repeat_tasks').select('*').eq('team', team).is('deleted_at', null)   // v2.9.0
+    sb.from('repeat_tasks').select('*').eq('team', team).is('deleted_at', null),   // v2.9.0
+    sb.from('projects').select('*').eq('team', team).is('deleted_at', null)         // v2.10.0: the team's project list
   ]);
   if (team !== S.team) return;
-  var err = res.find(function(r){ return r.error; });
+  // a table this database hasn't got yet (projects on an older copy) must not stop the sheet loading:
+  // the Project field just comes up empty. Every other table still has to answer.
+  var err = res.slice(0, 6).find(function(r){ return r.error; });
   if (err) throw err.error;
   D.people.clear(); res[0].data.forEach(function(r){ D.people.set(r.id, r); });
   D.templates.clear(); res[1].data.forEach(function(r){ r.tasks = normTplTasks(r.tasks); D.templates.set(r.id, r); });
@@ -2652,8 +2707,10 @@ async function loadShared(){
   D.members.clear(); res[3].data.forEach(function(r){ D.members.set(r.user_id, r); });
   D.est.clear(); if (!res[4].error) (res[4].data || []).forEach(function(r){ D.est.set(r.task_id, r); });
   D.rep.clear(); if (!res[5].error) (res[5].data || []).forEach(function(r){ D.rep.set(r.id, r); });   // v2.9.0
+  // v2.10.0: team-wide like templates and links, replaced whole on every shared load (pending inserts stay, applyQueueToState below)
+  D.projects.clear(); if (!res[6].error) (res[6].data || []).forEach(function(r){ if (!r.deleted_at) D.projects.set(r.id, r); });
   S.sharedLoaded = true; IX = null;
-  applyQueueToState();      // people, Master programs and links added offline stay on screen through a refresh (review P12)
+  applyQueueToState();      // people, Master programs, links and projects added offline stay on screen through a refresh (review P12)
 }
 async function fetchWeek(team, week){
   return Promise.all([
@@ -2791,7 +2848,7 @@ function scheduleResync(){
 /* ==========================================================================
    REALTIME: merge incoming rows; never overwrite a field being edited
    ========================================================================== */
-var RT_TABLES = ['people', 'templates', 'links', 'programs', 'tasks', 'task_people', 'task_watchers', 'week_notes', 'shifts', 'shift_people', 'office_hours', 'shift_leads', 'repeat_tasks'];   // v2.9.0: +shift_leads, repeat_tasks
+var RT_TABLES = ['people', 'templates', 'links', 'programs', 'tasks', 'task_people', 'task_watchers', 'week_notes', 'shifts', 'shift_people', 'office_hours', 'shift_leads', 'repeat_tasks', 'projects'];   // v2.9.0: +shift_leads, repeat_tasks; v2.10.0: +projects
 function subscribe(){
   if (S.channel){ try { sb.removeChannel(S.channel); } catch (e){} S.channel = null; }
   if (S.session) try { sb.realtime.setAuth(S.session.access_token); } catch (e){}
@@ -2835,6 +2892,8 @@ function onRemote(t, p){
   if (t === 'shifts' && !S.shiftMonths.has(row.month)){ if (D.shifts.has(row.id)){ D.shifts.delete(row.id); IX = null; invalidateFor(t); } return; }
   if (t === 'office_hours'){ if (row.deleted_at){ if (D.oh.delete(row.id)) invalidateFor(t); return; } if (!S.shiftMonths.has(monthOf(row.date))) return; }
   if (t === 'templates' && row.tasks) row.tasks = normTplTasks(row.tasks);
+  // v2.10.0: a project archived or deleted elsewhere leaves every project list here too
+  if (t === 'projects' && row.deleted_at){ if (map.has(key)){ map.delete(key); IX = null; invalidateFor(t); } return; }
   if (t === 'task_estimates' && !estOn()) return;
   // a program, task or shift this device never loaded is coming back (restored from History, undo
   // elsewhere, moved here): fetch its tasks and people too, not just the bare row (review M4)
@@ -2870,6 +2929,7 @@ function invalidateFor(t){
   else if (t === 'week_notes') invalidate('notes');
   else if (t === 'shifts' || t === 'shift_people' || t === 'shift_leads') invalidate('shifts', 'person', 'cal', 'pas');   // v2.9.0: +shift_leads
   else if (t === 'repeat_tasks') invalidate('master');   // v2.9.0
+  else if (t === 'projects') invalidate('board', 'person', 'cal', 'pas', 'master');   // v2.10.0: team-wide, so the By person copy redraws with the new names too
   else if (t === 'office_hours') invalidate('cal', 'person', 'pas');
   else if (t === 'task_estimates') invalidate('board', 'person', 'cal', 'pas');
   if (S.tab === 'history') scheduleHistoryRefresh();
@@ -3293,6 +3353,32 @@ function loadError(err, retry){
 }
 function progLabel(p){ var n = (p.name || '').trim(); return n || 'Untitled program'; }
 function taskLabel(t){ var n = (t.task || '').trim(); return n || 'Untitled task'; }
+
+/* ---------- projects (v2.10.0, Anisha Oct 26): the team's own list, not tied to a week ----------
+   A task with no real program (a personal task) but a project is filed under the project instead. */
+function projLabel(p){ var n = (p && p.name ? String(p.name).trim() : ''); return n || 'Untitled project'; }
+function projList(){ return Array.from(D.projects.values()).filter(function(p){ return !p.deleted_at; }).sort(function(a, b){ return (a.sort || 0) - (b.sort || 0) || projLabel(a).toLowerCase().localeCompare(projLabel(b).toLowerCase()); }); }
+function projById(id){ var p = id ? D.projects.get(id) : null; return p && !p.deleted_at ? p : null; }
+/* the project's name for a task, '' when it has none (so 'Personal' shows as before) */
+function projNameOf(t){ var p = projById(t && t.project_id); return p ? projLabel(p) : ''; }
+function projNextSort(){ var m = -1; Array.from(D.projects.values()).forEach(function(p){ if ((p.sort || 0) > m) m = p.sort || 0; }); return m + 1; }
+/* new project through the same queue as every other team row. team is set here; updated_at/updated_by
+   are the database's (tg_touch writes auth.uid()), exactly like programs, people and links. */
+function addProject(name){
+  var n = String(name || '').replace(/\s+/g, ' ').trim();
+  if (!n) return null;
+  var had = projList().find(function(p){ return projLabel(p).toLowerCase() === n.toLowerCase(); });
+  if (had) return had;
+  var p = insertRow('projects', {id: newId('prj_'), team: S.team, name: n, sort: projNextSort()}, n);
+  invalidate('board', 'person', 'cal');
+  return p;
+}
+function setTaskProject(id, v){
+  var t = D.tasks.get(id); if (!t) return;
+  setFields('tasks', id, {project_id: v || null}, taskLabel(t));
+  invalidate('board', 'person', 'cal');
+  announce(v ? 'Project set to ' + quote(projLabel(projById(v) || {})) : 'No project');
+}
 
 /* Undo an archive. Works even when a background refresh has already dropped the archived row
    from this device (B1): the row is put back locally first, then deleted_at = null is saved. */
@@ -4473,16 +4559,97 @@ function progForChoice(v){
   if (!p || p.deleted_at){ toast('That program was archived.'); return undefined; }
   return {p: p, made: false};
 }
-/* Mon-Sun chips (plus "No day") as one radio group */
-function dayChips(id, cur, onPick){
-  var today = S.week === thisWeek() ? DAYS[todayIdx()] : '';
-  return h('fieldset', {class: 'f25'}, h('legend', {text: 'Day'}),
-    h('div', {class: 'tchips daychips'}, [''].concat(DAYS).map(function(d, i){
+/* Project select (v2.10.0, Anisha Oct 26): "a 'Project' section that's also a dropdown (and I could add to it)".
+   Same shape as the program select but flat: No project, the team's projects by sort then name, then "+ New project...".
+   Choosing that opens a small inline name box and keeps the sheet open; the new project is created, selected and used. */
+function projSelect(id, cur, onChange){
+  var val = cur && cur !== '__new' ? cur : '';
+  var sel = h('select', {id: id, class: 'pill-sel', 'data-fk': id, on: {change: function(){ pick(sel.value); }}});
+  var inp = h('input', {type: 'text', id: id + 'New', autocomplete: 'off', enterkeyhint: 'done',
+    placeholder: 'New project\u2019s name', 'aria-label': 'New project\u2019s name'});
+  var addBtn = h('button', {type: 'button', class: 'primary', on: {click: function(){ addIt(); }}}, 'Add');
+  var newBox = h('div', {class: 'proj-new', hidden: true}, inp, addBtn,
+    h('button', {type: 'button', on: {click: function(){ cancel(); }}}, 'Cancel'));
+  var wrap = h('div', {class: 'proj-field'}, sel, newBox);
+  function fill(){
+    var list = projList();
+    var opts = [h('option', {value: '', text: 'No project'})].concat(list.map(function(p){ return h('option', {value: p.id, text: projLabel(p)}); }));
+    // a project archived elsewhere but still on this task stays listed, so the field shows what the task says
+    if (val && !list.some(function(p){ return p.id === val; })) opts.push(h('option', {value: val, text: 'This project (archived)'}));
+    sel.replaceChildren.apply(sel, opts.concat([h('option', {value: '__new', text: '+ New project\u2026'})]));
+    sel.value = val;
+  }
+  function pick(v){
+    if (v === '__new'){ openBox(); return; }
+    if (v === val) return;
+    val = v; onChange(val);
+  }
+  function openBox(){ sel.hidden = true; newBox.hidden = false; inp.value = ''; inp.focus(); }
+  function shutBox(){ newBox.hidden = true; sel.hidden = false; sel.value = val; }
+  function cancel(){ shutBox(); sel.focus(); }
+  function addIt(){
+    var name = inp.value.replace(/\s+/g, ' ').trim();
+    if (!name){ toast('Type a project name first.'); inp.focus(); return; }
+    var before = val, had = !!projList().find(function(p){ return projLabel(p).toLowerCase() === name.toLowerCase(); });
+    var made = addProject(name);
+    if (!made){ toast('Couldn\u2019t add that project. Please try again.', {kind: 'error'}); shutBox(); return; }
+    val = made.id; fill(); shutBox(); onChange(val);
+    if (!had){ toast('Added project ' + quote(projLabel(made)) + '.'); announce('Project ' + quote(projLabel(made)) + ' added'); }
+    // the write can still be refused (no access, table missing): put the field back rather than leave a project that isn't there
+    whenSaved(function(){
+      var live = D.projects.get(made.id);
+      if (live && !live.deleted_at) return;
+      if (val === made.id){ val = before; fill(); onChange(before); }
+      toast('Couldn\u2019t add ' + quote(name) + '. Please try again.', {kind: 'error', timeout: 9000});
+    });
+  }
+  inp.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' && !composing(e)){ e.preventDefault(); addIt(); }
+    else if (e.key === 'Escape'){ e.stopPropagation(); cancel(); }
+  });
+  fill();
+  return wrap;
+}
+/* Mon-Sun chips (plus "No day") as one radio group.
+   v2.10.0 (Anisha, Oct 26): the chips used to borrow S.week, so a task added while the app sat on next week
+   could only be given next week's days ("isn't showing any dates for this week, only next"). The week is now
+   passed in, named on the legend, and switchable from a small segmented control. Two options always
+   (This week / Next week); a third only when the sheet was opened from another week. */
+function dayChips(id, cur, onPick, week){
+  var base = thisWeek(), nxt = addDays(base, 7);
+  var weeks = [base, nxt];
+  if (week && weeks.indexOf(week) < 0) weeks.push(week);
+  var sel = weeks.indexOf(week) >= 0 ? week : base;
+  var curDay = cur || '';
+  var legend = h('legend');
+  var seg = h('div', {class: 'seg wkseg', role: 'group', 'aria-label': 'Which week\u2019s days'});
+  var chips = h('div', {class: 'tchips daychips'});
+  function wkName(w){ return w === base ? 'this week' : w === nxt ? 'next week' : 'week of ' + shortDate(w); }
+  function wkBtn(w){ return w === base ? 'This week' : w === nxt ? 'Next week' : weekLabel(w); }
+  function draw(focusDay){
+    legend.textContent = 'Day \u00b7 ' + wkName(sel) + ' (' + weekRange(sel) + ')';
+    seg.replaceChildren.apply(seg, weeks.map(function(w){
+      return h('button', {type: 'button', 'aria-pressed': w === sel ? 'true' : 'false', 'data-fk': id + 'wk:' + w,
+        on: {click: function(){ if (w === sel) return; setWeek(w); }}}, wkBtn(w));
+    }));
+    var today = sel === base ? DAYS[todayIdx()] : '';
+    chips.replaceChildren.apply(chips, [''].concat(DAYS).map(function(d, i){
       var rid = id + '_' + (d || 'none');
       return h('label', {class: 'tchip' + (d && d === today ? ' is-today' : ''), for: rid},
-        h('input', {type: 'radio', name: id, id: rid, value: d, checked: (cur || '') === d, 'data-fk': id + ':' + (d || 'none'), on: {change: function(){ onPick(d); }}}),
-        h('span', {text: d ? DAY_SHORT[i - 1] : 'No day'}), d && S.week ? h('span', {class: 'sub', text: String(isoToDate(addDays(S.week, i - 1)).getDate())}) : null);
-    })));
+        h('input', {type: 'radio', name: id, id: rid, value: d, checked: (curDay || '') === d, 'data-fk': id + ':' + (d || 'none'),
+          on: {change: function(){ curDay = d; onPick(d); }}}),
+        h('span', {text: d ? DAY_SHORT[i - 1] : 'No day'}), d ? h('span', {class: 'sub', text: String(isoToDate(addDays(sel, i - 1)).getDate())}) : null);
+    }));
+    if (focusDay != null){ var f = chips.querySelector('#' + cssEsc(id + '_' + (focusDay || 'none'))); if (f) f.focus({preventScroll: true}); }
+  }
+  function setWeek(w){
+    // the chosen day is a weekday, so it stays chosen in the new week (its date moves with the week)
+    var a = document.activeElement, back = a && chips.contains(a) ? a.value : null;
+    sel = w; draw(back);
+    announce('Days for ' + wkName(w) + ': ' + shortDate(w) + ' \u2013 ' + shortDate(addDays(w, 6)));
+  }
+  draw();
+  return h('fieldset', {class: 'f25 dayfield'}, legend, seg, chips);
 }
 /* People as toggle chips: the chosen ones first; "Someone else" opens everyone (PAs, then Staff) */
 function peopleChips(o){
@@ -4565,7 +4732,7 @@ function addTaskSheet(o){
   if (me && (!D.people.has(me) || D.people.get(me).deleted_at)) me = null;
   // v2.9.0 (F, Anisha L135-137): one Watchers control for everyone (PAs and YCs too), the adder first as "Me".
   // A task for someone else starts with the adder watching (L137), unless she turned that off last time.
-  var st = {who: pid ? [pid] : [], prog: '', due: S.week === thisWeek() ? DAYS[todayIdx()] : '', watchers: [], wTouched: false};
+  var st = {who: pid ? [pid] : [], prog: '', proj: '', due: S.week === thisWeek() ? DAYS[todayIdx()] : '', watchers: [], wTouched: false};
   var forOther = function(){ return !!me && st.who.some(function(x){ return x !== me; }); };
   var autoMe = function(){
     if (!me || st.wTouched) return;
@@ -4575,7 +4742,7 @@ function addTaskSheet(o){
   autoMe();
   if (dr){
     var live = function(a){ return (a || []).filter(function(x){ return D.people.has(x) && !D.people.get(x).deleted_at; }); };
-    st.who = live(dr.who); st.prog = dr.prog || ''; st.due = DAYS.indexOf(dr.due) >= 0 ? dr.due : ''; st.watchers = live(dr.watchers);
+    st.who = live(dr.who); st.prog = dr.prog || ''; st.proj = projById(dr.proj) ? dr.proj : ''; st.due = DAYS.indexOf(dr.due) >= 0 ? dr.due : ''; st.watchers = live(dr.watchers);
     if (me && dr.watchMe === true && st.watchers.indexOf(me) < 0) st.watchers.push(me);   // a draft kept by an older build
     st.wTouched = true;
   }
@@ -4586,7 +4753,8 @@ function addTaskSheet(o){
   var who = peopleChips({id: 'atWho', label: 'Who', none: 'Choose who it\u2019s for.', selected: function(){ return st.who; },
     toggle: function(x, on){ st.who = st.who.filter(function(y){ return y !== x; }); if (on) st.who.push(x);
       var had = st.watchers.slice().sort().join(); autoMe(); if (more && st.watchers.slice().sort().join() !== had) more.draw(); }});
-  var dayBox = dayChips('atDay', st.due, function(d){ st.due = d; });
+  // v2.10.0: the chips show the week being viewed, and can be pointed at this week (or next) from the sheet itself
+  var dayBox = dayChips('atDay', st.due, function(d){ st.due = d; }, S.week);
   // v2.6.4 (judge signal: a Thursday Soul Food task was filed on Tuesday): picking a program sets Day to that program's day
   // (still editable). "No program" leaves Day alone. Replaces the v2.5 default "the day stays on today".
   var prog = progSelect('atProg', st.prog, function(v, c){
@@ -4600,6 +4768,8 @@ function addTaskSheet(o){
   });
   var note = h('textarea', {id: 'atNote', rows: 2, placeholder: 'Anything they should know (optional)', 'data-fk': 'atnote'});
   if (dr) note.value = dr.note || '';
+  // v2.10.0 (Anisha): Project sits right under Program; optional either way, and the way to file a personal task.
+  var proj = projSelect('atProj', st.proj, function(v){ st.proj = v; });
   // v2.6.6 (Anisha): Watchers sit in the box itself, no "More" fold. v2.9.0: for every login; "Let me know when it's done" is the "Me" chip
   more = peopleChips({id: 'atWat', label: 'Watchers', none: '', me: me, selected: function(){ return st.watchers; },
       toggle: function(x, on){ st.watchers = st.watchers.filter(function(y){ return y !== x; }); if (on) st.watchers.push(x);
@@ -4611,7 +4781,7 @@ function addTaskSheet(o){
     if (tooSoon('atsave')) return;
     var r = progForChoice(st.prog); if (r === undefined) return;
     var p = r ? r.p : newPersonalProgram(text), madeProg = r ? r.made : true;
-    var t = insertRow('tasks', {id: newId('t_'), team: S.team, program_id: p.id, task: text, notes: note.value.trim(), due: st.due || '', done: false, sort: nextSort(tasksOf(p.id))}, text);
+    var t = insertRow('tasks', {id: newId('t_'), team: S.team, program_id: p.id, project_id: st.proj || null, task: text, notes: note.value.trim(), due: st.due || '', done: false, sort: nextSort(tasksOf(p.id))}, text);
     st.who.forEach(function(x){ insertRow('task_people', {task_id: t.id, person_id: x, team: S.team, done: false}, text); });
     var ws = st.watchers.filter(function(x, i, a){ return a.indexOf(x) === i && D.people.has(x); });
     ws.forEach(function(x){ insertRow('task_watchers', {task_id: t.id, person_id: x, team: S.team}, text); });
@@ -4631,6 +4801,7 @@ function addTaskSheet(o){
     h('div', {class: 'pv-add at-text'}, h('label', {class: 'field', for: 'atText', text: 'Task'}), txt),
     who.el,
     h('div', null, h('label', {class: 'field', for: 'atProg', text: 'Program'}), prog, prog.hint),
+    h('div', {class: 'at-proj'}, h('label', {class: 'field', for: 'atProj', text: 'Project'}), proj),
     dayBox,
     h('div', null, h('label', {class: 'field', for: 'atNote', text: 'Note'}), note),
     more.el, err);
@@ -4639,7 +4810,7 @@ function addTaskSheet(o){
     foot: [h('button', {type: 'button', 'data-fk': 'atcancel', on: {click: closeSheet}}, 'Cancel'),
       h('button', {type: 'button', class: 'primary', 'data-fk': 'atsave', on: {click: save}}, 'Add task')]});
   $('#sheet').classList.add('wide');
-  AT_LIVE = {el: form, get: function(){ return {kind: 'add', pid: pid, text: txt.value, who: st.who.slice(), prog: st.prog, due: st.due, note: note.value, watchers: st.watchers.slice()}; }};
+  AT_LIVE = {el: form, get: function(){ return {kind: 'add', pid: pid, text: txt.value, who: st.who.slice(), prog: st.prog, proj: st.proj, due: st.due, note: note.value, watchers: st.watchers.slice()}; }};
 }
 
 /* ---------- 2. the task detail sheet (tap a task row): everything about one task, saved as you go ---------- */
@@ -4694,7 +4865,9 @@ function taskSheet(id, pid, ret){
       selected: function(){ return watchersOf(id).map(function(x){ return x.person_id; }); },
       toggle: function(x, on){ var c = D.tasks.get(id); if (!c) return; if (on) addWatcher(c, x); else removeWatcher(c, x); }});
     var prog = progSelect('tdProg', progValueOf(cur), function(v){ moveTaskTo(id, v); });
-    var days = dayChips('tdDay', cur.due, function(d){ setTaskDue(id, d); invalidate('cal'); });
+    // v2.10.0 (Anisha): Project under Program. Saves as you pick; the sheet stays where it is.
+    var proj = projSelect('tdProj', cur.project_id || '', function(v){ setTaskProject(id, v); });
+    var days = dayChips('tdDay', cur.due, function(d){ setTaskDue(id, d); invalidate('cal'); }, S.week);
     var e = estOn() && isAdmin() ? estOf(id) : null;
     var est = estOn() && isAdmin() ? h('div', {class: 'td-est'}, h('span', {class: 'field', text: 'Time estimate'}),
       h('span', {class: 'grow', text: e ? (e.source === 'admin' ? '' : 'About ') + minsWords(e.minutes) : 'Not set'}),
@@ -4708,6 +4881,7 @@ function taskSheet(id, pid, ret){
       h('div', null, h('label', {class: 'field', for: 'tdNote', text: 'Note'}), note),
       who.el, wat.el,
       h('div', null, h('label', {class: 'field', for: 'tdProg', text: 'Program'}), prog, prog.hint, board),
+      h('div', {class: 'td-proj'}, h('label', {class: 'field', for: 'tdProj', text: 'Project'}), proj),
       days,
       est].filter(Boolean));
     if (keepFk){ var el = body.querySelector('[data-fk="' + cssEsc(keepFk) + '"]'); if (el) el.focus({preventScroll: true}); }
@@ -4762,7 +4936,12 @@ function pvWatching(pid){
 /* ---------- v2.8.0 (Oct 23 call, Item A: Zaynab L102-106, L115; Ummehani L81-82; L114): My tasks by program ----------
    Program first (name, then day · time · place as context), her tasks under it, tap to fold. Personal tasks sit under their day,
    tasks with no day in "No day set" last. A lead-up card (a later program, e.g. Fall Fest, worked on this week) groups under its
-   name with its real date, placed by her tasks' days. Folds are remembered per device (per team). */
+   name with its real date, placed by her tasks' days. Folds are remembered per device (per team).
+
+   v2.10.0 (Anisha, Oct 26 7:52pm): the week is DAY COLUMNS first — Monday to Sunday, only the days that have something on them,
+   and "No day set" last. Inside a day her tasks group under their program's header, a project's name when a task has a project
+   and no program, else one "(Misc.)" header per day. Headers come first and start folded; each day column folds on its own,
+   remembered per device (pvFoldSet). */
 function isLeadUp(p){ return !!p && !p.personal && validIso(p.date) && (p.date < p.week || p.date > addDays(p.week, 6)); }
 /* the calendar program a lead-up card is for, when its month is loaded (same name rule as the pairing) */
 function leadEvent(p){
@@ -4778,57 +4957,107 @@ function pvFoldSet(k, folded){
   lsSet('pvfold:' + S.team, m);
 }
 function pvDueIso(t){ var i = DAYS.indexOf(t.due); return i >= 0 ? addDays(S.week, i) : ''; }
+/* v2.10.0: a task's project name. The Project field (tasks.project_id, loaded into D.projects) lands separately, so this must
+   read it whether or not that work is here: no D.projects, no row, or no id gives '' and the task groups by program or (Misc.). */
+function projName(t){
+  var m = D.projects, id = t && t.project_id;
+  if (!id || !m) return '';
+  var p = typeof m.get === 'function' ? m.get(id) : m[id];
+  if (!p || p.deleted_at) return '';
+  return String(p.name || '').replace(/\s+/g, ' ').trim();
+}
+/* a day key: this week's own date, else '' (the "No day set" column) */
+function pvDayKey(iso){ return iso && iso >= S.week && iso <= addDays(S.week, 6) ? iso : ''; }
+/* the person's week as day columns. Each column holds her groups for that day: one per program, one per project, one "(Misc.)".
+   The same program can sit in two columns (a task due Tuesday on a Friday program) — each column is its own group and fold. */
 function pvGroups(pid, skip, wkOk){
-  var wk = S.week, wz = addDays(wk, 6), pairs = calPairs(), groups = new Map();
-  function grp(k, o){ var g = groups.get(k); if (!g){ g = Object.assign({k: k, tasks: []}, o); groups.set(k, g); } return g; }
-  // the calendar programs she's signed up for this week, even with no tasks
+  var wk = S.week, wz = addDays(wk, 6), pairs = calPairs(), days = new Map(), INF = 24 * 60 + 1;
+  function dayOf(iso){
+    var k = pvDayKey(iso), d = days.get(k);
+    if (!d){ d = {key: k, date: k, groups: new Map()}; days.set(k, d); }
+    return d;
+  }
+  function grp(iso, gk, o){
+    var d = dayOf(iso), g = d.groups.get(gk);
+    if (!g){ g = Object.assign({k: (d.date || 'nodate') + '|' + gk, gk: gk, date: d.date, tasks: []}, o); d.groups.set(gk, g); }
+    return g;
+  }
+  // the calendar programs she's signed up for this week, even with no tasks of hers: they sit on their own day
   if (hasShifts() && wkOk) eventsIn(wk, wz).forEach(function(s){
     if (!D.sp.has(s.id + '|' + pid)) return;
     var p = pairs.byEv.get(s.id) || null;
-    grp(p ? 'p:' + p.id : 'ev:' + s.id, {kind: 'prog', ev: s, p: p, date: s.date, min: shiftMinutes(s)});
+    grp(s.date, p ? 'p:' + p.id : 'ev:' + s.id, {kind: 'prog', ev: s, p: p, min: shiftMinutes(s), placed: false});
   });
   tasksFor(pid).forEach(function(t){
     if (skip && skip.has(t.id)) return;
     var p = D.programs.get(t.program_id);
-    if (!p || p.personal){ var d = pvDueIso(t); (d ? grp('d:' + d, {kind: 'day', date: d, min: 24 * 60 + 1}) : grp('none:' + wk, {kind: 'none', date: '', min: 0})).tasks.push(t); return; }
-    var g = groups.get('p:' + p.id);
-    if (!g){
-      var ev = pairs.byProg.get(p.id) || null;
-      if (ev) g = grp('p:' + p.id, {kind: 'prog', ev: ev, p: p, date: ev.date, min: shiftMinutes(ev)});
-      else if (validIso(p.date) && p.date >= wk && p.date <= wz) g = grp('p:' + p.id, {kind: 'prog', p: p, date: p.date, min: 24 * 60});
-      else g = grp('p:' + p.id, {kind: 'prog', p: p, lead: isLeadUp(p), date: '', min: 24 * 60});
+    if (p && p.deleted_at) p = null;
+    var ev = p ? (pairs.byProg.get(p.id) || null) : null;
+    var day = pvDueIso(t);                                     // the day it's due,
+    if (!day && ev && ev.date) day = ev.date;                   // else the day of its program (as personDayTasks does),
+    if (!day && p && validIso(p.date)) day = p.date;            // else "No day set"
+    if (p && !p.personal){
+      grp(day, 'p:' + p.id, {kind: 'prog', p: p, ev: ev, min: ev ? shiftMinutes(ev) : INF, lead: isLeadUp(p), placed: true}).tasks.push(t);
+      return;
     }
-    g.tasks.push(t);
+    var pj = projName(t);
+    if (pj) grp(day, 'pj:' + String(t.project_id), {kind: 'proj', pname: pj, min: INF, placed: true}).tasks.push(t);
+    else grp(day, 'misc', {kind: 'misc', min: INF, placed: true}).tasks.push(t);
   });
-  // lead-up and undated cards (Weekly Tasks): placed by the first day her tasks on it are due
-  groups.forEach(function(g){ if (g.kind === 'prog' && !g.date){ var ds = g.tasks.map(pvDueIso).filter(Boolean).sort(); g.date = ds[0] || ''; g.placed = true; } });
   var di = function(t){ var i = DAYS.indexOf(t.due); return i < 0 ? 9 : i; };
-  groups.forEach(function(g){ g.tasks.sort(function(a, b){ return (personDone(a, pid) ? 1 : 0) - (personDone(b, pid) ? 1 : 0) || di(a) - di(b) || bySort(a, b); }); });
-  var rank = function(g){ return g.kind === 'none' ? 2 : g.date ? 0 : 1; };
-  return Array.from(groups.values()).sort(function(a, b){ return rank(a) - rank(b) || a.date.localeCompare(b.date) || a.min - b.min || String(a.k).localeCompare(String(b.k)); });
+  days.forEach(function(d){
+    d.groups.forEach(function(g){
+      g.tasks.sort(function(a, b){ return (personDone(a, pid) ? 1 : 0) - (personDone(b, pid) ? 1 : 0) || di(a) - di(b) || bySort(a, b); });
+      pvGroupMeta(g);
+    });
+    d.list = Array.from(d.groups.values()).sort(pvGroupCmp);
+  });
+  // Monday to Sunday, then "No day set" last; only the days that have something on them
+  return Array.from(days.values()).sort(function(a, b){ return (a.date || '9').localeCompare(b.date || '9'); });
+}
+/* one day column: the day label, then its folded program headers */
+function pvDayEl(d, pid){
+  var today = todayIso(), iso = d.date, id = 'pvd_' + (iso || 'nodate');
+  var hd = iso
+    ? h('h3', {class: 'pv-dayh', id: id},
+        h('b', {class: 'pv-dayn', text: WEEKDAY_NAMES[isoToDate(iso).getDay()].slice(0, 3)}),
+        h('span', {class: 'pv-dayd', text: shortDate(iso)}),
+        iso === today ? h('span', {class: 'rd-today sm'}, 'Today') : null)
+    : h('h3', {class: 'pv-dayh', id: id}, h('b', {class: 'pv-dayn', text: 'No day set'}));
+  return h('li', {class: 'pv-day' + (iso === today ? ' is-today' : '') + (iso ? '' : ' pv-day-none'), 'data-date': iso || null, 'aria-labelledby': id},
+    hd, h('ol', {class: 'pv-dayg'}, d.list.map(function(g){ return pvGroupEl(g, pid); })));
+}
+function pvGroupName(g){
+  if (g.kind === 'misc') return '(Misc.)';
+  if (g.kind === 'proj') return g.pname || 'Project';
+  if (g.p) return progLabel(g.p);
+  return (g.ev && (g.ev.program || '').trim()) || 'Untitled event';
+}
+/* the sort inside a day: programs with a start time first (by that time), then the rest by name, "(Misc.)" last */
+function pvGroupMeta(g){ g.nm = pvGroupName(g); g.rk = g.kind === 'misc' ? 2 : (g.min < 24 * 60 + 1 ? 0 : 1); return g; }
+function pvGroupCmp(a, b){
+  return a.rk - b.rk || (a.rk === 0 ? a.min - b.min : 0) || String(a.nm).localeCompare(String(b.nm)) || String(a.k).localeCompare(String(b.k));
 }
 function pvGroupHead(g, pid){
-  if (g.kind === 'day') return {name: dayLong(g.date), when: '', ev: null};
-  if (g.kind === 'none') return {name: 'No day set', when: '', ev: null};
+  if (g.kind === 'misc') return {name: '(Misc.)', when: '', ev: null};
+  if (g.kind === 'proj') return {name: g.pname || 'Project', when: '', ev: null};
   var s = g.ev, p = g.p;
   if (s){
     var nm = (s.program || '').trim() || 'Untitled event', where = locText(s.location);
     var arr = pid && D.sp.has(s.id + '|' + pid) ? arriveAt(s) : '';   // v2.9.0 (Oct 23 call, L23-24): when she should be there, on programs she's on
-    return {name: where ? tileTitle(nm, where) : nm, when: [niceDate(s.date), shiftTime(s), arr ? 'arrive ' + arr : '', where, s.cal_status === 'gone' ? 'Cancelled' : ''].filter(Boolean).join(' \u00b7 '), ev: s};
+    // v2.10.0: the day column already names the date, so say it only when the program is on another day (a lead-up card)
+    return {name: where ? tileTitle(nm, where) : nm, when: [s.date !== g.date ? niceDate(s.date) : '', shiftTime(s), arr ? 'arrive ' + arr : '', where, s.cal_status === 'gone' ? 'Cancelled' : ''].filter(Boolean).join(' \u00b7 '), ev: s};
   }
   var le = g.lead ? leadEvent(p) : null;
-  return {name: progLabel(p), when: [validIso(p.date) ? niceDate(p.date) : '', le ? shiftTime(le) : ''].filter(Boolean).join(' \u00b7 '), ev: le};
+  return {name: progLabel(p || {}), when: [validIso(p && p.date) && p.date !== g.date ? niceDate(p.date) : '', le ? shiftTime(le) : ''].filter(Boolean).join(' \u00b7 '), ev: le};
 }
 function pvGroupEl(g, pid){
   var today = todayIso(), fold = pvFoldMap(), base = 'pg_' + String(g.k).replace(/[^a-z0-9_]/gi, '_');
   var open = g.tasks.filter(function(t){ return !personDone(t, pid); }), done = g.tasks.filter(function(t){ return personDone(t, pid); });
-  // past days and all-done groups START folded: the default is taken once per session, so ticking a group's last task doesn't fold it away
-  if (!S.pvFoldDflt) S.pvFoldDflt = new Map();
-  var fk0 = S.team + '|' + g.k;
-  if (!S.pvFoldDflt.has(fk0)) S.pvFoldDflt.set(fk0, !!(g.date && g.date < today) || (g.tasks.length > 0 && !open.length));
-  var dflt = S.pvFoldDflt.get(fk0);
-  var folded = g.tasks.length ? (Object.prototype.hasOwnProperty.call(fold, g.k) ? !!fold[g.k] : dflt) : false;
-  var hd = pvGroupHead(g, pid), isToday = g.date === today && !g.placed;   // a lead-up/undated card placed by its tasks' day isn't "today"
+  // v2.10.0 (Anisha): the header shows first and the tasks wait for a tap, so a group STARTS folded; a fold she made
+  // herself is remembered across renders and reloads (pvFoldSet), day column by day column.
+  var folded = g.tasks.length ? (Object.prototype.hasOwnProperty.call(fold, g.k) ? !!fold[g.k] : true) : false;
+  var hd = pvGroupHead(g, pid), isToday = g.date === today && !g.placed;   // a card placed by her tasks' day isn't "today"
   var dot = hd.ev ? h('span', {class: 'cal__dot', 'aria-hidden': 'true'}) : null;
   var txt = h('span', {class: 'pg-tx'}, h('b', {class: 'pg-name', text: hd.name}), hd.when ? h('span', {class: 'pg-when', text: hd.when}) : null);
   var tag = isToday ? h('span', {class: 'rd-today'}, 'Today') : null;
@@ -4836,25 +5065,27 @@ function pvGroupEl(g, pid){
   if (g.tasks.length){
     head = h('button', {type: 'button', class: 'pg-head', id: base + 'h', 'data-fk': 'pgh:' + g.k, 'aria-expanded': folded ? 'false' : 'true', 'aria-controls': base + 'l',
       on: {click: function(){ pvFoldSet(g.k, !folded); invalidate('person'); }}},
-      icon(folded ? 'chevR' : 'down', 'sm pg-chev'), dot, txt, tag, folded && open.length ? h('span', {class: 'pg-n', text: open.length + ' open'}) : null);
+      icon(folded ? 'chevR' : 'down', 'sm pg-chev'), dot, txt, tag,
+      folded && open.length ? h('span', {class: 'pg-n', text: open.length + ' open'}) : folded && done.length ? h('span', {class: 'pg-n', text: done.length + ' done'}) : null);
   } else {
     // a program she's signed up for with no tasks of hers: the header opens the program
-    head = h('button', {type: 'button', class: 'pg-head pg-ev', id: base + 'h', 'data-fk': 'pgh:' + g.k, 'aria-haspopup': 'dialog', on: {click: function(e){ eventSheet(hd.ev.id, e.currentTarget); }}},
+    head = h('button', {type: 'button', class: 'pg-head pg-ev', id: base + 'h', 'data-fk': 'pgh:' + g.k, 'aria-haspopup': 'dialog', on: {click: function(e){ if (hd.ev) eventSheet(hd.ev.id, e.currentTarget); }}},
       h('span', {class: 'pg-chev pg-sp', 'aria-hidden': 'true'}), dot, txt, tag);
   }
   var body = null;
   if (g.tasks.length){
-    var opt = {noWhere: true, day: g.kind !== 'day'}, rows = open.map(function(t){ return taskLine(t, pid, 'pv', opt); });
+    var opt = {noWhere: true}, rows = open.map(function(t){ return taskLine(t, pid, 'pv', opt); });
     var dk = 'g:' + g.k, dOpen = !open.length || !!(S.pvDoneOpen && S.pvDoneOpen.has(dk));
-    if (done.length && open.length) rows.push(h('li', {class: 'pg-done'}, h('button', {type: 'button', class: 'link rd-done', 'aria-expanded': dOpen ? 'true' : 'false', 'data-fk': 'pvdone:' + (g.kind === 'day' ? g.date : g.k),
+    if (done.length && open.length) rows.push(h('li', {class: 'pg-done'}, h('button', {type: 'button', class: 'link rd-done', 'aria-expanded': dOpen ? 'true' : 'false', 'data-fk': 'pvdone:' + g.k,
       on: {click: function(){ if (!S.pvDoneOpen) S.pvDoneOpen = new Set(); if (S.pvDoneOpen.has(dk)) S.pvDoneOpen.delete(dk); else S.pvDoneOpen.add(dk); invalidate('person'); }}},
       icon(dOpen ? 'down' : 'chevR', 'sm'), done.length + ' done')));
     if (dOpen) done.forEach(function(t){ rows.push(taskLine(t, pid, 'pv', opt)); });
     body = h('ul', {class: 'rtasks pg-tasks', id: base + 'l', 'aria-labelledby': base + 'h', hidden: folded}, rows);
   }
   return h('li', {class: 'pgroup pg-' + g.kind + (hd.ev ? ' c25 ' + (deptClass(hd.ev) || 'dept-other') : '') + (isToday ? ' is-today' : '') + (folded ? ' folded' : '') + (g.lead ? ' pg-lead' : ''),
-    id: g.kind === 'day' ? 'pd_' + g.date : null, 'data-date': g.date || null, 'data-k': g.k}, h('h3', {class: 'pg-h'}, head), body);
+    'data-date': g.date || null, 'data-k': g.k}, h('h3', {class: 'pg-h'}, head), body);
 }
+
 RENDER.person = function(){
   var sec = $('#v-person');
   if (S.weekLoaded !== S.week || !S.sharedLoaded){
@@ -4914,11 +5145,12 @@ RENDER.person = function(){
   var needIds = new Set(needs.map(function(t){ return t.id; }));
   var needSec = needs.length ? h('section', {class: 'pv-need', 'aria-labelledby': 'pvNeedH'}, h('h2', {class: 'pv-h', id: 'pvNeedH'}, 'Overdue', h('span', {class: 'muted', text: needs.length + ' open'})),
     h('ul', {class: 'rtasks wide'}, needs.map(function(t){ return taskLine(t, pid, 'pn', {day: true}); }))) : null;
-  // 2. v2.8.0 (Oct 23 call, Item A): the week by program. One group per program she's on (tasks or a sign-up), personal tasks under their day,
-  //    "No day set" last. In-office and setup lines stay on the Calendar.
+  // 2. v2.10.0 (Anisha, Oct 26 7:52pm): the week by DAY, left to right — Monday to Sunday, only the days with something on them,
+  //    "No day set" last. Inside a day, one folded header per program (or project, or "(Misc.)"), her tasks under it.
+  //    In-office and setup lines stay on the Calendar.
   var wkOk = !hasShifts() || shiftsReady(monthsOfRange(S.week, addDays(S.week, 6)));
-  var groups = pvGroups(pid, needIds, wkOk);
-  var box = groups.length ? h('ol', {class: 'pv-groups pv-days', 'aria-labelledby': 'pvTasksH'}, groups.map(function(g){ return pvGroupEl(g, pid); })) : null;
+  var days = pvGroups(pid, needIds, wkOk);
+  var box = days.length ? h('ol', {class: 'pv-groups pv-days pv-wk', 'aria-labelledby': 'pvTasksH'}, days.map(function(d){ return pvDayEl(d, pid); })) : null;
   var openN = ts.filter(function(t){ return !personDone(t, pid); }).length;
   var tasksH = h('h2', {class: 'pv-h', id: 'pvTasksH'}, tw ? 'This week' : weekLabel(S.week),
     openN ? h('span', {class: 'muted', text: openN + ' open'}) : null);
@@ -6057,7 +6289,7 @@ function describe(e){
   var fields = function(){ var w = []; ch.forEach(function(k){ var f = FIELD_WORDS[k]; if (f && w.indexOf(f) < 0) w.push(f); }); return w.length ? w.join(', ') : 'details'; };
   switch (e.tbl){
     case 'tasks': {
-      var tn = quote(n.task || o.task), pn = histProgName(x.program_id);
+      var tn = quote(n.task || o.task), pn = histProgName(x.program_id) || (x.project_id && projById(x.project_id) ? projLabel(projById(x.project_id)) : '');   // v2.10.0: a project names a personal task
       if (e.op === 'INSERT') return who + ' added ' + tn + (pn ? ' to ' + pn : '');
       if (arch) return who + ' ' + arch + ' ' + tn;
       if (ch.indexOf('done') >= 0) return who + (n.done ? ' marked ' + tn + ' done' : ' marked ' + tn + ' not done');
@@ -6722,7 +6954,9 @@ function personDayTasks(pid){
 function taskLine(t, pid, fk, opts){
   opts = opts || {};
   var on = personDone(t, pid), lbl = taskLabel(t), p = D.programs.get(t.program_id), note = (t.notes || '').replace(/\s+/g, ' ').trim();
-  var meta = opts.noWhere ? [] : [h('span', {class: 'rt-where', text: p && !p.personal ? progLabel(p) : 'Personal'})];   // v2.8.0: My tasks groups say the program once, on the header
+  // v2.10.0: a personal task that belongs to a project says the project's name, not "Personal"
+  var where = p && !p.personal ? progLabel(p) : (projNameOf(t) || 'Personal');
+  var meta = opts.noWhere ? [] : [h('span', {class: 'rt-where', text: where})];   // v2.8.0: My tasks groups say the program once, on the header
   if (opts.day && t.due) meta.push(meta.length ? ' \u00b7 ' : null, h('span', {text: dayName(t.due)}));
   var mk = [];
   if (!on && isOverdue(t)) mk.push(h('span', {class: 'mk overdue'}, icon('warn'), 'Overdue'));
@@ -8186,7 +8420,8 @@ window.__rootspa = {S: S, D: D, Q: Q, sb: sb, go: go, version: BUILD,
      todayIso: todayIso, mondayOf: mondayOf, isoToDate: isoToDate, niceDate: niceDate, shiftShown: shiftShown, isCalRow: isCalRow, shiftPAs: shiftPAs,
      isPaLogin: isPaLogin, myLoginPerson: myLoginPerson, myId: myId, isYC: isYC, paPeople: paPeople, paOnlyPeople: paOnlyPeople, specialTemplate: specialTemplate, activeTemplates: activeTemplates, templateFor: templateFor,   // v2.6.6
      progDept: progDept, deptVal: deptVal, calPairs: calPairs, boardPrograms: boardPrograms,   // v2.7.2
-     repCommon: repCommon, repCommonIx: repCommonIx, openFor: function(pid){ return tasksFor(pid).filter(function(t){ return !personDone(t, pid); }).map(function(t){ return normTask(t.task); }); }}};   // v2.5b probe hooks (read-only)
+     repCommon: repCommon, repCommonIx: repCommonIx, openFor: function(pid){ return tasksFor(pid).filter(function(t){ return !personDone(t, pid); }).map(function(t){ return normTask(t.task); }) },
+     pvGroups: pvGroups, pvDayEl: pvDayEl, projName: projName, pvGroupMeta: pvGroupMeta, pvGroupCmp: pvGroupCmp}};   // v2.10.0: My tasks day columns (read-only probes)
 })();
 
 </script>
