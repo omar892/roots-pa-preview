@@ -1727,6 +1727,24 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 .card>.cp-card{display:flex;align-items:center;gap:6px;margin:0 var(--sp2,8px) var(--sp2,8px);min-height:36px;font-weight:600}
 @media (pointer:coarse){ .card>.cp-card{min-height:44px} }
 
+/* ---------- v2.12.0 (Anisha, Oct 28) ----------
+   1. My tasks: an overdue task stays under its day; its row carries a red warning icon (far right) and its group header says
+      "N overdue" in red (--err, AA on white 6.2:1 and on the cream page 5.5:1), folded or open.
+   2. PA shifts: "2 spots left" under the Sign up button; calendar tiles say it inside the green Sign up pill. */
+.pg-od{flex:none;white-space:nowrap;margin-top:1px;font-size:var(--fs-s,14px);font-weight:650;color:var(--err)}
+#v-person .pv-day .pg-od{font-size:13px;margin-top:2px}
+.rtask .rt-od{flex:none;display:inline-flex;align-items:center;justify-content:center;width:28px;min-height:var(--tap,44px);margin-left:2px;color:var(--err)}
+.rtask .rt-od .ic{width:18px;height:18px}
+@media (forced-colors:active){ .pg-od,.rtask .rt-od{color:CanvasText} }
+#v-shifts.v26 .s-act:has(.s-spots){flex-direction:column;align-items:flex-end;justify-content:center;gap:2px}
+#v-shifts.v26 .s-spots{display:block;max-width:100%;white-space:nowrap;font:600 12.5px/1.25 var(--font);color:var(--warn);text-align:right}
+@media (max-width:767px){ #v-shifts.v26 .s-spots{font-size:12px} }
+/* the month strip's Sign up tag may wrap ("Sign up" / "2 left") instead of cutting the count off */
+.rtile.compact .cal__tag.su .tag-t{overflow:visible;white-space:normal;text-overflow:clip;overflow-wrap:normal}
+/* tablet month grid (768-1023px): the day cells are ~70-130px wide, so the tag keeps the + and the count ("+ 2 left"); "Sign up" is still read out */
+@media (min-width:768px) and (max-width:1023px){ .rtile.compact .cal__tag.su .tag-su{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap} .rtile.compact .cal__tag.su .tag-sp{margin-left:0} }
+.cal__tag .tag-sp{font-weight:500}
+
 </style>
 </head>
 <body>
@@ -1806,7 +1824,7 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.11.1';   // v2.11.1: Calendar month, Mine: when all of the person's sign-ups are before today the empty note and "See N that need a PA" show above the "Show N earlier days" link. Was 2.11.0:   // v2.11.0: Anisha Oct 27 (month +more in place, Common tasks pick list, admin My tasks trimmed, Add task on group headers, done tasks to the bottom). Was 2.10.0:   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
+var BUILD = '2.12.0';   // v2.12.0: Anisha Oct 28 (My tasks keeps overdue tasks under their day with a red icon and a red "N overdue" on the group header, PAs see "N spots left" next to Sign up, the Project list is per person). Was 2.11.1:   // v2.11.1: Calendar month, Mine: when all of the person's sign-ups are before today the empty note and "See N that need a PA" show above the "Show N earlier days" link. Was 2.11.0:   // v2.11.0: Anisha Oct 27 (month +more in place, Common tasks pick list, admin My tasks trimmed, Add task on group headers, done tasks to the bottom). Was 2.10.0:   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
 // was 2.7.2: // v2.7.2: departments are one shared filter (Calendar, Board, PA shifts), never a team; no team chips at sign-in
 // v2.7.1: Calendar filter is one dropdown (departments + Needs a PA); Board tab for PAs/YCs with Take it
 // v2.6.9:   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
@@ -2055,14 +2073,16 @@ var S = {
   loading: 0, buffer: [], channel: null, rtDown: false, offline: !navigator.onLine,
   person: null, dayFilter: 'all', histLimit: 100, hist: null, histErr: null, histNames: {tasks:{}, shifts:{}, programs:{}},
   signingOut: false, reauthOpen: false, pointerDown: false, lastHidden: 0, prevWeekCarry: null,
-  shiftMonths: new Set(), shiftLoading: new Set()
+  shiftMonths: new Set(), shiftLoading: new Set(),
+  projMine: new Set(), projHist: null, ptAt: 0   // v2.12.0: projects this login created (history), when the per-person project read last landed
 };
 var D = {
   people: new Map(), templates: new Map(), links: new Map(), programs: new Map(), tasks: new Map(),
   tp: new Map(), notes: new Map(), shifts: new Map(), sp: new Map(), members: new Map(), tw: new Map(), oh: new Map(),
   est: new Map(), pnotes: new Map(),
   sl: new Map(), rep: new Map(),   // v2.9.0: shift_leads (program leads), repeat_tasks (repeating admin tasks)
-  projects: new Map()              // v2.10.0: a team's own project list (Monthly Calendar, Operations...), not per week
+  projects: new Map(),             // v2.10.0: a team's own project list (Monthly Calendar, Operations...), not per week
+  ptasks: new Map()                // v2.12.0: task id -> {p: project id, w: [person ids]} for every live task with a project, any week (who has worked on which project)
 };
 var T = {
   people: {map: function(){ return D.people; }, pk: ['id']},
@@ -2274,6 +2294,7 @@ function upsertRow(table, row, prev, label){
 }
 
 function enqueue(op){
+  if (op.table === 'tasks' || op.table === 'task_people' || op.table === 'projects') ptStale(true);   // v2.12.0: read again once this has saved
   for (var i = Q.items.length - 1; i >= 0; i--){
     var o = Q.items[i];
     // An op that has been sent once may already be on the server even if we never heard back.
@@ -2729,6 +2750,7 @@ async function loadShared(){
   D.projects.clear(); if (!res[6].error) (res[6].data || []).forEach(function(r){ if (!r.deleted_at) D.projects.set(r.id, r); });
   S.sharedLoaded = true; IX = null;
   applyQueueToState();      // people, Master programs, links and projects added offline stay on screen through a refresh (review P12)
+  ptRefresh(); if (!S.projHist) ptHistory();   // v2.12.0: who has worked on which project; which projects this login made
 }
 async function fetchWeek(team, week){
   return Promise.all([
@@ -2891,6 +2913,7 @@ function subscribe(){
   S.channel = ch;
 }
 function onRemote(t, p){
+  if (t === 'tasks' || t === 'task_people' || t === 'projects') ptStale(false);   // v2.12.0: the per-person Project list reads again
   if (S.loading > 0){ S.buffer.push([t, p]); return; }
   var ev = p.eventType, row = ev === 'DELETE' ? p.old : p.new;
   if (!row) return;
@@ -3388,8 +3411,70 @@ function addProject(name){
   var had = projList().find(function(p){ return projLabel(p).toLowerCase() === n.toLowerCase(); });
   if (had) return had;
   var p = insertRow('projects', {id: newId('prj_'), team: S.team, name: n, sort: projNextSort()}, n);
+  S.projMine.add(p.id);   // v2.12.0: stays in this login's list until a task is in it (history confirms it after a reload)
   invalidate('board', 'person', 'cal');
   return p;
+}
+/* ---------- v2.12.0 (Anisha, Oct 28): the Project list is per person ----------
+   "I worked on Nur Conference things but nobody else did, so it shouldn't show up for them." A project is offered for a person when
+   that person has at least one live task in it (any week: D.ptasks is one team-wide read of tasks with a project + their
+   assignees, kept fresh on realtime and after saves; the week on screen is read from local state so pending edits count), when it has
+   no live task at all yet and this login created it (history INSERT row, read once per team), when it is the project the task already
+   has, or when it was just made in the sheet. No history read -> a project nobody has a task in shows to admins only.
+   An admin with nobody to filter by (no person mapped, nobody picked) sees the whole list. */
+var PTB = {busy: false, again: false, timer: null};
+async function ptRefresh(){
+  var team = S.team; if (!team || !S.session) return;
+  if (PTB.busy){ PTB.again = true; return; }
+  PTB.busy = true;
+  try {
+    var r = await sb.from('tasks').select('id,project_id,task_people(person_id)').eq('team', team).is('deleted_at', null).not('project_id', 'is', null).limit(5000);
+    if (team === S.team && !r.error){
+      D.ptasks.clear();
+      (r.data || []).forEach(function(t){ D.ptasks.set(t.id, {p: t.project_id, w: (t.task_people || []).map(function(x){ return x.person_id; })}); });
+      S.ptAt = Date.now();
+    }
+  } catch (e){}
+  PTB.busy = false;
+  if (PTB.again){ PTB.again = false; ptRefresh(); }
+}
+async function ptHistory(){
+  var team = S.team; if (!team || !S.uid || !S.session) return;
+  try {
+    var r = await sb.from('history').select('row_id,user_id').eq('team', team).eq('tbl', 'projects').eq('op', 'INSERT').limit(5000);
+    if (team === S.team && !r.error){ S.projHist = new Map(); (r.data || []).forEach(function(x){ if (!S.projHist.has(x.row_id)) S.projHist.set(x.row_id, x.user_id); }); }   // project id -> the login that made it
+  } catch (e){}
+}
+/* a task, assignee or project changed somewhere: read again soon (debounced); after one of ours, once it has saved */
+function ptStale(afterSave){
+  clearTimeout(PTB.timer);
+  PTB.timer = setTimeout(function(){ if (afterSave) whenSaved(ptRefresh); else ptRefresh(); }, afterSave ? 800 : 1500);
+}
+function projIx(){
+  var live = new Set(), by = new Map();
+  var put = function(pr, people){ if (!pr) return; live.add(pr); var s = by.get(pr); if (!s) by.set(pr, s = new Set()); people.forEach(function(x){ s.add(x); }); };
+  D.ptasks.forEach(function(e, id){ if (!D.tasks.has(id)) put(e.p, e.w); });   // other weeks: the last read from the server
+  D.tasks.forEach(function(t){ if (!t.deleted_at && t.project_id) put(t.project_id, liveAssignees(t.id).map(function(x){ return x.person_id; })); });   // the week on screen: local state
+  return {live: live, by: by};
+}
+function projMeId(){ var me = isPaLogin() ? myLoginPerson() : myStaffPerson(); return me && D.people.has(me) && !D.people.get(me).deleted_at ? me : null; }
+function projsFor(people, cur, extra){
+  var all = projList(), ppl = (people || []).filter(Boolean);
+  if (!ppl.length && isAdmin()) return all;
+  var ix = projIx(), made = S.projHist;
+  return all.filter(function(p){
+    if (p.id === cur || (extra && extra.has(p.id))) return true;
+    var by = ix.by.get(p.id);
+    if (by && ppl.some(function(x){ return by.has(x); })) return true;
+    if (!ix.live.has(p.id)){   // nobody has a task in it yet: it is the one who made it (this login, or the login of the person it is for)
+      if (S.projMine.has(p.id)) return true;
+      if (!made) return isAdmin();
+      var mk = made.get(p.id); if (!mk) return false;
+      if (mk === S.uid) return true;
+      var m = D.members.get(mk); return !!m && ppl.indexOf(personForLabel(m.label, false)) >= 0;
+    }
+    return false;
+  });
 }
 function setTaskProject(id, v){
   var t = D.tasks.get(id); if (!t) return;
@@ -4610,8 +4695,8 @@ function progForChoice(v){
 /* Project select (v2.10.0, Anisha Oct 26): "a 'Project' section that's also a dropdown (and I could add to it)".
    Same shape as the program select but flat: No project, the team's projects by sort then name, then "+ New project...".
    Choosing that opens a small inline name box and keeps the sheet open; the new project is created, selected and used. */
-function projSelect(id, cur, onChange){
-  var val = cur && cur !== '__new' ? cur : '';
+function projSelect(id, cur, onChange, getPeople){
+  var val = cur && cur !== '__new' ? cur : '', madeHere = new Set();   // v2.12.0: getPeople() = whose projects to offer; madeHere = made in this sheet
   var sel = h('select', {id: id, class: 'pill-sel', 'data-fk': id, on: {change: function(){ pick(sel.value); }}});
   var inp = h('input', {type: 'text', id: id + 'New', autocomplete: 'off', enterkeyhint: 'done',
     placeholder: 'New project\u2019s name', 'aria-label': 'New project\u2019s name'});
@@ -4619,8 +4704,9 @@ function projSelect(id, cur, onChange){
   var newBox = h('div', {class: 'proj-new', hidden: true}, inp, addBtn,
     h('button', {type: 'button', on: {click: function(){ cancel(); }}}, 'Cancel'));
   var wrap = h('div', {class: 'proj-field'}, sel, newBox);
+  wrap.refresh = function(){ fill(); };   // v2.12.0: the sheet's people changed
   function fill(){
-    var list = projList();
+    var list = projsFor(getPeople ? getPeople() : [], val, madeHere);   // v2.12.0 (Anisha, Oct 28): only this person's projects
     var opts = [h('option', {value: '', text: 'No project'})].concat(list.map(function(p){ return h('option', {value: p.id, text: projLabel(p)}); }));
     // a project archived elsewhere but still on this task stays listed, so the field shows what the task says
     if (val && !list.some(function(p){ return p.id === val; })) opts.push(h('option', {value: val, text: 'This project (archived)'}));
@@ -4641,7 +4727,7 @@ function projSelect(id, cur, onChange){
     var before = val, had = !!projList().find(function(p){ return projLabel(p).toLowerCase() === name.toLowerCase(); });
     var made = addProject(name);
     if (!made){ toast('Couldn\u2019t add that project. Please try again.', {kind: 'error'}); shutBox(); return; }
-    val = made.id; fill(); shutBox(); onChange(val);
+    madeHere.add(made.id); val = made.id; fill(); shutBox(); onChange(val);
     if (!had){ toast('Added project ' + quote(projLabel(made)) + '.'); announce('Project ' + quote(projLabel(made)) + ' added'); }
     // the write can still be refused (no access, table missing): put the field back rather than leave a project that isn't there
     whenSaved(function(){
@@ -4656,6 +4742,7 @@ function projSelect(id, cur, onChange){
     else if (e.key === 'Escape'){ e.stopPropagation(); cancel(); }
   });
   fill();
+  if (Date.now() - (S.ptAt || 0) > 20000) ptRefresh().then(function(){ fill(); });   // v2.12.0: a fresh read of who has worked on which project
   return wrap;
 }
 /* Mon-Sun chips (plus "No day") as one radio group.
@@ -4802,7 +4889,8 @@ function addTaskSheet(o){
   var more = null;
   var who = peopleChips({id: 'atWho', label: 'Who', none: 'Choose who it\u2019s for.', selected: function(){ return st.who; },
     toggle: function(x, on){ st.who = st.who.filter(function(y){ return y !== x; }); if (on) st.who.push(x);
-      var had = st.watchers.slice().sort().join(); autoMe(); if (more && st.watchers.slice().sort().join() !== had) more.draw(); }});
+      var had = st.watchers.slice().sort().join(); autoMe(); if (more && st.watchers.slice().sort().join() !== had) more.draw();
+      if (proj) proj.refresh(); }});   // v2.12.0: the Project list follows who it's for
   // v2.10.0: the chips show the week being viewed, and can be pointed at this week (or next) from the sheet itself
   var dayBox = dayChips('atDay', st.due, function(d){ st.due = d; }, S.week, function(w){ st.wk = w; });
   // v2.6.4 (judge signal: a Thursday Soul Food task was filed on Tuesday): picking a program sets Day to that program's day
@@ -4819,7 +4907,8 @@ function addTaskSheet(o){
   var note = h('textarea', {id: 'atNote', rows: 2, placeholder: 'Anything they should know (optional)', 'data-fk': 'atnote'});
   if (dr) note.value = dr.note || '';
   // v2.10.0 (Anisha): Project sits right under Program; optional either way, and the way to file a personal task.
-  var proj = projSelect('atProj', st.proj, function(v){ st.proj = v; });
+  // v2.12.0 (Anisha, Oct 28): only the projects of whoever the task is for (several people = all of theirs); nobody picked yet = the adder's own
+  var proj = projSelect('atProj', st.proj, function(v){ st.proj = v; }, function(){ return st.who.length ? st.who : me ? [me] : []; });
   // v2.6.6 (Anisha): Watchers sit in the box itself, no "More" fold. v2.9.0: for every login; "Let me know when it's done" is the "Me" chip
   more = peopleChips({id: 'atWat', label: 'Watchers', none: '', me: me, selected: function(){ return st.watchers; },
       toggle: function(x, on){ st.watchers = st.watchers.filter(function(y){ return y !== x; }); if (on) st.watchers.push(x);
@@ -4919,7 +5008,9 @@ function taskSheet(id, pid, ret){
       toggle: function(x, on){ var c = D.tasks.get(id); if (!c) return; if (on) addWatcher(c, x); else removeWatcher(c, x); }});
     var prog = progSelect('tdProg', progValueOf(cur), function(v){ moveTaskTo(id, v); });
     // v2.10.0 (Anisha): Project under Program. Saves as you pick; the sheet stays where it is.
-    var proj = projSelect('tdProj', cur.project_id || '', function(v){ setTaskProject(id, v); });
+    // v2.12.0 (Anisha, Oct 28): the task's people plus whoever has the sheet open
+    var proj = projSelect('tdProj', cur.project_id || '', function(v){ setTaskProject(id, v); }, function(){
+      var m = projMeId(); return assigneesOf(id).map(function(x){ return x.person_id; }).concat(m ? [m] : []); });
     var days = dayChips('tdDay', cur.due, function(d){ setTaskDue(id, d); invalidate('cal'); }, S.week, null, true);
     var e = estOn() && isAdmin() ? estOf(id) : null;
     var est = estOn() && isAdmin() ? h('div', {class: 'td-est'}, h('span', {class: 'field', text: 'Time estimate'}),
@@ -5112,18 +5203,21 @@ function pvGroupEl(g, pid){
   var folded = g.tasks.length ? (Object.prototype.hasOwnProperty.call(fold, g.k) ? !!fold[g.k] : true) : false;
   var hd = pvGroupHead(g, pid), isToday = g.date === today && !g.placed;   // a card placed by her tasks' day isn't "today"
   var dot = hd.ev ? h('span', {class: 'cal__dot', 'aria-hidden': 'true'}) : null;
+  // v2.12.0 (Anisha, Oct 28, mockup 1): the header says how many of its tasks are overdue, in red, folded or open
+  var od = open.filter(function(t){ return isOverdue(t); }).length;
   var txt = h('span', {class: 'pg-tx'}, h('b', {class: 'pg-name', text: hd.name}), hd.when ? h('span', {class: 'pg-when', text: hd.when}) : null);
+  var odEl = od ? h('span', {class: 'pg-od', 'data-od': String(od), text: od + ' overdue'}) : null;   // sits at the header's right, before the open count (her mockup)
   var tag = isToday ? h('span', {class: 'rd-today'}, 'Today') : null;
   var head;
   if (g.tasks.length){
     head = h('button', {type: 'button', class: 'pg-head', id: base + 'h', 'data-fk': 'pgh:' + g.k, 'aria-expanded': folded ? 'false' : 'true', 'aria-controls': base + 'l',
       on: {click: function(){ pvFoldSet(g.k, !folded); invalidate('person'); }}},
-      icon(folded ? 'chevR' : 'down', 'sm pg-chev'), dot, txt, tag,
+      icon(folded ? 'chevR' : 'down', 'sm pg-chev'), dot, txt, odEl, tag,
       folded && open.length ? h('span', {class: 'pg-n', text: open.length + ' open'}) : folded && done.length ? h('span', {class: 'pg-n', text: done.length + ' done'}) : null);
   } else {
     // a program she's signed up for with no tasks of hers: the header opens the program
     head = h('button', {type: 'button', class: 'pg-head pg-ev', id: base + 'h', 'data-fk': 'pgh:' + g.k, 'aria-haspopup': 'dialog', on: {click: function(e){ if (hd.ev) eventSheet(hd.ev.id, e.currentTarget); }}},
-      h('span', {class: 'pg-chev pg-sp', 'aria-hidden': 'true'}), dot, txt, tag);
+      h('span', {class: 'pg-chev pg-sp', 'aria-hidden': 'true'}), dot, txt, odEl, tag);
   }
   // v2.11.0 (Anisha, Oct 27 11:25am mockup): "+ Add task" on every group header, filed under that program/project and that day
   var gi = g.date ? Math.round((isoToDate(g.date) - isoToDate(S.week)) / 864e5) : -1;
@@ -5134,7 +5228,7 @@ function pvGroupEl(g, pid){
   var body = null;
   if (g.tasks.length){
     // v2.11.0 (Anisha, Oct 27): a task crossed off stays in its group, shifted to the bottom (no "N done" fold)
-    var opt = {noWhere: true}, rows = open.concat(done).map(function(t){ return taskLine(t, pid, 'pv', opt); });
+    var opt = {noWhere: true, odIcon: true}, rows = open.concat(done).map(function(t){ return taskLine(t, pid, 'pv', opt); });
     body = h('ul', {class: 'rtasks pg-tasks', id: base + 'l', 'aria-labelledby': base + 'h', hidden: folded}, rows);
   }
   return h('li', {class: 'pgroup pg-' + g.kind + (hd.ev ? ' c25 ' + (deptClass(hd.ev) || 'dept-other') : '') + (isToday ? ' is-today' : '') + (folded ? ' folded' : '') + (g.lead ? ' pg-lead' : ''),
@@ -5195,21 +5289,18 @@ RENDER.person = function(){
         var v = inp.value.trim(); inp.value = ''; addTaskSheet({pid: pid, text: v, ret: e.currentTarget}); }}}, icon('plus', 'sm'), 'Add task'));
     addf.dataset.pid = pid;
   }
-  // 1. Overdue (only when there are any, viewing this week). v2.6.6 (Anisha): a task due today sits in today's group, checked or not
-  var needs = ts.filter(function(t){ return !personDone(t, pid) && isOverdue(t); });
-  var needIds = new Set(needs.map(function(t){ return t.id; }));
-  var needSec = needs.length ? h('section', {class: 'pv-need', 'aria-labelledby': 'pvNeedH'}, h('h2', {class: 'pv-h', id: 'pvNeedH'}, 'Overdue', h('span', {class: 'muted', text: needs.length + ' open'})),
-    h('ul', {class: 'rtasks wide'}, needs.map(function(t){ return taskLine(t, pid, 'pn', {day: true}); }))) : null;
+  // 1. v2.12.0 (Anisha, Oct 28 12:24am): no separate Overdue section for anyone. An overdue task stays under its own day and group,
+  //    with a red warning icon on its row and a red \"N overdue\" on the group header (pvGroupEl). v2.6.6: a task due today sits in today's group, checked or not.
   // 2. v2.10.0 (Anisha, Oct 26 7:52pm): the week by DAY, left to right — Monday to Sunday, only the days with something on them,
   //    "No day set" last. Inside a day, one folded header per program (or project, or "(Misc.)"), her tasks under it.
   //    In-office and setup lines stay on the Calendar.
   var wkOk = !hasShifts() || shiftsReady(monthsOfRange(S.week, addDays(S.week, 6)));
-  var days = pvGroups(pid, needIds, wkOk);
+  var days = pvGroups(pid, null, wkOk);
   var box = days.length ? h('ol', {class: 'pv-groups pv-days pv-wk', 'aria-labelledby': 'pvTasksH'}, days.map(function(d){ return pvDayEl(d, pid); })) : null;
   var openN = ts.filter(function(t){ return !personDone(t, pid); }).length;
   var tasksH = h('h2', {class: 'pv-h', id: 'pvTasksH'}, tw ? 'This week' : weekLabel(S.week),
     openN ? h('span', {class: 'muted', text: openN + ' open'}) : null);
-  var quiet = !box ? h('p', {class: 'muted pv-quiet', text: needs.length ? 'Nothing else on ' + personName(pid) + '\u2019s week.' : 'Nothing on ' + personName(pid) + '\u2019s week yet.' + (wkOk ? '' : ' Loading the calendar\u2026')}) : null;
+  var quiet = !box ? h('p', {class: 'muted pv-quiet', text: 'Nothing on ' + personName(pid) + '\u2019s week yet.' + (wkOk ? '' : ' Loading the calendar\u2026')}) : null;   // v2.12.0: overdue tasks stay in the day groups, so an empty week is simply empty
   var noneEl = null;
 
   // 3. programs for the next two weeks: one line each, their tasks under it only when there are any
@@ -5242,7 +5333,7 @@ RENDER.person = function(){
         x.live ? h('button', {type: 'button', class: 'grow w-open', 'data-fk': 'pwm:' + x.t.id, 'aria-haspopup': 'dialog', on: {click: function(e){ taskSheet(x.t.id, pid, e.currentTarget); }}}, txt) : h('span', {class: 'grow', text: txt}),
         x.done ? h('span', {class: 'mk full'}, icon('check'), 'Done') : null);
     })) : h('p', {class: 'muted small', text: 'Nothing yet.'})) : null;
-  setKids(sec, [top, addf, staffView && !adminMt ? watchSec : null, needSec, tasksH, adminMt ? null : estLine(pid, S.week), box, quiet, ntw, staffView && !adminMt ? null : watchSec]);
+  setKids(sec, [top, addf, staffView && !adminMt ? watchSec : null, tasksH, adminMt ? null : estLine(pid, S.week), box, quiet, ntw, staffView && !adminMt ? null : watchSec]);
 };
 
 
@@ -5669,11 +5760,12 @@ function shiftRowEl(s){
     h('span', {class: 's-avs', 'aria-hidden': 'true'}, st.on.slice(0, 2).map(function(pid){ return avatar(D.people.get(pid)); })),
     h('span', {class: 's-names', text: firstName(st.on[0]) + (st.on.length > 1 ? ' +' + (st.on.length - 1) : '')})) : null;
   var act;
-  if (st.st === 'signup') act = h('button', {type: 'button', class: 'primary su-me s-signup', 'data-fk': 'sume:' + s.id, 'aria-label': 'Sign me up for ' + lbl, 'aria-haspopup': st.ask ? 'dialog' : null, on: {click: function(e){
+  // v2.12.0 (Anisha, Oct 28 1:50am): "2 spots left" under the Sign up button (it was only a button, so a PA couldn't see how many were open)
+  if (st.st === 'signup') act = [h('button', {type: 'button', class: 'primary su-me s-signup', 'data-fk': 'sume:' + s.id, 'aria-label': 'Sign me up for ' + lbl + '. ' + spotsText(st.miss), 'aria-haspopup': st.ask ? 'dialog' : null, on: {click: function(e){
     if (st.ask){ whoAmISheet(D.shifts.get(s.id) || s, e.currentTarget); return; }   // v2.6.3 (F-03): no name picked yet
     signUp(D.shifts.get(s.id) || s, st.me);
     setTimeout(function(){ var el = fkEl('sho:' + s.id); if (el) el.focus({preventScroll: true}); }, 80);
-  }}}, 'Sign up');
+  }}}, 'Sign up'), h('span', {class: 's-spots', 'data-spots': String(st.miss), text: spotsText(st.miss)})];
   else if (st.st === 'mine') act = h('span', {class: 's-pill mine'}, icon('check', 'sm'), 'You\u2019re on');
   else if (st.st === 'open') act = h('span', {class: 'cal__tag need s-pill'}, 'Need ' + st.miss);
   else if (st.st === 'partial') act = h('span', {class: 'cal__tag need s-pill'}, 'Need ' + st.miss, h('span', {class: 's-more'}, ' more'));   // v2.6.1: ' more' hides on phones
@@ -6729,6 +6821,9 @@ function paInfo(s){
   var full = (names.length ? names.join(', ') + ' signed up' : 'Nobody signed up yet') + (miss ? ', ' + miss + ' more PA' + (miss === 1 ? '' : 's') + ' needed' : need ? ', full' : '');
   return {on: on, miss: miss, short: short, full: full};
 }
+/* v2.12.0 (Anisha, Oct 28 1:50am): a PA sees how many places are open next to "Sign up". "2 spots left" / "1 spot left";
+   short = "2 left" for the narrow month strip. The full phrase always goes in the aria-label. */
+function spotsText(n, short){ n = +n || 0; return short ? n + ' left' : n + (n === 1 ? ' spot left' : ' spots left'); }
 function calFilter(s){
   if (S.calDept && deptOf(s) !== S.calDept) return false;
   var cp = calPerson(); if (cp && !D.sp.has(s.id + '|' + cp)) return false;
@@ -7026,12 +7121,12 @@ function calTile(s, fk, mode){
   var where = locText(s.location), shown = where ? tileTitle(name, where) : name;
   return h('button', {type: 'button', class: 'rtile ' + (deptClass(s) || 'dept-other') + (compact ? ' compact' : '') + (gone ? ' gone' : '') + (info.miss && !gone ? ' needs' : ''),
     'data-fk': fk + ':' + s.id, 'data-id': s.id, 'data-prog': p ? p.id : null, title: compact ? name + (where ? ' \u00b7 ' + where : '') + (arr ? ' \u00b7 arrive ' + arr : '') : null,
-    'aria-label': niceDate(s.date) + (shiftTime(s) ? ', ' + shiftTime(s) : '') + (arr ? ', PA arrives ' + arr : '') + ': ' + shown + (deptOf(s) ? ' (' + deptOf(s) + ')' : '') + (where ? ', ' + where : '') + '. ' + (gone ? 'Cancelled on the calendar. ' : '') + info.full + '. ' + (tt ? tt + '. ' : '') + (su ? 'Open to sign up' : 'Open details'),
+    'aria-label': niceDate(s.date) + (shiftTime(s) ? ', ' + shiftTime(s) : '') + (arr ? ', PA arrives ' + arr : '') + ': ' + shown + (deptOf(s) ? ' (' + deptOf(s) + ')' : '') + (where ? ', ' + where : '') + '. ' + (gone ? 'Cancelled on the calendar. ' : '') + info.full + '. ' + (tt ? tt + '. ' : '') + (su ? spotsText(info.miss) + '. Open to sign up' : 'Open details'),
     on: {click: function(e){ eventSheet(s.id, e.currentTarget); }}},
     h('span', {class: 'rt-time', text: ((compact ? shortTime(s) : shiftTime(s)) || 'Time TBC') + (arr && !compact ? ' \u00b7 arrive ' + arr : '')}),
     h('span', {class: 'rt-name', text: compact ? shortProg({program: shown}) : shown}),
     where ? h('span', {class: 'rt-loc'}, icon('pin', 'sm'), h('span', {class: 'rt-loc-t', text: where})) : null,
-    h('span', {class: 'cal__tag' + (su ? ' su' : info.miss && !gone ? ' need' : '') + (!gone && !info.short ? ' none' : '')}, su ? icon('plus', 'sm') : h('span', {class: 'cal__dot', 'aria-hidden': 'true'}), h('span', {class: 'tag-t', text: tag})),
+    h('span', {class: 'cal__tag' + (su ? ' su' : info.miss && !gone ? ' need' : '') + (!gone && !info.short ? ' none' : '')}, su ? icon('plus', 'sm') : h('span', {class: 'cal__dot', 'aria-hidden': 'true'}), h('span', {class: 'tag-t'}, su ? h('span', {class: 'tag-su', text: tag}) : tag, su ? h('span', {class: 'tag-sp', text: (compact ? ' ' : ' \u00b7 ') + spotsText(info.miss, compact)}) : null)),   // v2.12.0: + the open spots ("2 spots left"; the narrow month strip says "2 left" and may wrap)
     tt ? h('span', {class: 'rt-tasks', text: tt}) : null);
 }
 
@@ -7054,8 +7149,12 @@ function taskLine(t, pid, fk, opts){
   var where = p && !p.personal ? progLabel(p) : (projNameOf(t) || 'Personal');
   var meta = opts.noWhere ? [] : [h('span', {class: 'rt-where', text: where})];   // v2.8.0: My tasks groups say the program once, on the header
   if (opts.day && t.due) meta.push(meta.length ? ' \u00b7 ' : null, h('span', {text: dayName(t.due)}));
-  var mk = [];
-  if (!on && isOverdue(t)) mk.push(h('span', {class: 'mk overdue'}, icon('warn'), 'Overdue'));
+  var mk = [], od = null;
+  // v2.12.0 (Anisha, Oct 28): My tasks rows show a red warning icon only (the group header says "N overdue"); Board and Calendar rows keep the "Overdue" tag
+  if (!on && isOverdue(t)){
+    if (opts.odIcon) od = h('span', {class: 'rt-od', title: 'Overdue'}, icon('warn'), h('span', {class: 'sr-only', text: 'Overdue'}));
+    else mk.push(h('span', {class: 'mk overdue'}, icon('warn'), 'Overdue'));
+  }
   var ws = watchersOf(t.id);
   if (ws.length){ var wn = ws.map(function(x){ return personName(x.person_id); });
     mk.push(h('span', {class: 'mk watch'}, icon('eye'), h('span', {class: 'sr-only', text: 'Watched by '}), wn.length > 2 ? wn.slice(0, 2).join(', ') + ' +' + (wn.length - 2) : wn.join(', '))); }
@@ -7066,7 +7165,8 @@ function taskLine(t, pid, fk, opts){
     h('button', {type: 'button', class: 'rt-open', 'data-fk': fk + 'o:' + t.id, 'aria-haspopup': 'dialog', on: {click: function(e){ taskSheet(t.id, pid, e.currentTarget); }}},
       h('span', {class: 'rt-tx', text: lbl}),
       note ? h('span', {class: 'rt-note'}, h('span', {class: 'sr-only', text: 'Note: '}), note) : null,
-      h('span', {class: 'rt-meta'}, meta, mk.map(function(x){ return [' ', x]; }))));
+      h('span', {class: 'rt-meta'}, meta, mk.map(function(x){ return [' ', x]; }))),
+    od);
 }
 
 /* ---------- the week strip (the site's "Every week"): seven white day cards, Monday to Sunday ---------- */
@@ -8420,6 +8520,7 @@ function resetData(){
   S.sharedLoaded = false; S.sharedError = null; S.weekLoaded = null; S.monthLoaded = null; S.weekError = null; S.monthError = null; S.monthLoading = null;
   S.hist = null; S.histErr = null; S.histMore = false; S.histNames = {tasks: {}, shifts: {}, programs: {}}; S.person = null; S.buffer = []; S.noteOpen = null; S.copying = false;
   S.shiftMonths = new Set(); S.shiftLoading = new Set(); pvReset(); D.oh = new Map();
+  S.projMine = new Set(); S.projHist = null; S.ptAt = 0;   // v2.12.0
   poIds.clear(); S.tplOpen = new Set(); S.tplQuery = '';
   TABS.forEach(function(t){ var s = $('#v-' + t.id); if (s) s.replaceChildren(); });
 }
@@ -8524,7 +8625,8 @@ window.__rootspa = {S: S, D: D, Q: Q, sb: sb, go: go, version: BUILD,
      isPaLogin: isPaLogin, myLoginPerson: myLoginPerson, myId: myId, isYC: isYC, paPeople: paPeople, paOnlyPeople: paOnlyPeople, specialTemplate: specialTemplate, activeTemplates: activeTemplates, templateFor: templateFor,   // v2.6.6
      progDept: progDept, deptVal: deptVal, calPairs: calPairs, boardPrograms: boardPrograms,   // v2.7.2
      repCommon: repCommon, repCommonIx: repCommonIx, openFor: function(pid){ return tasksFor(pid).filter(function(t){ return !personDone(t, pid); }).map(function(t){ return normTask(t.task); }) },
-     pvGroups: pvGroups, pvDayEl: pvDayEl, projName: projName, pvGroupMeta: pvGroupMeta, pvGroupCmp: pvGroupCmp}};   // v2.10.0: My tasks day columns (read-only probes)
+     pvGroups: pvGroups, pvDayEl: pvDayEl, projName: projName, pvGroupMeta: pvGroupMeta, pvGroupCmp: pvGroupCmp,
+     projsFor: projsFor, isOverdue: isOverdue}};   // v2.12.0: per-person Project list + overdue rule (read-only probes)   // v2.10.0: My tasks day columns (read-only probes)
 })();
 
 </script>
