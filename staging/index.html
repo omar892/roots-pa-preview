@@ -642,6 +642,50 @@ a.lname .lt{text-decoration:underline;font-weight:650;word-break:break-word}
 #main>section#v-board[hidden]{display:block !important;content-visibility:hidden;contain-intrinsic-size:0 0;height:0;overflow:hidden;margin:0;padding:0}
 @media print{ #main>section#v-board[hidden]{display:none !important} }
 
+
+/* ==========================================================================
+   v2.9.0 (Engineer B): View-as person select, Repeating tasks, Template "PA arrives", Change my password
+   ========================================================================== */
+.va-bar{flex-wrap:wrap}
+.va-bar select{width:auto;max-width:200px;min-height:36px;padding:4px 28px 4px 12px;font:inherit;font-weight:600;border-radius:var(--radius-pill)}
+@media (max-width:767px),(pointer:coarse){ .va-bar select{min-height:44px;font-size:16px} }
+.rp-sec .rp-add{display:flex;flex-direction:column;gap:var(--sp2);padding:var(--sp3);margin-bottom:var(--sp2);background:var(--surface-raised);border:1px solid var(--line);border-radius:var(--radius-md)}
+.rp-addrow{display:flex;align-items:flex-end;gap:var(--sp2);flex-wrap:wrap}
+.rp-addrow>button.primary{min-height:var(--tap,44px)}
+.rp-when{display:flex;gap:var(--sp2);flex-wrap:wrap;min-width:0}
+.rp-when>div{min-width:0}
+.rp-when select{width:auto;min-width:130px}
+.rp-list{list-style:none;margin:0;padding:0;background:var(--surface-raised);border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden}
+.rp-row{display:flex;align-items:center;gap:var(--sp1,4px);border-top:1px solid var(--line);padding-right:var(--sp1,4px);min-width:0}
+.rp-row:first-child{border-top:none}
+.rp-main{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:48px;padding:8px var(--sp3);border:0;border-radius:0;background:transparent;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.rp-main:hover{background:var(--hover);color:var(--ink)}   /* colour too: the global button:hover would turn the label white */
+.rp-t{font-weight:650;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rp-m{font-size:var(--fs-s);color:var(--muted);overflow-wrap:anywhere}
+.rp-row.is-paused .rp-t{color:var(--muted)}
+.tpl-arrive select{width:auto;min-width:220px;max-width:100%}
+
+/* ==========================================================================
+   v2.10.0 (Engineer B): day chips name and switch their week; Project under Program
+   ========================================================================== */
+/* the week the chips are showing: two small buttons (This week / Next week), a third only when the
+   sheet was opened from another week. .seg carries the pill look; this only sizes it for a sheet. */
+.dayfield .wkseg{display:inline-flex;margin:0 0 var(--sp2) 0;max-width:100%}
+.dayfield .wkseg button{min-height:32px;padding:0 12px;font-size:var(--fs-s);font-weight:600;white-space:nowrap}
+/* the Project field and its inline "New project..." name box */
+.proj-field{min-width:0}
+.proj-field>select.pill-sel{max-width:100%}
+.proj-new{display:flex;gap:var(--sp2);align-items:center;flex-wrap:wrap}
+.proj-new input{flex:1 1 12rem;min-width:0}
+.proj-new[hidden]{display:none}
+@media (max-width:767px),(pointer:coarse){
+  .dayfield .wkseg{display:flex;flex-wrap:wrap;gap:6px}
+  .dayfield .wkseg button{flex:1 1 auto;justify-content:center;min-height:44px;padding:0 10px}
+  .dayfield .wkseg button+button{margin-left:0}
+  .proj-new input{font-size:16px}
+  .proj-new button{min-height:44px}
+}
+
 /* ==========================================================================
    v2.2: Roots brand (Roots Brand & Website Design System v3) + Calendar
    ========================================================================== */body{background:var(--bg)}
@@ -810,6 +854,7 @@ button.dnum:hover{background:var(--roots-white)}
 .mtiles .more:hover{background:var(--roots-white)}
 .dots{display:none}
 .agenda{display:none}
+@media (min-width:768px){.cal-empty.ce-past{display:none}}   /* v2.11.1: the all-sign-ups-are-past note belongs to the phone agenda */
 
 /* ---------- below the strip ---------- */
 .wother{margin-top:var(--sp5)}
@@ -1636,6 +1681,105 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 .pa-note{margin:4px 0 0;font-size:var(--fs-s,14px);line-height:1.35;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}
 @media print{ .pb28 ul.tasks[hidden]{display:block !important} }
 
+/* ---------- v2.10.0 (Anisha, Oct 26 7:52pm): My tasks as day columns ----------
+   The week reads left to right, Monday to Sunday, only the days that have something on them, "No day set" last.
+   Under each day: one header per program (or project, or "(Misc.)"), folded until she taps it.
+   Same idiom as .rstrip in cal.css: a grid of day columns on a wide screen, one stacked column under 1100px. */
+#v-person .pv-wk{grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px;max-width:none;align-items:start}
+#v-person .pv-day{min-width:0;display:flex;flex-direction:column;gap:8px;list-style:none}
+#v-person .pv-dayh{position:sticky;top:var(--stick,0px);z-index:3;margin:0 -2px;padding:8px 2px 6px;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 6px;background:var(--bg);border-bottom:1px solid var(--line);font:600 15px/1.3 var(--font);color:var(--heading)}
+#v-person .pv-dayn{font-size:16px;font-weight:700;color:var(--heading)}
+#v-person .pv-dayd{font-size:var(--fs-s,14px);font-weight:500;color:var(--muted)}
+#v-person .pv-day.is-today .pv-dayh{border-bottom-color:var(--heading);box-shadow:inset 0 -2px 0 var(--heading)}
+#v-person .pv-day-none .pv-dayn{color:var(--muted)}
+#v-person .pv-dayg{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp2);align-content:start}
+#v-person .pv-day .pgroup{margin:0;min-width:0}
+/* a column is narrow: the header's name wraps, the context line stops at two lines, the count stays on the name's line */
+#v-person .pv-day .pg-head{padding:8px 10px;min-height:var(--tap,44px)}
+#v-person .pv-day .pg-name{font-size:15px}
+#v-person .pv-day .pg-when{font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#v-person .pv-day .pg-tasks{padding:2px 10px 8px}
+#v-person .pv-day .rtask{padding-left:0;padding-right:0}
+@media (max-width:1099px){
+  #v-person .pv-wk{grid-template-columns:minmax(0,1fr);gap:14px}
+  #v-person .pv-dayh{position:static}
+  #v-person .pv-day .pg-when{-webkit-line-clamp:none;display:block;overflow:visible}
+}
+@media print{
+  #v-person .pv-wk{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  #v-person .pv-dayh{position:static}
+}
+
+/* ---------- v2.11.0 (Anisha, Oct 27) ----------
+   "+ Add task" on each My tasks group header (her 11:25am mockup): the label shows when the week is one stacked column;
+   in the narrow day columns it's the + alone (its name is in aria-label). */
+.pg-h{display:flex;align-items:center}
+.pg-h>.pg-head{flex:1 1 auto;min-width:0;width:auto}
+.pg-add{flex:none;display:inline-flex;align-items:center;gap:4px;margin:0 8px 0 0;min-height:36px;padding:0 12px;border-radius:999px;background:var(--action);border:1px solid var(--action);color:var(--on-action);font-weight:600;font-size:var(--fs-s,14px)}
+.pg-add:hover{opacity:.9;background:var(--action);color:var(--on-action)}
+.pg-add .ic{width:14px;height:14px}
+@media (min-width:1100px){ #v-person .pv-wk .pg-add{width:32px;min-height:32px;padding:0;justify-content:center;margin-right:6px} #v-person .pv-wk .pg-add-l{display:none} }
+@media (pointer:coarse){ .pg-add{min-height:44px} #v-person .pv-wk .pg-add{min-width:44px} }
+@media print{ .pg-add{display:none !important} }
+/* Common tasks pick list: one already on the card/Template shows ticked and greyed */
+.cp-list .opt.is-on{color:var(--muted);cursor:default}
+.cp-list .opt.is-on:hover{background:none;color:var(--muted)}
+.card>.cp-card{display:flex;align-items:center;gap:6px;margin:0 var(--sp2,8px) var(--sp2,8px);min-height:36px;font-weight:600}
+@media (pointer:coarse){ .card>.cp-card{min-height:44px} }
+
+/* ---------- v2.12.0 (Anisha, Oct 28) ----------
+   1. My tasks: an overdue task stays under its day; its row carries a red warning icon (far right) and its group header says
+      "N overdue" in red (--err, AA on white 6.2:1 and on the cream page 5.5:1), folded or open.
+   2. PA shifts: "2 spots left" under the Sign up button; calendar tiles say it inside the green Sign up pill. */
+.pg-od{flex:none;white-space:nowrap;margin-top:1px;font-size:var(--fs-s,14px);font-weight:650;color:var(--err)}
+#v-person .pv-day .pg-od{font-size:13px;margin-top:2px}
+.rtask .rt-od{flex:none;display:inline-flex;align-items:center;justify-content:center;width:28px;min-height:var(--tap,44px);margin-left:2px;color:var(--err)}
+.rtask .rt-od .ic{width:18px;height:18px}
+@media (forced-colors:active){ .pg-od,.rtask .rt-od{color:CanvasText} }
+#v-shifts.v26 .s-act:has(.s-spots){flex-direction:column;align-items:flex-end;justify-content:center;gap:2px}
+#v-shifts.v26 .s-spots{display:block;max-width:100%;white-space:nowrap;font:600 12.5px/1.25 var(--font);color:var(--warn);text-align:right}
+@media (max-width:767px){ #v-shifts.v26 .s-spots{font-size:12px} }
+/* the month strip's Sign up tag may wrap ("Sign up" / "2 left") instead of cutting the count off */
+.rtile.compact .cal__tag.su .tag-t{overflow:visible;white-space:normal;text-overflow:clip;overflow-wrap:normal}
+/* tablet month grid (768-1023px): the day cells are ~70-130px wide, so the tag keeps the + and the count ("+ 2 left"); "Sign up" is still read out */
+@media (min-width:768px) and (max-width:1023px){ .rtile.compact .cal__tag.su .tag-su{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap} .rtile.compact .cal__tag.su .tag-sp{margin-left:0} }
+.cal__tag .tag-sp{font-weight:500}
+
+/* ---------- v2.12.1 (Anisha, Nov 3 4:30pm): wider My tasks day columns, side scroll, full text ----------
+   "cramped when there's tasks for each of the 7 days ... make each task wider so even if it can't all fit on one page, they can scroll
+   left and right with their mouse ... see as much information as possible without opening the task (Confirm locations for Muhsen with.... is getting cut off)"
+   Column mode only (1100px and up, the same breakpoint as the day columns); the stacked phone/tablet view is unchanged.
+   --pvn is the number of day columns (d_board.js): with 2-3 days they still fill the width, with more the row scrolls inside its own box. */
+.pv-wkw{position:relative;min-width:0;max-width:100%}
+@media screen and (min-width:1100px){
+  #v-person .pv-wk{position:relative;grid-template-columns:repeat(var(--pvn,1),minmax(300px,1fr));overflow-x:auto;padding:4px;overscroll-behavior-x:contain}
+  /* an overflow box can't keep a sticky header on the page's scroll: the day header scrolls with the page in column mode */
+  #v-person .pv-wk .pv-dayh{position:static;margin:0}
+  .pv-wkw.is-scroll{padding:0 40px}   /* a gutter at each end for the arrows: they sit beside the day columns, never over a header, checkbox or title */
+  .pv-edge{position:absolute;top:4px;z-index:5;width:32px;height:32px;min-height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:999px;background:var(--white);border:1px solid var(--line);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+  .pv-edge:hover{background:var(--roots-white);color:var(--ink)}
+  .pv-edge .ic{width:18px;height:18px}
+  .pv-edge-l{left:4px}
+  .pv-edge-r{right:4px}
+  /* full information on the row: title up to 3 lines, note up to 4, program line wraps */
+  #v-person .pv-wk .rtask .rt-tx{-webkit-line-clamp:3}
+  #v-person .pv-wk .rtask .rt-note{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;white-space:normal;overflow:hidden;text-overflow:clip;overflow-wrap:anywhere}
+  #v-person .pv-wk .rtask .rt-open .rt-meta{white-space:normal;overflow:visible;text-overflow:clip;flex-wrap:wrap}
+  #v-person .pv-wk .rtask .rt-open .rt-meta .rt-where{white-space:normal;overflow:visible;text-overflow:clip}
+  #v-person .pv-day .pg-when{display:block;-webkit-line-clamp:none;overflow:visible}
+  /* the header's name keeps its words; the counts sit after it or wrap under it */
+  #v-person .pv-day .pg-head{flex-wrap:wrap;row-gap:2px}
+  #v-person .pv-day .pg-tx{flex:1 1 8em;min-width:min-content}
+  #v-person .pv-day .pg-name{overflow-wrap:break-word}
+}
+@media screen and (min-width:1100px) and (pointer:coarse){
+  .pv-wkw.is-scroll{padding:0 48px}   /* the 44px touch buttons fit in the gutter */
+  .pv-edge{width:44px;height:44px;min-height:44px}
+  #v-person .pv-wk .pv-dayh{min-height:44px;box-sizing:border-box}
+}
+@media (prefers-reduced-motion:reduce){ #v-person .pv-wk{scroll-behavior:auto} }
+@media print{ .pv-edge{display:none !important} }
+
 </style>
 </head>
 <body>
@@ -1715,7 +1859,7 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.9.0';   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
+var BUILD = '2.12.1';   // v2.12.1: Anisha Nov 3 4:30pm (My tasks day columns at least 300px wide with a sideways scroll + edge arrows, full titles/notes/program lines, group header names never squeezed). Was 2.12.0: // v2.12.0: Anisha Oct 28 (My tasks keeps overdue tasks under their day with a red icon and a red "N overdue" on the group header, PAs see "N spots left" next to Sign up, the Project list is per person). Was 2.11.1:   // v2.11.1: Calendar month, Mine: when all of the person's sign-ups are before today the empty note and "See N that need a PA" show above the "Show N earlier days" link. Was 2.11.0:   // v2.11.0: Anisha Oct 27 (month +more in place, Common tasks pick list, admin My tasks trimmed, Add task on group headers, done tasks to the bottom). Was 2.10.0:   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
 // was 2.7.2: // v2.7.2: departments are one shared filter (Calendar, Board, PA shifts), never a team; no team chips at sign-in
 // v2.7.1: Calendar filter is one dropdown (departments + Needs a PA); Board tab for PAs/YCs with Take it
 // v2.6.9:   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
@@ -1964,13 +2108,16 @@ var S = {
   loading: 0, buffer: [], channel: null, rtDown: false, offline: !navigator.onLine,
   person: null, dayFilter: 'all', histLimit: 100, hist: null, histErr: null, histNames: {tasks:{}, shifts:{}, programs:{}},
   signingOut: false, reauthOpen: false, pointerDown: false, lastHidden: 0, prevWeekCarry: null,
-  shiftMonths: new Set(), shiftLoading: new Set()
+  shiftMonths: new Set(), shiftLoading: new Set(),
+  projMine: new Set(), projHist: null, ptAt: 0   // v2.12.0: projects this login created (history), when the per-person project read last landed
 };
 var D = {
   people: new Map(), templates: new Map(), links: new Map(), programs: new Map(), tasks: new Map(),
   tp: new Map(), notes: new Map(), shifts: new Map(), sp: new Map(), members: new Map(), tw: new Map(), oh: new Map(),
   est: new Map(), pnotes: new Map(),
-  sl: new Map(), rep: new Map()   // v2.9.0: shift_leads (program leads), repeat_tasks (repeating admin tasks)
+  sl: new Map(), rep: new Map(),   // v2.9.0: shift_leads (program leads), repeat_tasks (repeating admin tasks)
+  projects: new Map(),             // v2.10.0: a team's own project list (Monthly Calendar, Operations...), not per week
+  ptasks: new Map()                // v2.12.0: task id -> {p: project id, w: [person ids]} for every live task with a project, any week (who has worked on which project)
 };
 var T = {
   people: {map: function(){ return D.people; }, pk: ['id']},
@@ -1987,7 +2134,8 @@ var T = {
   task_estimates: {map: function(){ return D.est; }, pk: ['task_id']},
   pa_notes: {map: function(){ return D.pnotes; }, pk: ['id']},
   shift_leads: {map: function(){ return D.sl; }, pk: ['shift_id', 'person_id']},   // v2.9.0
-  repeat_tasks: {map: function(){ return D.rep; }, pk: ['id']}                      // v2.9.0
+  repeat_tasks: {map: function(){ return D.rep; }, pk: ['id']},                     // v2.9.0
+  projects: {map: function(){ return D.projects; }, pk: ['id']}                      // v2.10.0
 };
 /* Task time estimates: who sees them. 'admins' until Anisha approves them for PAs, then 'everyone'.
    This is the only switch: with it off for a login, estimates aren't loaded, subscribed to or shown. */
@@ -2181,6 +2329,7 @@ function upsertRow(table, row, prev, label){
 }
 
 function enqueue(op){
+  if (op.table === 'tasks' || op.table === 'task_people' || op.table === 'projects') ptStale(true);   // v2.12.0: read again once this has saved
   for (var i = Q.items.length - 1; i >= 0; i--){
     var o = Q.items[i];
     // An op that has been sent once may already be on the server even if we never heard back.
@@ -2478,7 +2627,7 @@ function updateSaveState(){
 var CF_FIELD = {task: 'task', notes: 'note', waiting_on: 'waiting on', name: 'name', program: 'program', location: 'location', time_text: 'time',
   pa_needed: 'PAs needed', due: 'day', label: 'label', url: 'link', folder: 'folder', date: 'date', grp: 'group', dept: 'department',
   manual_url: 'program flow link', start_time: 'start time', end_time: 'end time', program_id: 'program', lead_ids: 'leads', locations: 'locations',
-  offsite: 'offsite place', template_id: 'template', text: 'note', minutes: 'time estimate', arrive_min: 'PA arrival'};   // v2.9.0: +arrive_min
+  offsite: 'offsite place', template_id: 'template', text: 'note', minutes: 'time estimate', arrive_min: 'PA arrival', project_id: 'project'};   // v2.9.0: +arrive_min; v2.10.0: +project_id
 function cfKeyFor(team){ return 'conflicts:' + S.uid + ':' + team; }
 function cfLoad(){
   var k = S.uid && S.team ? cfKeyFor(S.team) : null;
@@ -2618,10 +2767,13 @@ async function loadShared(){
     sb.from('members').select('user_id,label,role').eq('team', team),
     // task time estimates: only for logins that may see them (SHOW_ESTIMATES); never fetched otherwise
     estOn() ? sb.from('task_estimates').select('task_id,team,minutes,kind,source,for_text,updated_at').eq('team', team).limit(5000) : Promise.resolve({data: []}),
-    sb.from('repeat_tasks').select('*').eq('team', team).is('deleted_at', null)   // v2.9.0
+    sb.from('repeat_tasks').select('*').eq('team', team).is('deleted_at', null),   // v2.9.0
+    sb.from('projects').select('*').eq('team', team).is('deleted_at', null)         // v2.10.0: the team's project list
   ]);
   if (team !== S.team) return;
-  var err = res.find(function(r){ return r.error; });
+  // a table this database hasn't got yet (projects on an older copy) must not stop the sheet loading:
+  // the Project field just comes up empty. Every other table still has to answer.
+  var err = res.slice(0, 6).find(function(r){ return r.error; });
   if (err) throw err.error;
   D.people.clear(); res[0].data.forEach(function(r){ D.people.set(r.id, r); });
   D.templates.clear(); res[1].data.forEach(function(r){ r.tasks = normTplTasks(r.tasks); D.templates.set(r.id, r); });
@@ -2629,8 +2781,11 @@ async function loadShared(){
   D.members.clear(); res[3].data.forEach(function(r){ D.members.set(r.user_id, r); });
   D.est.clear(); if (!res[4].error) (res[4].data || []).forEach(function(r){ D.est.set(r.task_id, r); });
   D.rep.clear(); if (!res[5].error) (res[5].data || []).forEach(function(r){ D.rep.set(r.id, r); });   // v2.9.0
+  // v2.10.0: team-wide like templates and links, replaced whole on every shared load (pending inserts stay, applyQueueToState below)
+  D.projects.clear(); if (!res[6].error) (res[6].data || []).forEach(function(r){ if (!r.deleted_at) D.projects.set(r.id, r); });
   S.sharedLoaded = true; IX = null;
-  applyQueueToState();      // people, Master programs and links added offline stay on screen through a refresh (review P12)
+  applyQueueToState();      // people, Master programs, links and projects added offline stay on screen through a refresh (review P12)
+  ptRefresh(); if (!S.projHist) ptHistory();   // v2.12.0: who has worked on which project; which projects this login made
 }
 async function fetchWeek(team, week){
   return Promise.all([
@@ -2768,7 +2923,7 @@ function scheduleResync(){
 /* ==========================================================================
    REALTIME: merge incoming rows; never overwrite a field being edited
    ========================================================================== */
-var RT_TABLES = ['people', 'templates', 'links', 'programs', 'tasks', 'task_people', 'task_watchers', 'week_notes', 'shifts', 'shift_people', 'office_hours', 'shift_leads', 'repeat_tasks'];   // v2.9.0: +shift_leads, repeat_tasks
+var RT_TABLES = ['people', 'templates', 'links', 'programs', 'tasks', 'task_people', 'task_watchers', 'week_notes', 'shifts', 'shift_people', 'office_hours', 'shift_leads', 'repeat_tasks', 'projects'];   // v2.9.0: +shift_leads, repeat_tasks; v2.10.0: +projects
 function subscribe(){
   if (S.channel){ try { sb.removeChannel(S.channel); } catch (e){} S.channel = null; }
   if (S.session) try { sb.realtime.setAuth(S.session.access_token); } catch (e){}
@@ -2793,6 +2948,7 @@ function subscribe(){
   S.channel = ch;
 }
 function onRemote(t, p){
+  if (t === 'tasks' || t === 'task_people' || t === 'projects') ptStale(false);   // v2.12.0: the per-person Project list reads again
   if (S.loading > 0){ S.buffer.push([t, p]); return; }
   var ev = p.eventType, row = ev === 'DELETE' ? p.old : p.new;
   if (!row) return;
@@ -2812,6 +2968,8 @@ function onRemote(t, p){
   if (t === 'shifts' && !S.shiftMonths.has(row.month)){ if (D.shifts.has(row.id)){ D.shifts.delete(row.id); IX = null; invalidateFor(t); } return; }
   if (t === 'office_hours'){ if (row.deleted_at){ if (D.oh.delete(row.id)) invalidateFor(t); return; } if (!S.shiftMonths.has(monthOf(row.date))) return; }
   if (t === 'templates' && row.tasks) row.tasks = normTplTasks(row.tasks);
+  // v2.10.0: a project archived or deleted elsewhere leaves every project list here too
+  if (t === 'projects' && row.deleted_at){ if (map.has(key)){ map.delete(key); IX = null; invalidateFor(t); } return; }
   if (t === 'task_estimates' && !estOn()) return;
   // a program, task or shift this device never loaded is coming back (restored from History, undo
   // elsewhere, moved here): fetch its tasks and people too, not just the bare row (review M4)
@@ -2847,6 +3005,7 @@ function invalidateFor(t){
   else if (t === 'week_notes') invalidate('notes');
   else if (t === 'shifts' || t === 'shift_people' || t === 'shift_leads') invalidate('shifts', 'person', 'cal', 'pas');   // v2.9.0: +shift_leads
   else if (t === 'repeat_tasks') invalidate('master');   // v2.9.0
+  else if (t === 'projects') invalidate('board', 'person', 'cal', 'pas', 'master');   // v2.10.0: team-wide, so the By person copy redraws with the new names too
   else if (t === 'office_hours') invalidate('cal', 'person', 'pas');
   else if (t === 'task_estimates') invalidate('board', 'person', 'cal', 'pas');
   if (S.tab === 'history') scheduleHistoryRefresh();
@@ -3271,6 +3430,94 @@ function loadError(err, retry){
 function progLabel(p){ var n = (p.name || '').trim(); return n || 'Untitled program'; }
 function taskLabel(t){ var n = (t.task || '').trim(); return n || 'Untitled task'; }
 
+/* ---------- projects (v2.10.0, Anisha Oct 26): the team's own list, not tied to a week ----------
+   A task with no real program (a personal task) but a project is filed under the project instead. */
+function projLabel(p){ var n = (p && p.name ? String(p.name).trim() : ''); return n || 'Untitled project'; }
+function projList(){ return Array.from(D.projects.values()).filter(function(p){ return !p.deleted_at; }).sort(function(a, b){ return (a.sort || 0) - (b.sort || 0) || projLabel(a).toLowerCase().localeCompare(projLabel(b).toLowerCase()); }); }
+function projById(id){ var p = id ? D.projects.get(id) : null; return p && !p.deleted_at ? p : null; }
+/* the project's name for a task, '' when it has none (so 'Personal' shows as before) */
+function projNameOf(t){ var p = projById(t && t.project_id); return p ? projLabel(p) : ''; }
+function projNextSort(){ var m = -1; Array.from(D.projects.values()).forEach(function(p){ if ((p.sort || 0) > m) m = p.sort || 0; }); return m + 1; }
+/* new project through the same queue as every other team row. team is set here; updated_at/updated_by
+   are the database's (tg_touch writes auth.uid()), exactly like programs, people and links. */
+function addProject(name){
+  var n = String(name || '').replace(/\s+/g, ' ').trim();
+  if (!n) return null;
+  var had = projList().find(function(p){ return projLabel(p).toLowerCase() === n.toLowerCase(); });
+  if (had) return had;
+  var p = insertRow('projects', {id: newId('prj_'), team: S.team, name: n, sort: projNextSort()}, n);
+  S.projMine.add(p.id);   // v2.12.0: stays in this login's list until a task is in it (history confirms it after a reload)
+  invalidate('board', 'person', 'cal');
+  return p;
+}
+/* ---------- v2.12.0 (Anisha, Oct 28): the Project list is per person ----------
+   "I worked on Nur Conference things but nobody else did, so it shouldn't show up for them." A project is offered for a person when
+   that person has at least one live task in it (any week: D.ptasks is one team-wide read of tasks with a project + their
+   assignees, kept fresh on realtime and after saves; the week on screen is read from local state so pending edits count), when it has
+   no live task at all yet and this login created it (history INSERT row, read once per team), when it is the project the task already
+   has, or when it was just made in the sheet. No history read -> a project nobody has a task in shows to admins only.
+   An admin with nobody to filter by (no person mapped, nobody picked) sees the whole list. */
+var PTB = {busy: false, again: false, timer: null};
+async function ptRefresh(){
+  var team = S.team; if (!team || !S.session) return;
+  if (PTB.busy){ PTB.again = true; return; }
+  PTB.busy = true;
+  try {
+    var r = await sb.from('tasks').select('id,project_id,task_people(person_id)').eq('team', team).is('deleted_at', null).not('project_id', 'is', null).limit(5000);
+    if (team === S.team && !r.error){
+      D.ptasks.clear();
+      (r.data || []).forEach(function(t){ D.ptasks.set(t.id, {p: t.project_id, w: (t.task_people || []).map(function(x){ return x.person_id; })}); });
+      S.ptAt = Date.now();
+    }
+  } catch (e){}
+  PTB.busy = false;
+  if (PTB.again){ PTB.again = false; ptRefresh(); }
+}
+async function ptHistory(){
+  var team = S.team; if (!team || !S.uid || !S.session) return;
+  try {
+    var r = await sb.from('history').select('row_id,user_id').eq('team', team).eq('tbl', 'projects').eq('op', 'INSERT').limit(5000);
+    if (team === S.team && !r.error){ S.projHist = new Map(); (r.data || []).forEach(function(x){ if (!S.projHist.has(x.row_id)) S.projHist.set(x.row_id, x.user_id); }); }   // project id -> the login that made it
+  } catch (e){}
+}
+/* a task, assignee or project changed somewhere: read again soon (debounced); after one of ours, once it has saved */
+function ptStale(afterSave){
+  clearTimeout(PTB.timer);
+  PTB.timer = setTimeout(function(){ if (afterSave) whenSaved(ptRefresh); else ptRefresh(); }, afterSave ? 800 : 1500);
+}
+function projIx(){
+  var live = new Set(), by = new Map();
+  var put = function(pr, people){ if (!pr) return; live.add(pr); var s = by.get(pr); if (!s) by.set(pr, s = new Set()); people.forEach(function(x){ s.add(x); }); };
+  D.ptasks.forEach(function(e, id){ if (!D.tasks.has(id)) put(e.p, e.w); });   // other weeks: the last read from the server
+  D.tasks.forEach(function(t){ if (!t.deleted_at && t.project_id) put(t.project_id, liveAssignees(t.id).map(function(x){ return x.person_id; })); });   // the week on screen: local state
+  return {live: live, by: by};
+}
+function projMeId(){ var me = isPaLogin() ? myLoginPerson() : myStaffPerson(); return me && D.people.has(me) && !D.people.get(me).deleted_at ? me : null; }
+function projsFor(people, cur, extra){
+  var all = projList(), ppl = (people || []).filter(Boolean);
+  if (!ppl.length && isAdmin()) return all;
+  var ix = projIx(), made = S.projHist;
+  return all.filter(function(p){
+    if (p.id === cur || (extra && extra.has(p.id))) return true;
+    var by = ix.by.get(p.id);
+    if (by && ppl.some(function(x){ return by.has(x); })) return true;
+    if (!ix.live.has(p.id)){   // nobody has a task in it yet: it is the one who made it (this login, or the login of the person it is for)
+      if (S.projMine.has(p.id)) return true;
+      if (!made) return isAdmin();
+      var mk = made.get(p.id); if (!mk) return false;
+      if (mk === S.uid) return true;
+      var m = D.members.get(mk); return !!m && ppl.indexOf(personForLabel(m.label, false)) >= 0;
+    }
+    return false;
+  });
+}
+function setTaskProject(id, v){
+  var t = D.tasks.get(id); if (!t) return;
+  setFields('tasks', id, {project_id: v || null}, taskLabel(t));
+  invalidate('board', 'person', 'cal');
+  announce(v ? 'Project set to ' + quote(projLabel(projById(v) || {})) : 'No project');
+}
+
 /* Undo an archive. Works even when a background refresh has already dropped the archived row
    from this device (B1): the row is put back locally first, then deleted_at = null is saved. */
 function unarchive(table, snap, label){
@@ -3296,6 +3543,7 @@ function markers(t, done, opts){
   if (!done && isOverdue(t)) out.push(h('span', {class: 'mk overdue'}, icon('warn'), 'Overdue'));
   else if (!done && isDueToday(t) && !(opts && opts.noToday)) out.push(h('span', {class: 'mk today'}, icon('clock'), 'Today'));
   if (isRecurring(t)) out.push(h('span', {class: 'mk rec'}, icon('restore'), 'Repeats weekly'));
+  else if (repOf(t)) out.push(h('span', {class: 'mk rec'}, icon('restore'), repWhen(repOf(t))));   // v2.9.0: Po's repeating-task occurrence ("Every Thursday")
   else if (isPo(t)) out.push(poTag(t));
   return out;
 }
@@ -3556,10 +3804,23 @@ function cardMenu(id, btn){
         toast('Added ' + made.length + (made.length === 1 ? ' task.' : ' tasks.'));
       }});
     }} : null,
+    commonTaskCopies().length ? {label: 'Add common tasks', icon: 'plus', fn: function(){ addCommonToCard(id, btn); }} : null,
     tpl && !tpl.deleted_at ? {label: 'Open in Master', icon: 'ext', fn: function(){ S.openTpl = tpl.id; go({tab: 'master'}); }} : null,
     '-',
     {label: 'Archive program', icon: 'archive', fn: function(){ archiveProgram(id); }}
   ], btn);
+}
+/* v2.11.0 (Anisha, Oct 27): pick from the Common tasks onto a board card; each lands as if typed on the card */
+function addCommonToCard(id, ret){
+  var p = D.programs.get(id); if (!p) return;
+  commonPickSheet({title: 'Common tasks for ' + progLabel(p), ret: ret, have: tasksOf(id).map(function(t){ return t.task; }),
+    go: function(n){ return n ? 'Add ' + n + (n === 1 ? ' task' : ' tasks') : 'Pick at least one'; },
+    onAdd: function(pick){
+      var q = D.programs.get(id); if (!q || q.deleted_at){ toast('That program was archived.'); return; }
+      pick.forEach(function(mt){ addTask(id, mt.task, {due: mt.due || '', quiet: true}); });
+      invalidate('board', 'person');
+      toast('Added ' + pick.length + (pick.length === 1 ? ' task to ' : ' tasks to ') + quote(progLabel(q)) + '.');
+    }});
 }
 function refocusMore(fk){ setTimeout(function(){ var el = document.querySelector('[data-fk="' + cssEsc(fk) + '"]'); if (el) el.focus({preventScroll: false}); }, 60); }
 function openNote(id, fk){
@@ -3781,7 +4042,11 @@ function cardEl(p, old){
   reconcile(ul, tasksOf(p.id), function(t){ return t.id; }, function(t, o){ return memo(o, 'board', taskSig(t), function(){ return taskEl(t); }); });
   var form = li.querySelector(':scope > form.addtask');
   if (!form || (!focusInside(form) && form.querySelector('input').getAttribute('aria-label') !== 'Add a task to ' + progLabel(p))) form = addTaskForm(p);
-  setKids(li, [head, ul, form]);
+  // v2.11.0: an empty card (Po makes one for a program with no Template) offers the Common tasks as a pick list
+  var cpb = li.querySelector(':scope > .cp-card');
+  if (tasksOf(p.id).length || !commonTaskCopies().length) cpb = null;
+  else if (!cpb) cpb = h('button', {type: 'button', class: 'link cp-card', 'data-fk': 'cpc:' + p.id, 'aria-haspopup': 'dialog', on: {click: function(e){ addCommonToCard(p.id, e.currentTarget); }}}, icon('plus', 'sm'), 'Choose common tasks');
+  setKids(li, [head, ul, form, cpb]);
   return li;
 }
 function boardMenu(btn){
@@ -4238,25 +4503,38 @@ function repCore(x){
   return normTask(x).replace(/[.!?]+$/, '').replace(/-/g, ' ').replace(/\s+/g, ' ')
     .replace(/^(please\s+)?(submit|create|make|do|send|file|open|post|put in|set up|add|write|run)\s+/, '').replace(/^(an?|the)\s+/, '').replace(/s$/, '').trim();
 }
-var REP_KEYS = new Map();
-REP_COMMON.forEach(function(c, i){ c.keys.forEach(function(k){ REP_KEYS.set(repCore(k), i); }); });
-function repCommonIx(text){ var i = REP_KEYS.get(repCore(text)); return i == null ? -1 : i; }
+/* v2.11.0 (Anisha, Oct 27): the pinned "Common" list is the team's Common tasks Template, in its wording, when it has one
+   (the old built-in six stay as the fallback and as extra spellings to match) */
+function repCommonList(){
+  var c = specialTemplate('common'), tt = ((c && c.tasks) || []).map(function(x){ return String((x && x.task) || '').replace(/\s+/g, ' ').trim(); }).filter(Boolean);
+  if (!tt.length) return REP_COMMON;
+  return tt.map(function(t){
+    var old = REP_COMMON.find(function(r){ return r.keys.concat([r.label]).some(function(k){ return repCore(k) === repCore(t); }); });
+    return {label: t, keys: (old ? old.keys.concat([old.label]) : []).concat([t]), own: true};
+  });
+}
+function repCommonIx(text, L){
+  L = L || repCommonList(); var k = repCore(text);
+  for (var i = 0; i < L.length; i++) if (L[i].keys.some(function(x){ return repCore(x) === k; })) return i;
+  return -1;
+}
 function repCommon(rows){
-  var best = REP_COMMON.map(function(){ return null; });
-  (rows || REP.rows || []).forEach(function(e){ var i = repCommonIx(e.text); if (i >= 0 && (!best[i] || e.weeks.size > best[i].weeks.size)) best[i] = e; });
-  return REP_COMMON.map(function(c, i){ return best[i] ? best[i].text : c.label; });
+  var L = repCommonList(), best = L.map(function(){ return null; });
+  (rows || REP.rows || []).forEach(function(e){ var i = repCommonIx(e.text, L); if (i >= 0 && (!best[i] || e.weeks.size > best[i].weeks.size)) best[i] = e; });
+  return L.map(function(c, i){ return !c.own && best[i] ? best[i].text : c.label; });
 }
 function repFor(pid, q){
   var words = normTask(q).split(' ').filter(Boolean);
   var have = new Set(tasksFor(pid).filter(function(t){ return !personDone(t, pid); }).map(function(t){ return normTask(t.task); }));
-  var haveCore = new Set(Array.from(have).map(function(k){ return repCommonIx(k); }).filter(function(i){ return i >= 0; }));
+  var L = repCommonList();
+  var haveCore = new Set(Array.from(have).map(function(k){ return repCommonIx(k, L); }).filter(function(i){ return i >= 0; }));
   var hit = function(k){ return !have.has(k) && words.every(function(w){ return k.indexOf(w) >= 0; }); };
   var common = repCommon().map(function(txt, i){ return {e: {text: txt}, grp: 'common', i: i}; })
     .filter(function(x){ return !haveCore.has(x.i) && hit(normTask(x.e.text)); });          // left out when they already have it open, in any wording
-  var rest = (REP.rows || []).filter(function(e){ var k = normTask(e.text); return repCommonIx(e.text) < 0 && hit(k); })
+  var rest = (REP.rows || []).filter(function(e){ var k = normTask(e.text); return repCommonIx(e.text, L) < 0 && hit(k); })
     .map(function(e){ var mine = e.people.has(pid) ? e.people.get(pid).size : 0; return {e: e, grp: 'rep', score: (mine ? 1000 + mine * 10 : 0) + e.weeks.size}; })
     .sort(function(a, b){ return b.score - a.score || a.e.text.localeCompare(b.e.text); });
-  return common.concat(rest).slice(0, 8);                                                    // still at most 8, Common first
+  return common.concat(rest).slice(0, Math.max(8, common.length));   // v2.11.0: every Common task fits (Anisha's list is 9)                                                    // still at most 8, Common first
 }
 function repCombo(inp, pid, onPick, opt){
   opt = opt || {}; var idp = opt.idp || 'pvRep';   // v2.5: own ids per field (the Add task sheet has one too); fill = put the text in the field instead of adding
@@ -4344,8 +4622,8 @@ function myLoginPerson(){
   if (!S.team || isTeamLogin() || isSharedAdmin()) return null;
   return personForLabel(((D.members && D.members.get(S.uid)) || {}).label || '', false);
 }
-function newPersonalProgram(label){
-  return insertRow('programs', {id: newId('prog_'), team: S.team, week: S.week, name: '', template_id: null, custom_name: false, force_pick: false, personal: true,
+function newPersonalProgram(label, week){
+  return insertRow('programs', {id: newId('prog_'), team: S.team, week: week || S.week, name: '', template_id: null, custom_name: false, force_pick: false, personal: true,
     date: '', locations: [], offsite: '', lead_ids: [], sort: nextSort(weekPrograms())}, label);
 }
 /* Every program on the calendar this week (all of them, not only ones with a card or a sign-up),
@@ -4449,38 +4727,124 @@ function progForChoice(v){
   if (!p || p.deleted_at){ toast('That program was archived.'); return undefined; }
   return {p: p, made: false};
 }
-/* Mon-Sun chips (plus "No day") as one radio group */
-function dayChips(id, cur, onPick){
-  var today = S.week === thisWeek() ? DAYS[todayIdx()] : '';
-  return h('fieldset', {class: 'f25'}, h('legend', {text: 'Day'}),
-    h('div', {class: 'tchips daychips'}, [''].concat(DAYS).map(function(d, i){
+/* Project select (v2.10.0, Anisha Oct 26): "a 'Project' section that's also a dropdown (and I could add to it)".
+   Same shape as the program select but flat: No project, the team's projects by sort then name, then "+ New project...".
+   Choosing that opens a small inline name box and keeps the sheet open; the new project is created, selected and used. */
+function projSelect(id, cur, onChange, getPeople){
+  var val = cur && cur !== '__new' ? cur : '', madeHere = new Set();   // v2.12.0: getPeople() = whose projects to offer; madeHere = made in this sheet
+  var sel = h('select', {id: id, class: 'pill-sel', 'data-fk': id, on: {change: function(){ pick(sel.value); }}});
+  var inp = h('input', {type: 'text', id: id + 'New', autocomplete: 'off', enterkeyhint: 'done',
+    placeholder: 'New project\u2019s name', 'aria-label': 'New project\u2019s name'});
+  var addBtn = h('button', {type: 'button', class: 'primary', on: {click: function(){ addIt(); }}}, 'Add');
+  var newBox = h('div', {class: 'proj-new', hidden: true}, inp, addBtn,
+    h('button', {type: 'button', on: {click: function(){ cancel(); }}}, 'Cancel'));
+  var wrap = h('div', {class: 'proj-field'}, sel, newBox);
+  wrap.refresh = function(){ fill(); };   // v2.12.0: the sheet's people changed
+  function fill(){
+    var list = projsFor(getPeople ? getPeople() : [], val, madeHere);   // v2.12.0 (Anisha, Oct 28): only this person's projects
+    var opts = [h('option', {value: '', text: 'No project'})].concat(list.map(function(p){ return h('option', {value: p.id, text: projLabel(p)}); }));
+    // a project archived elsewhere but still on this task stays listed, so the field shows what the task says
+    if (val && !list.some(function(p){ return p.id === val; })) opts.push(h('option', {value: val, text: 'This project (archived)'}));
+    sel.replaceChildren.apply(sel, opts.concat([h('option', {value: '__new', text: '+ New project\u2026'})]));
+    sel.value = val;
+  }
+  function pick(v){
+    if (v === '__new'){ openBox(); return; }
+    if (v === val) return;
+    val = v; onChange(val);
+  }
+  function openBox(){ sel.hidden = true; newBox.hidden = false; inp.value = ''; inp.focus(); }
+  function shutBox(){ newBox.hidden = true; sel.hidden = false; sel.value = val; }
+  function cancel(){ shutBox(); sel.focus(); }
+  function addIt(){
+    var name = inp.value.replace(/\s+/g, ' ').trim();
+    if (!name){ toast('Type a project name first.'); inp.focus(); return; }
+    var before = val, had = !!projList().find(function(p){ return projLabel(p).toLowerCase() === name.toLowerCase(); });
+    var made = addProject(name);
+    if (!made){ toast('Couldn\u2019t add that project. Please try again.', {kind: 'error'}); shutBox(); return; }
+    madeHere.add(made.id); val = made.id; fill(); shutBox(); onChange(val);
+    if (!had){ toast('Added project ' + quote(projLabel(made)) + '.'); announce('Project ' + quote(projLabel(made)) + ' added'); }
+    // the write can still be refused (no access, table missing): put the field back rather than leave a project that isn't there
+    whenSaved(function(){
+      var live = D.projects.get(made.id);
+      if (live && !live.deleted_at) return;
+      if (val === made.id){ val = before; fill(); onChange(before); }
+      toast('Couldn\u2019t add ' + quote(name) + '. Please try again.', {kind: 'error', timeout: 9000});
+    });
+  }
+  inp.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' && !composing(e)){ e.preventDefault(); addIt(); }
+    else if (e.key === 'Escape'){ e.stopPropagation(); cancel(); }
+  });
+  fill();
+  if (Date.now() - (S.ptAt || 0) > 20000) ptRefresh().then(function(){ fill(); });   // v2.12.0: a fresh read of who has worked on which project
+  return wrap;
+}
+/* Mon-Sun chips (plus "No day") as one radio group.
+   v2.10.0 (Anisha, Oct 26): the chips used to borrow S.week, so a task added while the app sat on next week
+   could only be given next week's days ("isn't showing any dates for this week, only next"). The week is now
+   passed in, named on the legend, and switchable from a small segmented control. Two options always
+   (This week / Next week); a third only when the sheet was opened from another week. */
+function dayChips(id, cur, onPick, week, onWeek, lock){
+  var base = thisWeek(), nxt = addDays(base, 7);
+  var weeks = lock ? [week || base] : [base, nxt];
+  if (!lock && week && weeks.indexOf(week) < 0) weeks.push(week);
+  var sel = weeks.indexOf(week) >= 0 ? week : base;
+  var curDay = cur || '';
+  var legend = h('legend');
+  var seg = h('div', {class: 'seg wkseg', role: 'group', 'aria-label': 'Which week\u2019s days'});
+  var chips = h('div', {class: 'tchips daychips'});
+  function wkName(w){ return w === base ? 'this week' : w === nxt ? 'next week' : 'week of ' + shortDate(w); }
+  function wkBtn(w){ return w === base ? 'This week' : w === nxt ? 'Next week' : weekLabel(w); }
+  function draw(focusDay){
+    legend.textContent = 'Day \u00b7 ' + wkName(sel) + ' (' + weekRange(sel) + ')';
+    seg.replaceChildren.apply(seg, weeks.map(function(w){
+      return h('button', {type: 'button', 'aria-pressed': w === sel ? 'true' : 'false', 'data-fk': id + 'wk:' + w,
+        on: {click: function(){ if (w === sel) return; setWeek(w); }}}, wkBtn(w));
+    }));
+    var today = sel === base ? DAYS[todayIdx()] : '';
+    chips.replaceChildren.apply(chips, [''].concat(DAYS).map(function(d, i){
       var rid = id + '_' + (d || 'none');
       return h('label', {class: 'tchip' + (d && d === today ? ' is-today' : ''), for: rid},
-        h('input', {type: 'radio', name: id, id: rid, value: d, checked: (cur || '') === d, 'data-fk': id + ':' + (d || 'none'), on: {change: function(){ onPick(d); }}}),
-        h('span', {text: d ? DAY_SHORT[i - 1] : 'No day'}), d && S.week ? h('span', {class: 'sub', text: String(isoToDate(addDays(S.week, i - 1)).getDate())}) : null);
-    })));
+        h('input', {type: 'radio', name: id, id: rid, value: d, checked: (curDay || '') === d, 'data-fk': id + ':' + (d || 'none'),
+          on: {change: function(){ curDay = d; onPick(d); }}}),
+        h('span', {text: d ? DAY_SHORT[i - 1] : 'No day'}), d ? h('span', {class: 'sub', text: String(isoToDate(addDays(sel, i - 1)).getDate())}) : null);
+    }));
+    if (focusDay != null){ var f = chips.querySelector('#' + cssEsc(id + '_' + (focusDay || 'none'))); if (f) f.focus({preventScroll: true}); }
+  }
+  function setWeek(w){
+    // the chosen day is a weekday, so it stays chosen in the new week (its date moves with the week)
+    var a = document.activeElement, back = a && chips.contains(a) ? a.value : null;
+    sel = w; if (onWeek) onWeek(w); draw(back);
+    announce('Days for ' + wkName(w) + ': ' + shortDate(w) + ' \u2013 ' + shortDate(addDays(w, 6)));
+  }
+  draw();
+  return h('fieldset', {class: 'f25 dayfield'}, legend, lock ? null : seg, chips);
 }
 /* People as toggle chips: the chosen ones first; "Someone else" opens everyone (PAs, then Staff) */
 function peopleChips(o){
   var open = !!o.open, keep = o.keep || new Set(o.selected());   // chips you un-tick stay on screen until the sheet closes
   var box = h('fieldset', {class: 'f25 pchips'});
-  function chip(p, on){
+  function chip(p, on, lab){
     var cid = o.id + '_' + p.id;
-    return h('label', {class: 'tchip', for: cid},
+    return h('label', {class: 'tchip' + (lab ? ' is-me' : ''), for: cid},
       h('input', {type: 'checkbox', id: cid, checked: on, 'data-fk': o.id + ':' + p.id, on: {change: function(e){ keep.add(p.id); o.toggle(p.id, e.target.checked); draw(cid); }}}),
-      avatar(p), h('span', {text: p.name + (p.deleted_at ? ' (archived)' : '')}));
+      avatar(p), h('span', {text: lab || (p.name + (p.deleted_at ? ' (archived)' : ''))}));
   }
   function draw(focusId){
     var sel = o.selected(); sel.forEach(function(x){ keep.add(x); });
+    // v2.9.0 (F): o.me = the signed-in person, always listed first as "Me" (one tap, like the old "Let me know" box)
+    var meP = o.me ? D.people.get(o.me) : null; if (meP && meP.deleted_at) meP = null;
     var ppl = activePeople().concat(sel.map(function(x){ return D.people.get(x); }).filter(function(p){ return p && p.deleted_at; }));
-    var shown = open ? ppl : ppl.filter(function(p){ return keep.has(p.id); });
+    var shown = (open ? ppl : ppl.filter(function(p){ return keep.has(p.id); })).filter(function(p){ return !meP || p.id !== meP.id; });
     var pas = shown.filter(function(p){ return !p.is_staff && !isYC(p); }), yc = shown.filter(isYC), st = shown.filter(function(p){ return p.is_staff; });
     var on = function(p){ return chip(p, sel.indexOf(p.id) >= 0); };
+    var first = (meP ? [chip(meP, sel.indexOf(meP.id) >= 0, 'Me')] : []).concat(pas.map(on));
     var more = h('button', {type: 'button', class: 'link pc-more', 'aria-expanded': open ? 'true' : 'false', 'data-fk': o.id + 'more',
       on: {click: function(){ open = !open; if (o.onOpen) o.onOpen(open); draw(o.id + 'more'); }}}, open ? 'Show fewer' : [icon('plus', 'sm'), sel.length ? 'Someone else' : 'Choose someone']);
     box.replaceChildren.apply(box, [h('legend', {text: o.label}),
-      !shown.length && o.none !== '' ? h('p', {class: 'muted small pc-none', text: o.none || 'Nobody yet.'}) : null,
-      pas.length ? h('div', {class: 'tchips'}, pas.map(on)) : null,
+      !shown.length && !meP && o.none !== '' ? h('p', {class: 'muted small pc-none', text: o.none || 'Nobody yet.'}) : null,
+      first.length ? h('div', {class: 'tchips'}, first) : null,
       yc.length && open ? h('p', {class: 'pc-h', text: 'Youth coordinators'}) : null,
       yc.length ? h('div', {class: 'tchips'}, yc.map(on)) : null,
       st.length && open ? h('p', {class: 'pc-h', text: 'Staff'}) : null,
@@ -4535,19 +4899,35 @@ function addTaskSheet(o){
   o = o || {};
   var dr = o.draft || null;
   var pid = dr ? dr.pid || null : o.pid || S.person || null, me = isPaLogin() ? myLoginPerson() : myStaffPerson();   // v2.6.6: a PA/YC login watches as herself
-  var st = {who: pid ? [pid] : [], prog: '', due: S.week === thisWeek() ? DAYS[todayIdx()] : '',
-    watchMe: !!(me && lsGet('atw:' + S.team, true)), watchers: []};   // on for staff unless they turned it off last time
+  if (me && (!D.people.has(me) || D.people.get(me).deleted_at)) me = null;
+  // v2.9.0 (F, Anisha L135-137): one Watchers control for everyone (PAs and YCs too), the adder first as "Me".
+  // A task for someone else starts with the adder watching (L137), unless she turned that off last time.
+  var st = {who: pid ? [pid] : [], prog: '', proj: '', due: S.week === thisWeek() ? DAYS[todayIdx()] : '', wk: S.week, watchers: [], wTouched: false};
+  // v2.11.0 (Anisha, Oct 27): "Add task" on a My tasks group header opens the sheet already on that program/project and day
+  if (!dr){ if (o.prog) st.prog = o.prog; if (o.proj && projById(o.proj)) st.proj = o.proj; if (o.due != null) st.due = DAYS.indexOf(o.due) >= 0 ? o.due : ''; }
+  var forOther = function(){ return !!me && st.who.some(function(x){ return x !== me; }); };
+  var autoMe = function(){
+    if (!me || st.wTouched) return;
+    var want = forOther() && lsGet('atw:' + S.team, true) !== false, has = st.watchers.indexOf(me) >= 0;
+    if (want && !has) st.watchers.push(me); else if (!want && has) st.watchers = st.watchers.filter(function(y){ return y !== me; });
+  };
+  autoMe();
   if (dr){
     var live = function(a){ return (a || []).filter(function(x){ return D.people.has(x) && !D.people.get(x).deleted_at; }); };
-    st.who = live(dr.who); st.prog = dr.prog || ''; st.due = DAYS.indexOf(dr.due) >= 0 ? dr.due : ''; st.watchers = live(dr.watchers);
-    if (me && typeof dr.watchMe === 'boolean') st.watchMe = dr.watchMe;
+    st.who = live(dr.who); st.prog = dr.prog || ''; st.proj = projById(dr.proj) ? dr.proj : ''; st.due = DAYS.indexOf(dr.due) >= 0 ? dr.due : ''; st.watchers = live(dr.watchers);
+    if (me && dr.watchMe === true && st.watchers.indexOf(me) < 0) st.watchers.push(me);   // a draft kept by an older build
+    st.wTouched = true;
   }
   var err = h('p', {class: 'err', role: 'alert', hidden: true});
   var txt = h('input', {type: 'text', id: 'atText', autocomplete: 'off', enterkeyhint: 'done', placeholder: 'What needs doing?', 'data-fk': 'attext'});
   txt.value = o.text || '';
+  var more = null;
   var who = peopleChips({id: 'atWho', label: 'Who', none: 'Choose who it\u2019s for.', selected: function(){ return st.who; },
-    toggle: function(x, on){ st.who = st.who.filter(function(y){ return y !== x; }); if (on) st.who.push(x); }});
-  var dayBox = dayChips('atDay', st.due, function(d){ st.due = d; });
+    toggle: function(x, on){ st.who = st.who.filter(function(y){ return y !== x; }); if (on) st.who.push(x);
+      var had = st.watchers.slice().sort().join(); autoMe(); if (more && st.watchers.slice().sort().join() !== had) more.draw();
+      if (proj) proj.refresh(); }});   // v2.12.0: the Project list follows who it's for
+  // v2.10.0: the chips show the week being viewed, and can be pointed at this week (or next) from the sheet itself
+  var dayBox = dayChips('atDay', st.due, function(d){ st.due = d; }, S.week, function(w){ st.wk = w; });
   // v2.6.4 (judge signal: a Thursday Soul Food task was filed on Tuesday): picking a program sets Day to that program's day
   // (still editable). "No program" leaves Day alone. Replaces the v2.5 default "the day stays on today".
   var prog = progSelect('atProg', st.prog, function(v, c){
@@ -4561,26 +4941,30 @@ function addTaskSheet(o){
   });
   var note = h('textarea', {id: 'atNote', rows: 2, placeholder: 'Anything they should know (optional)', 'data-fk': 'atnote'});
   if (dr) note.value = dr.note || '';
-  var watch = me ? h('label', {class: 'sw25', for: 'atWatch'},
-    h('input', {type: 'checkbox', id: 'atWatch', checked: st.watchMe, 'data-fk': 'atwatch', on: {change: function(e){ st.watchMe = e.target.checked; lsSet('atw:' + S.team, st.watchMe ? null : false); }}}),
-    h('span', {class: 'sw-t'}, h('b', {text: 'Let me know when it\u2019s done'}))) : null;
-  // v2.6.6 (Anisha): Watchers sit in the box itself, no "More" fold
-  var more = isAdmin() ? peopleChips({id: 'atWat', label: 'Watchers', none: '', selected: function(){ return st.watchers; },
-      toggle: function(x, on){ st.watchers = st.watchers.filter(function(y){ return y !== x; }); if (on) st.watchers.push(x); }}).el : null;
+  // v2.10.0 (Anisha): Project sits right under Program; optional either way, and the way to file a personal task.
+  // v2.12.0 (Anisha, Oct 28): only the projects of whoever the task is for (several people = all of theirs); nobody picked yet = the adder's own
+  var proj = projSelect('atProj', st.proj, function(v){ st.proj = v; }, function(){ return st.who.length ? st.who : me ? [me] : []; });
+  // v2.6.6 (Anisha): Watchers sit in the box itself, no "More" fold. v2.9.0: for every login; "Let me know when it's done" is the "Me" chip
+  more = peopleChips({id: 'atWat', label: 'Watchers', none: '', me: me, selected: function(){ return st.watchers; },
+      toggle: function(x, on){ st.watchers = st.watchers.filter(function(y){ return y !== x; }); if (on) st.watchers.push(x);
+        if (x === me){ st.wTouched = true; if (forOther()) lsSet('atw:' + S.team, on ? null : false); } }});
   function save(){
     var text = txt.value.replace(/\s+/g, ' ').trim();
     if (!text){ err.textContent = 'Type what needs doing first.'; err.hidden = false; txt.focus(); return; }
     if (!st.who.length){ err.textContent = 'Choose who it\u2019s for.'; err.hidden = false; var c = $('#sheet [data-fk="atWhomore"]'); if (c) c.focus(); return; }
     if (tooSoon('atsave')) return;
     var r = progForChoice(st.prog); if (r === undefined) return;
-    var p = r ? r.p : newPersonalProgram(text), madeProg = r ? r.made : true;
-    var t = insertRow('tasks', {id: newId('t_'), team: S.team, program_id: p.id, task: text, notes: note.value.trim(), due: st.due || '', done: false, sort: nextSort(tasksOf(p.id))}, text);
+    // v2.10.0: a day picked in another week files the task in THAT week (its own personal card), not the week on screen
+    var targetWk = st.wk || S.week;
+    var p = r ? r.p : newPersonalProgram(text, targetWk), madeProg = r ? r.made : true;
+    var t = insertRow('tasks', {id: newId('t_'), team: S.team, program_id: p.id, project_id: st.proj || null, task: text, notes: note.value.trim(), due: st.due || '', done: false, sort: nextSort(tasksOf(p.id))}, text);
     st.who.forEach(function(x){ insertRow('task_people', {task_id: t.id, person_id: x, team: S.team, done: false}, text); });
-    var ws = st.watchers.slice(); if (st.watchMe && me && ws.indexOf(me) < 0) ws.push(me);
+    var ws = st.watchers.filter(function(x, i, a){ return a.indexOf(x) === i && D.people.has(x); });
     ws.forEach(function(x){ insertRow('task_watchers', {task_id: t.id, person_id: x, team: S.team}, text); });
     invalidate('person', 'board', 'cal');
     lsSet(sheetDraftKey(), null);
     closeSheet();
+    if (!st.prog && targetWk !== S.week) go({week: targetWk});
     var names = st.who.map(personName);
     // v2.6.4 (judge signal): the toast names the watcher(s), so it's clear one was set
     var wn = ws.map(personName), wline = !wn.length ? '' : ' ' + (wn.length > 2 ? wn.slice(0, 2).join(', ') + ' +' + (wn.length - 2) + ' are' : wn.length === 2 ? wn.join(' and ') + ' are' : wn[0] + ' is') + ' watching.';
@@ -4594,15 +4978,16 @@ function addTaskSheet(o){
     h('div', {class: 'pv-add at-text'}, h('label', {class: 'field', for: 'atText', text: 'Task'}), txt),
     who.el,
     h('div', null, h('label', {class: 'field', for: 'atProg', text: 'Program'}), prog, prog.hint),
+    h('div', {class: 'at-proj'}, h('label', {class: 'field', for: 'atProj', text: 'Project'}), proj),
     dayBox,
     h('div', null, h('label', {class: 'field', for: 'atNote', text: 'Note'}), note),
-    watch, more, err);
+    more.el, err);
   openSheet({title: pid ? 'Add a task for ' + personName(pid) : 'Add a task', returnTo: o.ret, body: form, focus: '#atText', forceFocus: !o.text,
     onClose: function(){ AT_LIVE = null; lsSet(sheetDraftKey(), null); },   // closed on purpose (Cancel, Esc, saved): drop the kept draft
     foot: [h('button', {type: 'button', 'data-fk': 'atcancel', on: {click: closeSheet}}, 'Cancel'),
       h('button', {type: 'button', class: 'primary', 'data-fk': 'atsave', on: {click: save}}, 'Add task')]});
   $('#sheet').classList.add('wide');
-  AT_LIVE = {el: form, get: function(){ return {kind: 'add', pid: pid, text: txt.value, who: st.who.slice(), prog: st.prog, due: st.due, note: note.value, watchMe: st.watchMe, watchers: st.watchers.slice()}; }};
+  AT_LIVE = {el: form, get: function(){ return {kind: 'add', pid: pid, text: txt.value, who: st.who.slice(), prog: st.prog, proj: st.proj, due: st.due, note: note.value, watchers: st.watchers.slice()}; }};
 }
 
 /* ---------- 2. the task detail sheet (tap a task row): everything about one task, saved as you go ---------- */
@@ -4626,6 +5011,7 @@ function moveTaskTo(id, v){
 function taskSheet(id, pid, ret){
   var t = D.tasks.get(id); if (!t) return;
   var body = h('div', {class: 'stack td25'}), open = {who: false, w: false}, keepWho = new Set(), keepW = new Set();
+  var tsMe = isPaLogin() ? myLoginPerson() : myStaffPerson();   // v2.9.0 (F)
   function render(){
     var cur = D.tasks.get(id);
     if (!cur || cur.deleted_at){ body.replaceChildren(h('p', {class: 'muted', text: 'This task was archived.'})); return; }
@@ -4652,11 +5038,15 @@ function taskSheet(id, pid, ret){
         }
         invalidate('board', 'person', 'cal');
       }});
-    var wat = peopleChips({id: 'tdWat', label: 'Watchers', open: open.w, keep: keepW, onOpen: function(v){ open.w = v; }, none: 'Nobody is watching yet.',
+    var wat = peopleChips({id: 'tdWat', label: 'Watchers', open: open.w, keep: keepW, onOpen: function(v){ open.w = v; }, none: 'Nobody is watching yet.', me: tsMe,   // v2.9.0 (F): "Me" first
       selected: function(){ return watchersOf(id).map(function(x){ return x.person_id; }); },
       toggle: function(x, on){ var c = D.tasks.get(id); if (!c) return; if (on) addWatcher(c, x); else removeWatcher(c, x); }});
     var prog = progSelect('tdProg', progValueOf(cur), function(v){ moveTaskTo(id, v); });
-    var days = dayChips('tdDay', cur.due, function(d){ setTaskDue(id, d); invalidate('cal'); });
+    // v2.10.0 (Anisha): Project under Program. Saves as you pick; the sheet stays where it is.
+    // v2.12.0 (Anisha, Oct 28): the task's people plus whoever has the sheet open
+    var proj = projSelect('tdProj', cur.project_id || '', function(v){ setTaskProject(id, v); }, function(){
+      var m = projMeId(); return assigneesOf(id).map(function(x){ return x.person_id; }).concat(m ? [m] : []); });
+    var days = dayChips('tdDay', cur.due, function(d){ setTaskDue(id, d); invalidate('cal'); }, S.week, null, true);
     var e = estOn() && isAdmin() ? estOf(id) : null;
     var est = estOn() && isAdmin() ? h('div', {class: 'td-est'}, h('span', {class: 'field', text: 'Time estimate'}),
       h('span', {class: 'grow', text: e ? (e.source === 'admin' ? '' : 'About ') + minsWords(e.minutes) : 'Not set'}),
@@ -4670,6 +5060,7 @@ function taskSheet(id, pid, ret){
       h('div', null, h('label', {class: 'field', for: 'tdNote', text: 'Note'}), note),
       who.el, wat.el,
       h('div', null, h('label', {class: 'field', for: 'tdProg', text: 'Program'}), prog, prog.hint, board),
+      h('div', {class: 'td-proj'}, h('label', {class: 'field', for: 'tdProj', text: 'Project'}), proj),
       days,
       est].filter(Boolean));
     if (keepFk){ var el = body.querySelector('[data-fk="' + cssEsc(keepFk) + '"]'); if (el) el.focus({preventScroll: true}); }
@@ -4724,7 +5115,12 @@ function pvWatching(pid){
 /* ---------- v2.8.0 (Oct 23 call, Item A: Zaynab L102-106, L115; Ummehani L81-82; L114): My tasks by program ----------
    Program first (name, then day · time · place as context), her tasks under it, tap to fold. Personal tasks sit under their day,
    tasks with no day in "No day set" last. A lead-up card (a later program, e.g. Fall Fest, worked on this week) groups under its
-   name with its real date, placed by her tasks' days. Folds are remembered per device (per team). */
+   name with its real date, placed by her tasks' days. Folds are remembered per device (per team).
+
+   v2.10.0 (Anisha, Oct 26 7:52pm): the week is DAY COLUMNS first — Monday to Sunday, only the days that have something on them,
+   and "No day set" last. Inside a day her tasks group under their program's header, a project's name when a task has a project
+   and no program, else one "(Misc.)" header per day. Headers come first and start folded; each day column folds on its own,
+   remembered per device (pvFoldSet). */
 function isLeadUp(p){ return !!p && !p.personal && validIso(p.date) && (p.date < p.week || p.date > addDays(p.week, 6)); }
 /* the calendar program a lead-up card is for, when its month is loaded (same name rule as the pairing) */
 function leadEvent(p){
@@ -4740,83 +5136,202 @@ function pvFoldSet(k, folded){
   lsSet('pvfold:' + S.team, m);
 }
 function pvDueIso(t){ var i = DAYS.indexOf(t.due); return i >= 0 ? addDays(S.week, i) : ''; }
+/* v2.10.0: a task's project name. The Project field (tasks.project_id, loaded into D.projects) lands separately, so this must
+   read it whether or not that work is here: no D.projects, no row, or no id gives '' and the task groups by program or (Misc.). */
+function projName(t){
+  var m = D.projects, id = t && t.project_id;
+  if (!id || !m) return '';
+  var p = typeof m.get === 'function' ? m.get(id) : m[id];
+  if (!p || p.deleted_at) return '';
+  return String(p.name || '').replace(/\s+/g, ' ').trim();
+}
+/* a day key: this week's own date, else '' (the "No day set" column) */
+function pvDayKey(iso){ return iso && iso >= S.week && iso <= addDays(S.week, 6) ? iso : ''; }
+/* the person's week as day columns. Each column holds her groups for that day: one per program, one per project, one "(Misc.)".
+   The same program can sit in two columns (a task due Tuesday on a Friday program) — each column is its own group and fold. */
 function pvGroups(pid, skip, wkOk){
-  var wk = S.week, wz = addDays(wk, 6), pairs = calPairs(), groups = new Map();
-  function grp(k, o){ var g = groups.get(k); if (!g){ g = Object.assign({k: k, tasks: []}, o); groups.set(k, g); } return g; }
-  // the calendar programs she's signed up for this week, even with no tasks
+  var wk = S.week, wz = addDays(wk, 6), pairs = calPairs(), days = new Map(), INF = 24 * 60 + 1;
+  function dayOf(iso){
+    var k = pvDayKey(iso), d = days.get(k);
+    if (!d){ d = {key: k, date: k, groups: new Map()}; days.set(k, d); }
+    return d;
+  }
+  function grp(iso, gk, o){
+    var d = dayOf(iso), g = d.groups.get(gk);
+    if (!g){ g = Object.assign({k: (d.date || 'nodate') + '|' + gk, gk: gk, date: d.date, tasks: []}, o); d.groups.set(gk, g); }
+    return g;
+  }
+  // the calendar programs she's signed up for this week, even with no tasks of hers: they sit on their own day
   if (hasShifts() && wkOk) eventsIn(wk, wz).forEach(function(s){
     if (!D.sp.has(s.id + '|' + pid)) return;
     var p = pairs.byEv.get(s.id) || null;
-    grp(p ? 'p:' + p.id : 'ev:' + s.id, {kind: 'prog', ev: s, p: p, date: s.date, min: shiftMinutes(s)});
+    grp(s.date, p ? 'p:' + p.id : 'ev:' + s.id, {kind: 'prog', ev: s, p: p, min: shiftMinutes(s), placed: false});
   });
   tasksFor(pid).forEach(function(t){
     if (skip && skip.has(t.id)) return;
     var p = D.programs.get(t.program_id);
-    if (!p || p.personal){ var d = pvDueIso(t); (d ? grp('d:' + d, {kind: 'day', date: d, min: 24 * 60 + 1}) : grp('none:' + wk, {kind: 'none', date: '', min: 0})).tasks.push(t); return; }
-    var g = groups.get('p:' + p.id);
-    if (!g){
-      var ev = pairs.byProg.get(p.id) || null;
-      if (ev) g = grp('p:' + p.id, {kind: 'prog', ev: ev, p: p, date: ev.date, min: shiftMinutes(ev)});
-      else if (validIso(p.date) && p.date >= wk && p.date <= wz) g = grp('p:' + p.id, {kind: 'prog', p: p, date: p.date, min: 24 * 60});
-      else g = grp('p:' + p.id, {kind: 'prog', p: p, lead: isLeadUp(p), date: '', min: 24 * 60});
+    if (p && p.deleted_at) p = null;
+    var ev = p ? (pairs.byProg.get(p.id) || null) : null;
+    var day = pvDueIso(t);                                     // the day it's due,
+    if (!day && ev && ev.date) day = ev.date;                   // else the day of its program (as personDayTasks does),
+    if (!day && p && validIso(p.date)) day = p.date;            // else "No day set"
+    if (p && !p.personal){
+      grp(day, 'p:' + p.id, {kind: 'prog', p: p, ev: ev, min: ev ? shiftMinutes(ev) : INF, lead: isLeadUp(p), placed: true}).tasks.push(t);
+      return;
     }
-    g.tasks.push(t);
+    var pj = projName(t);
+    if (pj) grp(day, 'pj:' + String(t.project_id), {kind: 'proj', pname: pj, min: INF, placed: true}).tasks.push(t);
+    else grp(day, 'misc', {kind: 'misc', min: INF, placed: true}).tasks.push(t);
   });
-  // lead-up and undated cards (Weekly Tasks): placed by the first day her tasks on it are due
-  groups.forEach(function(g){ if (g.kind === 'prog' && !g.date){ var ds = g.tasks.map(pvDueIso).filter(Boolean).sort(); g.date = ds[0] || ''; g.placed = true; } });
   var di = function(t){ var i = DAYS.indexOf(t.due); return i < 0 ? 9 : i; };
-  groups.forEach(function(g){ g.tasks.sort(function(a, b){ return (personDone(a, pid) ? 1 : 0) - (personDone(b, pid) ? 1 : 0) || di(a) - di(b) || bySort(a, b); }); });
-  var rank = function(g){ return g.kind === 'none' ? 2 : g.date ? 0 : 1; };
-  return Array.from(groups.values()).sort(function(a, b){ return rank(a) - rank(b) || a.date.localeCompare(b.date) || a.min - b.min || String(a.k).localeCompare(String(b.k)); });
+  days.forEach(function(d){
+    d.groups.forEach(function(g){
+      g.tasks.sort(function(a, b){ return (personDone(a, pid) ? 1 : 0) - (personDone(b, pid) ? 1 : 0) || di(a) - di(b) || bySort(a, b); });
+      pvGroupMeta(g);
+    });
+    d.list = Array.from(d.groups.values()).sort(pvGroupCmp);
+  });
+  // Monday to Sunday, then "No day set" last; only the days that have something on them
+  return Array.from(days.values()).sort(function(a, b){ return (a.date || '9').localeCompare(b.date || '9'); });
+}
+/* one day column: the day label, then its folded program headers */
+function pvDayEl(d, pid){
+  var today = todayIso(), iso = d.date, id = 'pvd_' + (iso || 'nodate');
+  var hd = iso
+    ? h('h3', {class: 'pv-dayh', id: id},
+        h('b', {class: 'pv-dayn', text: WEEKDAY_NAMES[isoToDate(iso).getDay()].slice(0, 3)}),
+        h('span', {class: 'pv-dayd', text: shortDate(iso)}),
+        iso === today ? h('span', {class: 'rd-today sm'}, 'Today') : null)
+    : h('h3', {class: 'pv-dayh', id: id}, h('b', {class: 'pv-dayn', text: 'No day set'}));
+  return h('li', {class: 'pv-day' + (iso === today ? ' is-today' : '') + (iso ? '' : ' pv-day-none'), 'data-date': iso || null, 'aria-labelledby': id},
+    hd, h('ol', {class: 'pv-dayg'}, d.list.map(function(g){ return pvGroupEl(g, pid); })));
+}
+/* ---------- v2.12.1 (Anisha, Nov 3 4:30pm): the day columns scroll sideways ----------
+   "The task page feels a little cramped when there's tasks for each of the 7 days ... they can scroll left and right with their mouse."
+   Column mode (1100px and up): every day column is at least 300px (shape.css), the row scrolls inside its own box, the page never does.
+   A round arrow in a gutter at each edge (only while there is more that way, so it never covers a header or a task) steps one column. The row opens on today's column; a re-render
+   (realtime, ticking a task, folding a group, adding a task) keeps where she scrolled to; another person or week opens fresh. */
+var PVX = {key: '', left: 0};
+function pvTodayLeft(ol){
+  if (S.week !== thisWeek()) return 0;                               // a past or future week opens at the left
+  var t = todayIso(), cols = ol.querySelectorAll(':scope > li.pv-day[data-date]'), hit = null, i;
+  for (i = 0; i < cols.length; i++){ if (cols[i].getAttribute('data-date') >= t){ hit = cols[i]; break; } }   // today's column, else the first one after today
+  if (!hit) return 0;
+  return Math.max(0, hit.offsetLeft - (parseFloat(getComputedStyle(ol).paddingLeft) || 0));
+}
+function pvWrap(ol, key){
+  var wrap = h('div', {class: 'pv-wkw'}, ol), mq = window.matchMedia ? window.matchMedia('(min-width:1100px)') : null;
+  var first = PVX.key !== key, applied = false, bl = null, br = null;
+  function colMode(){ return !mq || mq.matches; }
+  function step(dir){
+    var c = ol.querySelector(':scope > li.pv-day'), w = c ? c.getBoundingClientRect().width : 300;
+    var gap = parseFloat(getComputedStyle(ol).columnGap) || 12;
+    var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    ol.scrollBy({left: dir * (w + gap), behavior: calm ? 'auto' : 'smooth'});
+  }
+  function mk(dir){
+    return h('button', {type: 'button', class: 'pv-edge pv-edge-' + (dir < 0 ? 'l' : 'r'), 'aria-label': dir < 0 ? 'Earlier days' : 'Later days', 'data-fk': 'pvedge:' + (dir < 0 ? 'l' : 'r'),
+      on: {click: function(){ step(dir); }}}, icon(dir < 0 ? 'chevL' : 'chevR', 'sm'));
+  }
+  function edge(dir, on){
+    var b = dir < 0 ? bl : br;
+    if (on && !b){ b = mk(dir); if (dir < 0) bl = b; else br = b; }
+    // both arrows come BEFORE the row in the page order, so Tab reaches them first instead of after every task in every column
+    if (on && !b.isConnected){ if (dir < 0) wrap.insertBefore(b, wrap.firstChild); else wrap.insertBefore(b, ol); }
+    if (!on && b && b.isConnected){
+      var had = document.activeElement === b, other = dir < 0 ? br : bl;
+      b.remove();
+      if (had){ if (other && other.isConnected) other.focus(); }   // never leave the keyboard on a button that just went away
+    }
+  }
+  function sync(){
+    // scrolls when the day columns need more than the whole box (the two gutters included), so adding the gutters can't flip it back
+    var col = colMode(), sc = col && ol.scrollWidth > wrap.clientWidth + 1;
+    wrap.classList.toggle('is-scroll', sc);
+    var max = ol.scrollWidth - ol.clientWidth, x = ol.scrollLeft;
+    edge(-1, sc && x > 1);
+    edge(1, sc && x < max - 1);
+  }
+  function apply(){
+    if (applied || !colMode() || !ol.clientWidth) return;               // wait for a laid-out row in column mode
+    applied = true; PVX.key = key;
+    ol.scrollLeft = first ? pvTodayLeft(ol) : PVX.left;                 // the browser clamps it to the end
+    PVX.left = ol.scrollLeft;
+  }
+  ol.addEventListener('scroll', function(){ if (applied && colMode()) PVX.left = ol.scrollLeft; sync(); }, {passive: true});
+  wrap._pvWire = function(){
+    sync(); apply(); sync();   // sync first: the gutters change the row's width before the scroll position is set
+    if (window.ResizeObserver){
+      var ro = new ResizeObserver(function(){ if (!wrap.isConnected){ ro.disconnect(); return; } sync(); apply(); sync(); });
+      ro.observe(ol);
+    }
+  };
+  return wrap;
+}
+function pvGroupName(g){
+  if (g.kind === 'misc') return '(Misc.)';
+  if (g.kind === 'proj') return g.pname || 'Project';
+  if (g.p) return progLabel(g.p);
+  return (g.ev && (g.ev.program || '').trim()) || 'Untitled event';
+}
+/* the sort inside a day: programs with a start time first (by that time), then the rest by name, "(Misc.)" last */
+function pvGroupMeta(g){ g.nm = pvGroupName(g); g.rk = g.kind === 'misc' ? 2 : (g.min < 24 * 60 + 1 ? 0 : 1); return g; }
+function pvGroupCmp(a, b){
+  return a.rk - b.rk || (a.rk === 0 ? a.min - b.min : 0) || String(a.nm).localeCompare(String(b.nm)) || String(a.k).localeCompare(String(b.k));
 }
 function pvGroupHead(g, pid){
-  if (g.kind === 'day') return {name: dayLong(g.date), when: '', ev: null};
-  if (g.kind === 'none') return {name: 'No day set', when: '', ev: null};
+  if (g.kind === 'misc') return {name: '(Misc.)', when: '', ev: null};
+  if (g.kind === 'proj') return {name: g.pname || 'Project', when: '', ev: null};
   var s = g.ev, p = g.p;
   if (s){
     var nm = (s.program || '').trim() || 'Untitled event', where = locText(s.location);
     var arr = pid && D.sp.has(s.id + '|' + pid) ? arriveAt(s) : '';   // v2.9.0 (Oct 23 call, L23-24): when she should be there, on programs she's on
-    return {name: where ? tileTitle(nm, where) : nm, when: [niceDate(s.date), shiftTime(s), arr ? 'arrive ' + arr : '', where, s.cal_status === 'gone' ? 'Cancelled' : ''].filter(Boolean).join(' \u00b7 '), ev: s};
+    // v2.10.0: the day column already names the date, so say it only when the program is on another day (a lead-up card)
+    return {name: where ? tileTitle(nm, where) : nm, when: [s.date !== g.date ? niceDate(s.date) : '', shiftTime(s), arr ? 'arrive ' + arr : '', where, s.cal_status === 'gone' ? 'Cancelled' : ''].filter(Boolean).join(' \u00b7 '), ev: s};
   }
   var le = g.lead ? leadEvent(p) : null;
-  return {name: progLabel(p), when: [validIso(p.date) ? niceDate(p.date) : '', le ? shiftTime(le) : ''].filter(Boolean).join(' \u00b7 '), ev: le};
+  return {name: progLabel(p || {}), when: [validIso(p && p.date) && p.date !== g.date ? niceDate(p.date) : '', le ? shiftTime(le) : ''].filter(Boolean).join(' \u00b7 '), ev: le};
 }
 function pvGroupEl(g, pid){
   var today = todayIso(), fold = pvFoldMap(), base = 'pg_' + String(g.k).replace(/[^a-z0-9_]/gi, '_');
   var open = g.tasks.filter(function(t){ return !personDone(t, pid); }), done = g.tasks.filter(function(t){ return personDone(t, pid); });
-  // past days and all-done groups START folded: the default is taken once per session, so ticking a group's last task doesn't fold it away
-  if (!S.pvFoldDflt) S.pvFoldDflt = new Map();
-  var fk0 = S.team + '|' + g.k;
-  if (!S.pvFoldDflt.has(fk0)) S.pvFoldDflt.set(fk0, !!(g.date && g.date < today) || (g.tasks.length > 0 && !open.length));
-  var dflt = S.pvFoldDflt.get(fk0);
-  var folded = g.tasks.length ? (Object.prototype.hasOwnProperty.call(fold, g.k) ? !!fold[g.k] : dflt) : false;
-  var hd = pvGroupHead(g, pid), isToday = g.date === today && !g.placed;   // a lead-up/undated card placed by its tasks' day isn't "today"
+  // v2.10.0 (Anisha): the header shows first and the tasks wait for a tap, so a group STARTS folded; a fold she made
+  // herself is remembered across renders and reloads (pvFoldSet), day column by day column.
+  var folded = g.tasks.length ? (Object.prototype.hasOwnProperty.call(fold, g.k) ? !!fold[g.k] : true) : false;
+  var hd = pvGroupHead(g, pid), isToday = g.date === today && !g.placed;   // a card placed by her tasks' day isn't "today"
   var dot = hd.ev ? h('span', {class: 'cal__dot', 'aria-hidden': 'true'}) : null;
+  // v2.12.0 (Anisha, Oct 28, mockup 1): the header says how many of its tasks are overdue, in red, folded or open
+  var od = open.filter(function(t){ return isOverdue(t); }).length;
   var txt = h('span', {class: 'pg-tx'}, h('b', {class: 'pg-name', text: hd.name}), hd.when ? h('span', {class: 'pg-when', text: hd.when}) : null);
+  var odEl = od ? h('span', {class: 'pg-od', 'data-od': String(od), text: od + ' overdue'}) : null;   // sits at the header's right, before the open count (her mockup)
   var tag = isToday ? h('span', {class: 'rd-today'}, 'Today') : null;
   var head;
   if (g.tasks.length){
     head = h('button', {type: 'button', class: 'pg-head', id: base + 'h', 'data-fk': 'pgh:' + g.k, 'aria-expanded': folded ? 'false' : 'true', 'aria-controls': base + 'l',
       on: {click: function(){ pvFoldSet(g.k, !folded); invalidate('person'); }}},
-      icon(folded ? 'chevR' : 'down', 'sm pg-chev'), dot, txt, tag, folded && open.length ? h('span', {class: 'pg-n', text: open.length + ' open'}) : null);
+      icon(folded ? 'chevR' : 'down', 'sm pg-chev'), dot, txt, odEl, tag,
+      folded && open.length ? h('span', {class: 'pg-n', text: open.length + ' open'}) : folded && done.length ? h('span', {class: 'pg-n', text: done.length + ' done'}) : null);
   } else {
     // a program she's signed up for with no tasks of hers: the header opens the program
-    head = h('button', {type: 'button', class: 'pg-head pg-ev', id: base + 'h', 'data-fk': 'pgh:' + g.k, 'aria-haspopup': 'dialog', on: {click: function(e){ eventSheet(hd.ev.id, e.currentTarget); }}},
-      h('span', {class: 'pg-chev pg-sp', 'aria-hidden': 'true'}), dot, txt, tag);
+    head = h('button', {type: 'button', class: 'pg-head pg-ev', id: base + 'h', 'data-fk': 'pgh:' + g.k, 'aria-haspopup': 'dialog', on: {click: function(e){ if (hd.ev) eventSheet(hd.ev.id, e.currentTarget); }}},
+      h('span', {class: 'pg-chev pg-sp', 'aria-hidden': 'true'}), dot, txt, odEl, tag);
   }
+  // v2.11.0 (Anisha, Oct 27 11:25am mockup): "+ Add task" on every group header, filed under that program/project and that day
+  var gi = g.date ? Math.round((isoToDate(g.date) - isoToDate(S.week)) / 864e5) : -1;
+  var addPre = {pid: pid, prog: g.p ? 'p:' + g.p.id : g.ev ? 'ev:' + g.ev.id : '', proj: g.kind === 'proj' ? String(g.gk).slice(3) : '', due: gi >= 0 && gi <= 6 ? DAYS[gi] : ''};
+  var addB = h('button', {type: 'button', class: 'pg-add', 'data-fk': 'pgadd:' + g.k, 'aria-haspopup': 'dialog', title: 'Add task',
+    'aria-label': g.kind === 'misc' ? 'Add a task with no program' : 'Add a task to ' + hd.name,
+    on: {click: function(e){ e.stopPropagation(); addTaskSheet(Object.assign({ret: e.currentTarget}, addPre)); }}}, icon('plus', 'sm'), h('span', {class: 'pg-add-l', text: 'Add task'}));
   var body = null;
   if (g.tasks.length){
-    var opt = {noWhere: true, day: g.kind !== 'day'}, rows = open.map(function(t){ return taskLine(t, pid, 'pv', opt); });
-    var dk = 'g:' + g.k, dOpen = !open.length || !!(S.pvDoneOpen && S.pvDoneOpen.has(dk));
-    if (done.length && open.length) rows.push(h('li', {class: 'pg-done'}, h('button', {type: 'button', class: 'link rd-done', 'aria-expanded': dOpen ? 'true' : 'false', 'data-fk': 'pvdone:' + (g.kind === 'day' ? g.date : g.k),
-      on: {click: function(){ if (!S.pvDoneOpen) S.pvDoneOpen = new Set(); if (S.pvDoneOpen.has(dk)) S.pvDoneOpen.delete(dk); else S.pvDoneOpen.add(dk); invalidate('person'); }}},
-      icon(dOpen ? 'down' : 'chevR', 'sm'), done.length + ' done')));
-    if (dOpen) done.forEach(function(t){ rows.push(taskLine(t, pid, 'pv', opt)); });
+    // v2.11.0 (Anisha, Oct 27): a task crossed off stays in its group, shifted to the bottom (no "N done" fold)
+    var opt = {noWhere: true, odIcon: true}, rows = open.concat(done).map(function(t){ return taskLine(t, pid, 'pv', opt); });
     body = h('ul', {class: 'rtasks pg-tasks', id: base + 'l', 'aria-labelledby': base + 'h', hidden: folded}, rows);
   }
   return h('li', {class: 'pgroup pg-' + g.kind + (hd.ev ? ' c25 ' + (deptClass(hd.ev) || 'dept-other') : '') + (isToday ? ' is-today' : '') + (folded ? ' folded' : '') + (g.lead ? ' pg-lead' : ''),
-    id: g.kind === 'day' ? 'pd_' + g.date : null, 'data-date': g.date || null, 'data-k': g.k}, h('h3', {class: 'pg-h'}, head), body);
+    'data-date': g.date || null, 'data-k': g.k}, h('h3', {class: 'pg-h'}, head, addB), body);
 }
+
 RENDER.person = function(){
   var sec = $('#v-person');
   if (S.weekLoaded !== S.week || !S.sharedLoaded){
@@ -4871,25 +5386,27 @@ RENDER.person = function(){
         var v = inp.value.trim(); inp.value = ''; addTaskSheet({pid: pid, text: v, ret: e.currentTarget}); }}}, icon('plus', 'sm'), 'Add task'));
     addf.dataset.pid = pid;
   }
-  // 1. Overdue (only when there are any, viewing this week). v2.6.6 (Anisha): a task due today sits in today's group, checked or not
-  var needs = ts.filter(function(t){ return !personDone(t, pid) && isOverdue(t); });
-  var needIds = new Set(needs.map(function(t){ return t.id; }));
-  var needSec = needs.length ? h('section', {class: 'pv-need', 'aria-labelledby': 'pvNeedH'}, h('h2', {class: 'pv-h', id: 'pvNeedH'}, 'Overdue', h('span', {class: 'muted', text: needs.length + ' open'})),
-    h('ul', {class: 'rtasks wide'}, needs.map(function(t){ return taskLine(t, pid, 'pn', {day: true}); }))) : null;
-  // 2. v2.8.0 (Oct 23 call, Item A): the week by program. One group per program she's on (tasks or a sign-up), personal tasks under their day,
-  //    "No day set" last. In-office and setup lines stay on the Calendar.
+  // 1. v2.12.0 (Anisha, Oct 28 12:24am): no separate Overdue section for anyone. An overdue task stays under its own day and group,
+  //    with a red warning icon on its row and a red \"N overdue\" on the group header (pvGroupEl). v2.6.6: a task due today sits in today's group, checked or not.
+  // 2. v2.10.0 (Anisha, Oct 26 7:52pm): the week by DAY, left to right — Monday to Sunday, only the days with something on them,
+  //    "No day set" last. Inside a day, one folded header per program (or project, or "(Misc.)"), her tasks under it.
+  //    In-office and setup lines stay on the Calendar.
   var wkOk = !hasShifts() || shiftsReady(monthsOfRange(S.week, addDays(S.week, 6)));
-  var groups = pvGroups(pid, needIds, wkOk);
-  var box = groups.length ? h('ol', {class: 'pv-groups pv-days', 'aria-labelledby': 'pvTasksH'}, groups.map(function(g){ return pvGroupEl(g, pid); })) : null;
+  var days = pvGroups(pid, null, wkOk);
+  var box = days.length ? h('ol', {class: 'pv-groups pv-days pv-wk', 'aria-labelledby': 'pvTasksH'}, days.map(function(d){ return pvDayEl(d, pid); })) : null;
+  if (box){ box.style.setProperty('--pvn', String(days.length)); box = pvWrap(box, [S.team, pid, S.week].join('|')); }
+  else PVX.key = '';   // no day row (an empty week): the next week or person that has one opens fresh   // v2.12.1: scroll box + edge arrows around the day row
   var openN = ts.filter(function(t){ return !personDone(t, pid); }).length;
   var tasksH = h('h2', {class: 'pv-h', id: 'pvTasksH'}, tw ? 'This week' : weekLabel(S.week),
     openN ? h('span', {class: 'muted', text: openN + ' open'}) : null);
-  var quiet = !box ? h('p', {class: 'muted pv-quiet', text: needs.length ? 'Nothing else on ' + personName(pid) + '\u2019s week.' : 'Nothing on ' + personName(pid) + '\u2019s week yet.' + (wkOk ? '' : ' Loading the calendar\u2026')}) : null;
+  var quiet = !box ? h('p', {class: 'muted pv-quiet', text: 'Nothing on ' + personName(pid) + '\u2019s week yet.' + (wkOk ? '' : ' Loading the calendar\u2026')}) : null;   // v2.12.0: overdue tasks stay in the day groups, so an empty week is simply empty
   var noneEl = null;
 
   // 3. programs for the next two weeks: one line each, their tasks under it only when there are any
   var ntw = null;
-  if (hasShifts()){
+  // v2.11.0 (Anisha, Oct 27): the admin's My tasks drops "Signed up, next 2 weeks" and the hours line; Watching goes last
+  var adminMt = isAdmin();
+  if (hasShifts() && !adminMt){
     var evs = nextTwoWeeks(pid), ready = shiftsReady(monthsOfRange(todayIso(), addDays(todayIso(), 13)));
     var rows = evs.map(function(s){
       var mine = ntwProgTasks(s, pid), name = (s.program || '').trim() || 'Untitled event';
@@ -4915,7 +5432,8 @@ RENDER.person = function(){
         x.live ? h('button', {type: 'button', class: 'grow w-open', 'data-fk': 'pwm:' + x.t.id, 'aria-haspopup': 'dialog', on: {click: function(e){ taskSheet(x.t.id, pid, e.currentTarget); }}}, txt) : h('span', {class: 'grow', text: txt}),
         x.done ? h('span', {class: 'mk full'}, icon('check'), 'Done') : null);
     })) : h('p', {class: 'muted small', text: 'Nothing yet.'})) : null;
-  setKids(sec, [top, addf, staffView ? watchSec : null, needSec, tasksH, estLine(pid, S.week), box, quiet, ntw, staffView ? null : watchSec]);
+  setKids(sec, [top, addf, staffView && !adminMt ? watchSec : null, tasksH, adminMt ? null : estLine(pid, S.week), box, quiet, ntw, staffView && !adminMt ? null : watchSec]);
+  if (box && box._pvWire) box._pvWire();   // v2.12.1: once it is in the page: open on today's column or keep the scroll, then show the arrows that apply
 };
 
 
@@ -5342,11 +5860,12 @@ function shiftRowEl(s){
     h('span', {class: 's-avs', 'aria-hidden': 'true'}, st.on.slice(0, 2).map(function(pid){ return avatar(D.people.get(pid)); })),
     h('span', {class: 's-names', text: firstName(st.on[0]) + (st.on.length > 1 ? ' +' + (st.on.length - 1) : '')})) : null;
   var act;
-  if (st.st === 'signup') act = h('button', {type: 'button', class: 'primary su-me s-signup', 'data-fk': 'sume:' + s.id, 'aria-label': 'Sign me up for ' + lbl, 'aria-haspopup': st.ask ? 'dialog' : null, on: {click: function(e){
+  // v2.12.0 (Anisha, Oct 28 1:50am): "2 spots left" under the Sign up button (it was only a button, so a PA couldn't see how many were open)
+  if (st.st === 'signup') act = [h('button', {type: 'button', class: 'primary su-me s-signup', 'data-fk': 'sume:' + s.id, 'aria-label': 'Sign me up for ' + lbl + '. ' + spotsText(st.miss), 'aria-haspopup': st.ask ? 'dialog' : null, on: {click: function(e){
     if (st.ask){ whoAmISheet(D.shifts.get(s.id) || s, e.currentTarget); return; }   // v2.6.3 (F-03): no name picked yet
     signUp(D.shifts.get(s.id) || s, st.me);
     setTimeout(function(){ var el = fkEl('sho:' + s.id); if (el) el.focus({preventScroll: true}); }, 80);
-  }}}, 'Sign up');
+  }}}, 'Sign up'), h('span', {class: 's-spots', 'data-spots': String(st.miss), text: spotsText(st.miss)})];
   else if (st.st === 'mine') act = h('span', {class: 's-pill mine'}, icon('check', 'sm'), 'You\u2019re on');
   else if (st.st === 'open') act = h('span', {class: 'cal__tag need s-pill'}, 'Need ' + st.miss);
   else if (st.st === 'partial') act = h('span', {class: 'cal__tag need s-pill'}, 'Need ' + st.miss, h('span', {class: 's-more'}, ' more'));   // v2.6.1: ' more' hides on phones
@@ -5676,11 +6195,15 @@ function tplMeta(tpl){
   if (locs.length) bits.push(locs.join(', '));
   var leads = (tpl.lead_ids || []).map(function(id){ return D.people.get(id); }).filter(function(p){ return p && !p.deleted_at; }).map(function(p){ return p.name; });
   if (leads.length) bits.push(leads.join(', '));
+  if (tpl.arrive_min != null && +tpl.arrive_min > 0) bits.push('PA arrives ' + tplArriveWords(+tpl.arrive_min) + ' before');   // v2.9.0 (E): only when set
   return bits.join(' \u00b7 ');
 }
 function tplSheet(id, ret){
   var t = D.templates.get(id); if (!t) return;
   var f = placeLeadFields('templates', id, (t.name || '').trim() || 'Untitled', {group: true});
+  // v2.9.0 (E, Zaynab L21-28): when the PA should be there, per program. A wrapper keeps it (and the flow link) when the
+  // place/lead fields redraw.
+  var arr = isAdmin() ? tplArriveField(id) : null, wrap = h('div', {class: 'stack'}, f.el, arr);
   if (isAdmin()){
     // "Program flow": this program's tab of the Programs Full Manual (v2.2)
     var lab = (t.name || '').trim() || 'Untitled';
@@ -5693,10 +6216,10 @@ function tplSheet(id, ret){
       if (v !== ((D.templates.get(id) || {}).manual_url || '')){ setFields('templates', id, {manual_url: v}, lab); invalidate('master', 'cal', 'board'); }
     };
     u.addEventListener('change', commit); u.addEventListener('blur', commit);
-    f.el.append(h('div', null, h('label', {class: 'field', for: 'tplFlow', text: 'Program flow link'}), u,
+    wrap.append(h('div', null, h('label', {class: 'field', for: 'tplFlow', text: 'Program flow link'}), u,
       h('p', {class: 'small muted', id: 'tplFlowHelp', text: 'The page in the Programs Full Manual for this program. Shows as \u201cProgram flow\u201d on its cards and in the calendar.'}), fe));
   }
-  openSheet({title: (t.name || '').trim() || 'Untitled', returnTo: ret, refresh: f.redraw, body: f.el, foot: [h('button', {type: 'button', class: 'primary', on: {click: closeSheet}}, 'Done')]});
+  openSheet({title: (t.name || '').trim() || 'Untitled', returnTo: ret, refresh: function(){ f.redraw(); if (arr) arr._sync(); }, body: wrap, foot: [h('button', {type: 'button', class: 'primary', on: {click: closeSheet}}, 'Done')]});
 }
 /* A Master card is built in parts (head, one row per task, add box) like a board card, so a
    task added or changed elsewhere shows up while you're typing in another row. */
@@ -5708,6 +6231,7 @@ function tplHead(tpl){
     var snap = Object.assign({}, D.templates.get(tpl.id));
     menuSheet(lbl, [
       {label: 'Add to ' + weekLabel(S.week).replace('Week of', 'the week of'), icon: 'plus', fn: function(){ var p = addProgramFromTemplate(D.templates.get(tpl.id), {quiet: true}); toast('Added ' + quote(lbl) + ' to the board.', {action: {label: 'Show', fn: function(){ revealCard(p.id); }}}); }},
+      commonTaskCopies().length ? {label: 'Add common tasks', icon: 'plus', fn: function(){ addCommonToTemplate(tpl.id, document.querySelector('[data-fk="mm:' + cssEsc(tpl.id) + '"]')); }} : null,
       '-',
       {label: 'Archive', icon: 'archive', fn: function(){
         setFields('templates', tpl.id, {deleted_at: nowIso()}, lbl); invalidate('master'); fillDatalists();
@@ -5717,7 +6241,7 @@ function tplHead(tpl){
   }}}, icon('more'));
   if (tpl.kind) return h('div', {class: 'card-head'}, h('div', {class: 'ch-row'}, name));   // v2.6.6: Common tasks / cancellation checklist aren't programs
   var mt = tplMeta(tpl);
-  var meta = h('button', {type: 'button', class: 'pmeta' + (mt ? '' : ' empty'), 'data-fk': 'me:' + tpl.id, 'aria-label': (mt ? mt + '. ' : '') + 'Change group, place and lead for ' + lbl,
+  var meta = h('button', {type: 'button', class: 'pmeta' + (mt ? '' : ' empty'), 'data-fk': 'me:' + tpl.id, 'aria-label': (mt ? mt + '. ' : '') + 'Change group, place, lead and PA arrival for ' + lbl,
     on: {click: function(e){ tplSheet(tpl.id, e.currentTarget); }}}, mt || 'Add place, lead');
   var fl = flowLink(tpl, 'mfl:' + tpl.id, lbl);
   return h('div', {class: 'card-head'}, h('div', {class: 'ch-row'}, name, more), fl ? h('div', {class: 'flowrow'}, meta, fl) : meta);
@@ -5737,7 +6261,7 @@ function tplTaskSig(mt){ return JSON.stringify([mt.task, mt.notes, mt.due, mt.wh
 function tplBody(tpl, old){
   var box = old || h('div', {class: 'card tpl'});
   box.style.setProperty('--pastel', pastelFor({template_id: tpl.id}));
-  var head = memo(box.querySelector(':scope > .card-head'), 'master', JSON.stringify([tpl.name, tpl.locations, tpl.offsite, tpl.lead_ids, (tpl.lead_ids || []).map(personName), flowUrl(tpl)]), function(){ return tplHead(tpl); });
+  var head = memo(box.querySelector(':scope > .card-head'), 'master', JSON.stringify([tpl.name, tpl.locations, tpl.offsite, tpl.lead_ids, (tpl.lead_ids || []).map(personName), flowUrl(tpl), tpl.arrive_min]), function(){ return tplHead(tpl); });
   var ul = box.querySelector(':scope > ul.tasks') || h('ul', {class: 'tasks'});
   ul.setAttribute('aria-label', 'Tasks in ' + ((tpl.name || '').trim() || 'Untitled'));
   reconcile(ul, tpl.tasks || [], function(x){ return x.id; }, function(x, o){ return memo(o, 'master', tplTaskSig(x), function(){ return tplTaskEl(tpl, x); }); });
@@ -5782,13 +6306,51 @@ function commonTaskCopies(){
   return ((c && c.tasks) || []).filter(function(x){ return x && (x.task || '').trim(); })
     .map(function(x){ return {id: newId('mt_'), task: x.task, notes: x.notes || '', due: x.due || '', who: (x.who || []).slice()}; });
 }
-function addTemplate(){
-  if (tooSoon('addTemplate')) return;
-  var g = GROUPS[1];
-  var t = insertRow('templates', {id: newId('m_'), team: S.team, name: '', grp: g, locations: [], offsite: '', lead_ids: [], tasks: commonTaskCopies(), sort: nextSort(activeTemplates())}, 'New program');
-  S.tplOpen.add(t.id); S.tplQuery = ''; var f = $('#tplFind'); if (f) f.value = '';
-  invalidate('master');
-  setTimeout(function(){ var el = document.querySelector('[data-fk="mn:' + cssEsc(t.id) + '"]'); if (el){ el.scrollIntoView({block: 'center'}); el.focus({preventScroll: true}); } }, 100);
+/* v2.11.0 (Anisha, Oct 27): Common tasks are a pick list, never added on their own. One sheet, three places:
+   a new program in Templates (with its name), a Template's menu, and a board card (empty cards show the button).
+   Nothing is ticked to start; ones already there show ticked and greyed. o: {title, name (bool), have [texts], go(n), onAdd(list, name), ret} */
+function commonPickSheet(o){
+  var list = commonTaskCopies(), have = new Set((o.have || []).map(normTask)), chosen = new Set(), used = false;
+  var nm = o.name ? h('input', {type: 'text', id: 'cpName', autocomplete: 'off', enterkeyhint: 'done', placeholder: 'Program name', 'data-fk': 'cpname'}) : null;
+  var goBtn = h('button', {type: 'button', class: 'primary', 'data-fk': 'cpgo', on: {click: function(){ submit(); }}});
+  function count(){ goBtn.textContent = o.go(chosen.size); goBtn.disabled = !o.name && !chosen.size; }
+  function submit(){
+    if (used || (!o.name && !chosen.size)) return; used = true;
+    var pick = list.filter(function(x){ return chosen.has(x.id); });
+    closeSheet(); o.onAdd(pick, nm ? nm.value.replace(/\s+/g, ' ').trim() : '');
+  }
+  var box = h('div', {class: 'optlist cp-list', role: 'group', 'aria-labelledby': 'cpH'});
+  list.forEach(function(x){
+    var id = 'cp_' + x.id, on = have.has(normTask(x.task));
+    box.append(h('label', {class: 'opt' + (on ? ' is-on' : ''), for: id}, h('input', {type: 'checkbox', id: id, checked: on, disabled: on, 'data-fk': 'cp:' + normTask(x.task),
+      on: {change: function(e){ if (e.target.checked) chosen.add(x.id); else chosen.delete(x.id); count(); }}}), h('span', {text: x.task}), on ? h('span', {class: 'sub', text: 'already on it'}) : null));
+  });
+  var body = h('form', {class: 'stack', novalidate: true, on: {submit: function(e){ e.preventDefault(); submit(); }}},
+    nm ? h('div', null, h('label', {class: 'field', for: 'cpName', text: 'Name'}), nm) : null,
+    h('div', null, h('p', {class: 'field', id: 'cpH', text: 'Common tasks'}), list.length ? box : h('p', {class: 'muted small', text: 'No Common tasks yet. Add them under \u201cEvery new program\u201d in Templates.'})));
+  count();
+  openSheet({title: o.title, returnTo: o.ret, body: body, focus: nm ? '#cpName' : null,
+    foot: [h('button', {type: 'button', 'data-fk': 'cpcancel', on: {click: closeSheet}}, 'Cancel'), goBtn]});
+}
+function addTemplate(e){
+  commonPickSheet({title: 'Add a program', name: true, ret: e && e.currentTarget,
+    go: function(n){ return n ? 'Add program with ' + n + (n === 1 ? ' task' : ' tasks') : 'Add program'; },
+    onAdd: function(pick, name){
+      if (tooSoon('addTemplate')) return;
+      var g = GROUPS[1];
+      var t = insertRow('templates', {id: newId('m_'), team: S.team, name: name, grp: g, locations: [], offsite: '', lead_ids: [], tasks: pick, sort: nextSort(activeTemplates())}, name || 'New program');
+      S.tplOpen.add(t.id); S.tplQuery = ''; var f = $('#tplFind'); if (f) f.value = '';
+      invalidate('master'); fillDatalists();
+      // named: straight to "Add a task" for the rest; unnamed: the name first
+      setTimeout(function(){ var el = document.querySelector('[data-fk="' + (name ? 'mat:' : 'mn:') + cssEsc(t.id) + '"]'); if (el){ el.scrollIntoView({block: 'center'}); el.focus({preventScroll: true}); } }, 100);
+    }});
+}
+function addCommonToTemplate(id, ret){
+  var tpl = D.templates.get(id); if (!tpl) return;
+  var lbl = (tpl.name || '').trim() || 'Untitled';
+  commonPickSheet({title: 'Common tasks for ' + lbl, ret: ret, have: (tpl.tasks || []).map(function(x){ return x.task; }),
+    go: function(n){ return n ? 'Add ' + n + (n === 1 ? ' task' : ' tasks') : 'Pick at least one'; },
+    onAdd: function(pick){ editTplTasks(id, function(a){ pick.forEach(function(x){ a.push(x); }); }); toast('Added ' + pick.length + (pick.length === 1 ? ' task to ' : ' tasks to ') + quote(lbl) + '.'); }});
 }
 RENDER.master = function(){
   var sec = $('#v-master');
@@ -5830,8 +6392,9 @@ RENDER.master = function(){
     setKids(gs, [h3, ul]);
     return gs;
   });
-  var empty = !groups.length && !spec.length ? h('div', {class: 'empty'}, h('h2', {text: q ? 'Nothing in Master matches \u201c' + S.tplQuery + '\u201d' : 'Master is empty'})) : null;
-  setKids(sec, [head, empty, spec.length ? sbox : null, box]);
+  var rsec = isAdmin() ? repSection(sec.querySelector(':scope > #repSec'), q) : null;   // v2.9.0 (H): Repeating tasks, admins only
+  var empty = !groups.length && !spec.length && !rsec ? h('div', {class: 'empty'}, h('h2', {text: q ? 'Nothing in Master matches \u201c' + S.tplQuery + '\u201d' : 'Master is empty'})) : null;
+  setKids(sec, [head, empty, spec.length ? sbox : null, box, rsec]);
   if (S.openTpl){
     var id = S.openTpl; S.openTpl = null;
     setTimeout(function(){ var el = document.querySelector('#v-master li.tplrow[data-id="' + cssEsc(id) + '"]'); if (el) el.scrollIntoView({block: 'start'}); }, 60);
@@ -6014,7 +6577,7 @@ function describe(e){
   var fields = function(){ var w = []; ch.forEach(function(k){ var f = FIELD_WORDS[k]; if (f && w.indexOf(f) < 0) w.push(f); }); return w.length ? w.join(', ') : 'details'; };
   switch (e.tbl){
     case 'tasks': {
-      var tn = quote(n.task || o.task), pn = histProgName(x.program_id);
+      var tn = quote(n.task || o.task), pn = histProgName(x.program_id) || (x.project_id && projById(x.project_id) ? projLabel(projById(x.project_id)) : '');   // v2.10.0: a project names a personal task
       if (e.op === 'INSERT') return who + ' added ' + tn + (pn ? ' to ' + pn : '');
       if (arch) return who + ' ' + arch + ' ' + tn;
       if (ch.indexOf('done') >= 0) return who + (n.done ? ' marked ' + tn + ' done' : ' marked ' + tn + ' not done');
@@ -6079,6 +6642,7 @@ function describe(e){
       var tq = quote(x.name);
       if (e.op === 'INSERT') return who + ' added ' + tq + ' to Master';
       if (arch) return who + ' ' + arch + ' ' + tq + ' in Master';
+      if (ch.length === 1 && ch[0] === 'arrive_min') return who + ' set the PA arrival for ' + tq + ' to ' + (n.arrive_min == null ? 'the default (1 hr before)' : tplArriveWords(+n.arrive_min) + ' before');   // v2.9.0
       return who + ' changed the ' + fields() + ' of ' + tq + ' in Master';
     }
     case 'links': {
@@ -6086,6 +6650,17 @@ function describe(e){
       if (e.op === 'INSERT') return who + ' added the link ' + lq;
       if (arch) return who + ' ' + arch + ' the link ' + lq;
       return who + ' changed the ' + fields() + ' of the link ' + lq;
+    }
+    case 'repeat_tasks': {   // v2.9.0 (H)
+      var rq = quote(x.task);
+      if (e.op === 'INSERT') return who + ' added the repeating task ' + rq;
+      if (arch) return who + ' ' + arch + ' the repeating task ' + rq;
+      if (ch.indexOf('active') >= 0 && ch.length === 1) return who + (n.active ? ' resumed' : ' paused') + ' the repeating task ' + rq;
+      if (ch.indexOf('task') >= 0) return who + ' renamed the repeating task ' + quote(o.task) + ' to ' + quote(n.task);
+      if (ch.some(function(k){ return k === 'freq' || k === 'weekday' || k === 'month_day'; })) return who + ' set ' + rq + ' to repeat ' + repWhen(n).replace(/^E/, 'e').replace(/^M/, 'm');
+      if (ch.indexOf('person_ids') >= 0) return who + ' changed who gets ' + rq;
+      if (ch.indexOf('notes') >= 0) return who + ' changed the notes on ' + rq;
+      return who + ' changed the repeating task ' + rq;
     }
     case 'week_notes': return who + ' edited the notes for the ' + weekLabel(x.week).replace('Week of', 'week of');
     case 'team_password': return who + ' changed the team password';
@@ -6346,6 +6921,9 @@ function paInfo(s){
   var full = (names.length ? names.join(', ') + ' signed up' : 'Nobody signed up yet') + (miss ? ', ' + miss + ' more PA' + (miss === 1 ? '' : 's') + ' needed' : need ? ', full' : '');
   return {on: on, miss: miss, short: short, full: full};
 }
+/* v2.12.0 (Anisha, Oct 28 1:50am): a PA sees how many places are open next to "Sign up". "2 spots left" / "1 spot left";
+   short = "2 left" for the narrow month strip. The full phrase always goes in the aria-label. */
+function spotsText(n, short){ n = +n || 0; return short ? n + ' left' : n + (n === 1 ? ' spot left' : ' spots left'); }
 function calFilter(s){
   if (S.calDept && deptOf(s) !== S.calDept) return false;
   var cp = calPerson(); if (cp && !D.sp.has(s.id + '|' + cp)) return false;
@@ -6643,12 +7221,12 @@ function calTile(s, fk, mode){
   var where = locText(s.location), shown = where ? tileTitle(name, where) : name;
   return h('button', {type: 'button', class: 'rtile ' + (deptClass(s) || 'dept-other') + (compact ? ' compact' : '') + (gone ? ' gone' : '') + (info.miss && !gone ? ' needs' : ''),
     'data-fk': fk + ':' + s.id, 'data-id': s.id, 'data-prog': p ? p.id : null, title: compact ? name + (where ? ' \u00b7 ' + where : '') + (arr ? ' \u00b7 arrive ' + arr : '') : null,
-    'aria-label': niceDate(s.date) + (shiftTime(s) ? ', ' + shiftTime(s) : '') + (arr ? ', PA arrives ' + arr : '') + ': ' + shown + (deptOf(s) ? ' (' + deptOf(s) + ')' : '') + (where ? ', ' + where : '') + '. ' + (gone ? 'Cancelled on the calendar. ' : '') + info.full + '. ' + (tt ? tt + '. ' : '') + (su ? 'Open to sign up' : 'Open details'),
+    'aria-label': niceDate(s.date) + (shiftTime(s) ? ', ' + shiftTime(s) : '') + (arr ? ', PA arrives ' + arr : '') + ': ' + shown + (deptOf(s) ? ' (' + deptOf(s) + ')' : '') + (where ? ', ' + where : '') + '. ' + (gone ? 'Cancelled on the calendar. ' : '') + info.full + '. ' + (tt ? tt + '. ' : '') + (su ? spotsText(info.miss) + '. Open to sign up' : 'Open details'),
     on: {click: function(e){ eventSheet(s.id, e.currentTarget); }}},
     h('span', {class: 'rt-time', text: ((compact ? shortTime(s) : shiftTime(s)) || 'Time TBC') + (arr && !compact ? ' \u00b7 arrive ' + arr : '')}),
     h('span', {class: 'rt-name', text: compact ? shortProg({program: shown}) : shown}),
     where ? h('span', {class: 'rt-loc'}, icon('pin', 'sm'), h('span', {class: 'rt-loc-t', text: where})) : null,
-    h('span', {class: 'cal__tag' + (su ? ' su' : info.miss && !gone ? ' need' : '') + (!gone && !info.short ? ' none' : '')}, su ? icon('plus', 'sm') : h('span', {class: 'cal__dot', 'aria-hidden': 'true'}), h('span', {class: 'tag-t', text: tag})),
+    h('span', {class: 'cal__tag' + (su ? ' su' : info.miss && !gone ? ' need' : '') + (!gone && !info.short ? ' none' : '')}, su ? icon('plus', 'sm') : h('span', {class: 'cal__dot', 'aria-hidden': 'true'}), h('span', {class: 'tag-t'}, su ? h('span', {class: 'tag-su', text: tag}) : tag, su ? h('span', {class: 'tag-sp', text: (compact ? ' ' : ' \u00b7 ') + spotsText(info.miss, compact)}) : null)),   // v2.12.0: + the open spots ("2 spots left"; the narrow month strip says "2 left" and may wrap)
     tt ? h('span', {class: 'rt-tasks', text: tt}) : null);
 }
 
@@ -6667,10 +7245,16 @@ function personDayTasks(pid){
 function taskLine(t, pid, fk, opts){
   opts = opts || {};
   var on = personDone(t, pid), lbl = taskLabel(t), p = D.programs.get(t.program_id), note = (t.notes || '').replace(/\s+/g, ' ').trim();
-  var meta = opts.noWhere ? [] : [h('span', {class: 'rt-where', text: p && !p.personal ? progLabel(p) : 'Personal'})];   // v2.8.0: My tasks groups say the program once, on the header
+  // v2.10.0: a personal task that belongs to a project says the project's name, not "Personal"
+  var where = p && !p.personal ? progLabel(p) : (projNameOf(t) || 'Personal');
+  var meta = opts.noWhere ? [] : [h('span', {class: 'rt-where', text: where})];   // v2.8.0: My tasks groups say the program once, on the header
   if (opts.day && t.due) meta.push(meta.length ? ' \u00b7 ' : null, h('span', {text: dayName(t.due)}));
-  var mk = [];
-  if (!on && isOverdue(t)) mk.push(h('span', {class: 'mk overdue'}, icon('warn'), 'Overdue'));
+  var mk = [], od = null;
+  // v2.12.0 (Anisha, Oct 28): My tasks rows show a red warning icon only (the group header says "N overdue"); Board and Calendar rows keep the "Overdue" tag
+  if (!on && isOverdue(t)){
+    if (opts.odIcon) od = h('span', {class: 'rt-od', title: 'Overdue'}, icon('warn'), h('span', {class: 'sr-only', text: 'Overdue'}));
+    else mk.push(h('span', {class: 'mk overdue'}, icon('warn'), 'Overdue'));
+  }
   var ws = watchersOf(t.id);
   if (ws.length){ var wn = ws.map(function(x){ return personName(x.person_id); });
     mk.push(h('span', {class: 'mk watch'}, icon('eye'), h('span', {class: 'sr-only', text: 'Watched by '}), wn.length > 2 ? wn.slice(0, 2).join(', ') + ' +' + (wn.length - 2) : wn.join(', '))); }
@@ -6681,7 +7265,8 @@ function taskLine(t, pid, fk, opts){
     h('button', {type: 'button', class: 'rt-open', 'data-fk': fk + 'o:' + t.id, 'aria-haspopup': 'dialog', on: {click: function(e){ taskSheet(t.id, pid, e.currentTarget); }}},
       h('span', {class: 'rt-tx', text: lbl}),
       note ? h('span', {class: 'rt-note'}, h('span', {class: 'sr-only', text: 'Note: '}), note) : null,
-      h('span', {class: 'rt-meta'}, meta, mk.map(function(x){ return [' ', x]; }))));
+      h('span', {class: 'rt-meta'}, meta, mk.map(function(x){ return [' ', x]; }))),
+    od);
 }
 
 /* ---------- the week strip (the site's "Every week"): seven white day cards, Monday to Sunday ---------- */
@@ -6764,7 +7349,9 @@ function calMonth(sec){
       var cells = [];
       for (var i = 0; i < 7; i++){
         var d = addDays(w, i), list = byDay.get(d) || [], out = monthOf(d) !== m, dn = isoToDate(d).getDate();
-        var shown = list.slice(0, list.length > TILES_PER_DAY ? TILES_PER_DAY - 1 : TILES_PER_DAY), more = list.length - shown.length;
+        // v2.11.0 (Anisha, Oct 27): "+2 more" opens the day in place (all its programs), the view stays on Month
+        var xp = !!(S.mExpand && S.mExpand.has(d));
+        var shown = xp ? list : list.slice(0, list.length > TILES_PER_DAY ? TILES_PER_DAY - 1 : TILES_PER_DAY), more = list.length - shown.length;
         var dlab = dayLong(d) + (list.length ? ', ' + list.length + (list.length === 1 ? ' program' : ' programs') : '');
         var dtxt = dn === 1 ? MON_SHORT[isoToDate(d).getMonth()] + ' 1' : String(dn);
         cells.push(h('li', {class: 'mday' + (out ? ' out' : '') + (d === today ? ' today' : '') + (d === sel ? ' is-sel' : '') + (i >= 5 ? ' wkend' : '') + (list.length ? '' : ' is-quiet'), 'data-date': d},
@@ -6773,8 +7360,11 @@ function calMonth(sec){
             : h('span', {class: 'dnum', 'aria-hidden': 'true'}, h('span', {class: 'dn', text: dtxt})),
           list.length ? h('span', {class: 'dots', 'aria-hidden': 'true'}, list.slice(0, list.length > 4 ? 3 : 4).map(function(s){ return h('i', {class: deptClass(s) || 'dept-other'}); }), list.length > 4 ? h('b', {text: '+' + (list.length - 3)}) : null) : null,
           list.length ? h('ul', {class: 'mtiles'}, shown.map(function(s){ return h('li', null, calTile(s, 'cm', 'compact')); }),
-            more ? h('li', null, h('button', {type: 'button', class: 'more', 'data-fk': 'cmore:' + d, 'aria-label': more + ' more on ' + dayLong(d) + '. Open the week',
-              on: {click: function(dd){ return function(){ go({mode: 'week', week: mondayOf(isoToDate(dd)), day: dd}); }; }(d)}}, '+' + more + ' more')) : null) : null));
+            more ? h('li', null, h('button', {type: 'button', class: 'more', 'data-fk': 'cmore:' + d, 'aria-expanded': 'false', 'aria-label': 'Show ' + more + ' more on ' + dayLong(d),
+              on: {click: function(dd, n0){ return function(){ if (!S.mExpand) S.mExpand = new Set(); S.mExpand.add(dd); invalidate('cal');
+                setTimeout(function(){ var t = document.querySelectorAll('#v-cal .mday[data-date="' + dd + '"] .mtiles > li')[n0]; var f = t && t.querySelector('button,a'); if (f) f.focus({preventScroll: true}); }, 60); }; }(d, shown.length)}}, '+' + more + ' more'))
+              : xp && list.length > TILES_PER_DAY ? h('li', null, h('button', {type: 'button', class: 'more', 'data-fk': 'cless:' + d, 'aria-expanded': 'true', 'aria-label': 'Show fewer on ' + dayLong(d),
+              on: {click: function(dd){ return function(){ S.mExpand.delete(dd); invalidate('cal'); setTimeout(function(){ var b = document.querySelector('#v-cal [data-fk="cmore:' + dd + '"]'); if (b) b.focus({preventScroll: true}); }, 60); }; }(d)}}, 'Show less')) : null) : null));
       }
       var wl = isoToDate(w), sun = addDays(w, 6), wz = isoToDate(sun);
       // v2.8.0 (Oct 23 call, L47): the week's range, "Sep 28 \u2013 Oct 4", on two lines
@@ -6798,8 +7388,10 @@ function calMonth(sec){
         h('h3', {id: 'agh_' + x[0]}, h('span', {text: dayLong(x[0])}), x[0] === today ? h('span', {class: 'rd-today'}, 'Today') : null),
         h('ul', {class: 'rtiles'}, x[1].map(function(s){ return h('li', null, calTile(s, 'ca', 'list')); })));
     }) : h('p', {class: 'muted', text: pid ? personName(pid) + ' hasn\u2019t signed up for anything this month.' : 'No programs this month.'}));
-  var nEmpty = S.calNeed && !agDays.length ? needEmpty('this month') : pid && pid === calMe() && !agDays.length ? mineEmpty('this month') : null;   // v2.6.9
-  if (nEmpty) agenda = h('div', {class: 'agenda'}, h('h2', {class: 'sr-only', text: 'Programs in ' + monthLabel(m)}));
+  // v2.6.9; v2.11.1: "Mine" is empty when no day is left after the past fold (agDays.length - past), not only when the month has none; the "Show N earlier days" link stays under the grid
+  var nEmpty = S.calNeed && !agDays.length ? needEmpty('this month') : pid && pid === calMe() && agDays.length - past <= 0 ? mineEmpty('this month') : null;
+  if (nEmpty) agenda = h('div', {class: 'agenda'}, h('h2', {class: 'sr-only', text: 'Programs in ' + monthLabel(m)}), earlier);
+  if (nEmpty && past) nEmpty.classList.add('ce-past');   // v2.11.1: the fold is a phone list; at 768px+ the grid itself shows her past days, so the note is phone-only (CSS, survives a rotation)
   return [h('p', {class: 'cal-line sr-only', id: 'calLine', role: 'status', text: monthLine(evs, pid)}), pid ? hoursLine(pid) : null, nEmpty, grid, pid ? null : whoPanel(), agenda];
 }
 
@@ -6960,6 +7552,7 @@ function eventSheet(id, ret, focusFk){
 /* v2.9.0: a removed program lead can be restored from History, like a PA sign-up (restore_row knows shift_leads).
    Set here, after e_views.js made RESTORABLE, so the History line in e_views.js stays as it was. */
 RESTORABLE.shift_leads = 1;
+RESTORABLE.repeat_tasks = 1;   // v2.9.0: archived repeating tasks come back from History
 
 /* ==========================================================================
    v2.2 P1: task time estimates (admins only for now), PAs tab + profile, Links folders
@@ -7250,6 +7843,238 @@ RENDER.links = function(){
 };
 
 
+/* ==========================================================================
+   v2.9.0 (Engineer B): Template "PA arrives" (E), Repeating tasks (H), Change my password (I)
+   ========================================================================== */
+/* ---------- E: the Template's "PA arrives" (templates.arrive_min; null = the default, 1 hr before) ---------- */
+var TPL_ARRIVE_OPTS = [30, 60, 90, 120, 150, 180];
+function tplArriveWords(m){ m = Math.round(+m || 0); return m < 60 ? m + ' min' : (m / 60) + ' hr'; }
+function tplArriveField(id){
+  var sel = h('select', {id: 'tplArrive', 'data-fk': 'tpa:' + id, on: {change: function(e){
+    var t = D.templates.get(id); if (!t) return;
+    var v = e.target.value ? +e.target.value : null;
+    setFields('templates', id, {arrive_min: v}, (t.name || '').trim() || 'Untitled');
+    invalidate('master', 'shifts', 'person', 'cal');
+    announce('PA arrives ' + (v == null ? '1 hr before (default)' : tplArriveWords(v) + ' before'));
+  }}}, h('option', {value: '', text: 'Default (1 hr before)'}),
+    TPL_ARRIVE_OPTS.map(function(m){ return h('option', {value: String(m), text: tplArriveWords(m) + ' before'}); }));
+  function sync(){
+    var t = D.templates.get(id) || {}, v = t.arrive_min == null ? '' : String(t.arrive_min);
+    if (v && !sel.querySelector('option[value="' + v + '"]')) sel.append(h('option', {value: v, text: tplArriveWords(+v) + ' before'}));
+    if (document.activeElement !== sel) sel.value = v;
+  }
+  sync();
+  var box = h('div', {class: 'tpl-arrive'}, h('label', {class: 'field', for: 'tplArrive', text: 'PA arrives'}), sel);
+  box._sync = sync;
+  return box;
+}
+
+/* ---------- H: Repeating tasks (Ummehani / Anisha L58-60). The app keeps the definitions; Po adds each one as a
+   personal task for each person on its date (tasks.source = 'repeat:<id>:<date>'). ---------- */
+function repOrd(n){ var s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
+function repWhen(r){
+  if (!r) return '';
+  if (r.freq === 'monthly'){ var d = +r.month_day || 0; return !d ? 'Monthly' : d >= 31 ? 'Monthly on the last day' : 'Monthly on the ' + repOrd(d); }
+  return DAYS.indexOf(r.weekday) >= 0 ? 'Every ' + r.weekday : 'Every week';
+}
+/* the next date it lands on, from today on Roots' clock (today counts) */
+function repNextIso(r, from){
+  from = from || todayIso();
+  if (!r) return '';
+  if (r.freq === 'monthly'){
+    var md = +r.month_day || 0; if (md < 1) return '';
+    var f = isoToDate(from), occ = function(y, m){ var last = new Date(y, m + 1, 0).getDate(); return isoOf(new Date(y, m, Math.min(md, last))); };
+    var a = occ(f.getFullYear(), f.getMonth()); return a >= from ? a : occ(f.getFullYear(), f.getMonth() + 1);
+  }
+  var wd = DAYS.indexOf(r.weekday); if (wd < 0) return '';
+  var k = isoToDate(from).getDay(), cur = k === 0 ? 6 : k - 1;
+  return addDays(from, (wd - cur + 7) % 7);
+}
+function repNextLabel(r){ var n = repNextIso(r); if (!n) return ''; return n === todayIso() ? 'today' : 'next ' + niceDate(n); }
+function repFirst(pid){ var p = D.people.get(pid); return p && !p.deleted_at ? (String(p.name || '').trim().split(/\s+/)[0] || '') : ''; }
+function repList(){
+  return Array.from(D.rep.values()).filter(function(r){ return !r.deleted_at && r.team === S.team; }).sort(function(a, b){
+    var aa = a.active !== false, ba = b.active !== false;
+    if (aa !== ba) return aa ? -1 : 1;
+    var na = repNextIso(a) || '9999', nb = repNextIso(b) || '9999';
+    if (na !== nb) return na < nb ? -1 : 1;
+    return bySort(a, b);
+  });
+}
+/* v2.9.0: the repeating task a Po occurrence came from (tasks.source 'po:repeat:<id>:<date>'), if it still exists */
+function repOf(t){ var m = /^po:repeat:([^:]+):/.exec(String((t && t.source) || '')); var r = m && D.rep.get(m[1]); return r && !r.deleted_at ? r : null; }
+function repLabel(r){ return (r && (r.task || '').trim()) || 'Untitled task'; }
+function repWhoLine(r){ return (r.person_ids || []).map(repFirst).filter(Boolean).join(', '); }
+function repSig(r){ return JSON.stringify([r.task, r.person_ids, (r.person_ids || []).map(repFirst), r.freq, r.weekday, r.month_day, r.active, repNextIso(r)]); }
+/* "Repeats [Weekly|Monthly]  on [Thursday | 15th]": the same two selects in the add form and the sheet */
+function repWhenFields(pfx, cur, onChange){
+  var freq = h('select', {id: pfx + 'Freq', 'data-fk': pfx + 'freq'}, h('option', {value: 'weekly', text: 'Weekly'}), h('option', {value: 'monthly', text: 'Monthly'}));
+  var day = h('select', {id: pfx + 'Day', 'data-fk': pfx + 'day'});
+  function fill(){
+    var f = freq.value;
+    day.replaceChildren.apply(day, f === 'monthly'
+      ? Array.from({length: 31}, function(_, i){ var n = i + 1; return h('option', {value: String(n), text: n === 31 ? 'Last day' : repOrd(n)}); })
+      : DAYS.map(function(d){ return h('option', {value: d, text: d}); }));
+  }
+  function set(c){
+    freq.value = c.freq === 'monthly' ? 'monthly' : 'weekly'; fill();
+    day.value = freq.value === 'monthly' ? String(+c.month_day || 1) : (DAYS.indexOf(c.weekday) >= 0 ? c.weekday : DAYS[todayIdx()]);
+  }
+  set(cur || {});
+  function val(){ return freq.value === 'monthly' ? {freq: 'monthly', weekday: '', month_day: +day.value || 1} : {freq: 'weekly', weekday: day.value, month_day: null}; }
+  freq.addEventListener('change', function(){
+    fill(); day.value = freq.value === 'monthly' ? String(Math.min(+todayIso().slice(8, 10), 31)) : DAYS[todayIdx()];
+    onChange(val());
+  });
+  day.addEventListener('change', function(){ onChange(val()); });
+  var box = h('div', {class: 'rp-when'},
+    h('div', null, h('label', {class: 'field', for: pfx + 'Freq', text: 'Repeats'}), freq),
+    h('div', null, h('label', {class: 'field', for: pfx + 'Day', text: 'On'}), day));
+  box._val = val; box._set = set;
+  return box;
+}
+function repArchive(id){
+  var r = D.rep.get(id); if (!r) return;
+  var snap = Object.assign({}, r), lbl = repLabel(r);
+  setFields('repeat_tasks', id, {deleted_at: nowIso()}, lbl); invalidate('master');
+  toast('Archived ' + quote(lbl) + '.', {action: {label: 'Undo', fn: function(){ unarchive('repeat_tasks', snap, lbl); invalidate('master'); }}});
+}
+function repSetActive(id, on){
+  var r = D.rep.get(id); if (!r) return;
+  setFields('repeat_tasks', id, {active: !!on}, repLabel(r)); invalidate('master');
+  announce(quote(repLabel(r)) + (on ? ' is on again' : ' is paused'));
+}
+function repMenu(id, btn){
+  var r = D.rep.get(id); if (!r) return;
+  menuSheet(repLabel(r), [{label: 'Archive', icon: 'archive', fn: function(){ repArchive(id); }}], btn);
+}
+function repRow(r){
+  var lbl = repLabel(r), who = repWhoLine(r), paused = r.active === false;
+  var meta = [who || 'Nobody yet', repWhen(r), paused ? 'Paused' : repNextLabel(r)].filter(Boolean).join(' \u00b7 ');
+  return h('li', {class: 'rp-row' + (paused ? ' is-paused' : ''), 'data-id': r.id},
+    h('button', {type: 'button', class: 'rp-main', 'data-fk': 'rp:' + r.id, on: {click: function(e){ repSheet(r.id, e.currentTarget); }}},
+      h('span', {class: 'rp-t', text: lbl}), h('span', {class: 'rp-m', text: meta})),
+    h('button', {type: 'button', class: 'icon', 'aria-label': 'More for ' + lbl, 'data-fk': 'rpm:' + r.id, on: {click: function(e){ repMenu(r.id, e.currentTarget); }}}, icon('more')));
+}
+function repAddForm(){
+  var st = {who: []};
+  var err = h('p', {class: 'err', role: 'alert', hidden: true});
+  var txt = h('input', {type: 'text', id: 'rpNew', autocomplete: 'off', enterkeyhint: 'done', placeholder: 'Add a repeating task', 'aria-label': 'New repeating task', 'data-fk': 'rpnew'});
+  var who = peopleChips({id: 'rpWho', label: 'Who', none: '', selected: function(){ return st.who; },
+    toggle: function(x, on){ st.who = st.who.filter(function(y){ return y !== x; }); if (on) st.who.push(x); }});
+  var when = repWhenFields('rpn', {freq: 'weekly', weekday: DAYS[todayIdx()]}, function(){});
+  function save(){
+    err.hidden = true;
+    var text = txt.value.replace(/\s+/g, ' ').trim();
+    if (!text){ err.textContent = 'Type the task first.'; err.hidden = false; txt.focus(); return; }
+    var ids = st.who.filter(function(x){ return D.people.has(x) && !D.people.get(x).deleted_at; });
+    if (!ids.length){ err.textContent = 'Choose who gets it.'; err.hidden = false; var c = form.querySelector('[data-fk="rpWhomore"]'); if (c) c.focus(); return; }
+    if (tooSoon('rpadd')) return;
+    var w = when._val();
+    var r = insertRow('repeat_tasks', {id: newId('rp_'), team: S.team, task: text, notes: '', person_ids: ids, freq: w.freq, weekday: w.weekday, month_day: w.month_day, active: true,
+      sort: nextSort(Array.from(D.rep.values()).filter(function(x){ return !x.deleted_at; }))}, text);
+    txt.value = ''; st.who = []; who.draw(); invalidate('master');
+    toast('Added ' + quote(text) + '. ' + repWhen(r) + ', ' + repNextLabel(r) + '.', {action: {label: 'Undo', fn: function(){
+      if (D.rep.has(r.id) && !D.rep.get(r.id).deleted_at){ setFields('repeat_tasks', r.id, {deleted_at: nowIso()}, text); invalidate('master'); announce('Took back ' + quote(text)); }
+    }}});
+    txt.focus();
+  }
+  var form = h('form', {class: 'rp-add', novalidate: true, on: {submit: function(e){ e.preventDefault(); save(); }}},
+    txt, who.el, h('div', {class: 'rp-addrow'}, when, h('button', {type: 'submit', class: 'primary', 'data-fk': 'rpadd'}, icon('plus'), 'Add')), err);
+  return {el: form};
+}
+function repSection(old, q){
+  var all = repList(), list = q ? all.filter(function(r){ return (r.task || '').toLowerCase().indexOf(q) >= 0; }) : all;
+  if (q && !list.length) return null;
+  var sec = old || h('section', {class: 'tgroup rp-sec', id: 'repSec', 'aria-labelledby': 'rpH'});
+  if (!sec._form) sec._form = repAddForm();
+  var h3 = sec.querySelector(':scope > h3') || h('h3', {id: 'rpH', text: 'Repeating tasks'});
+  var ul = sec.querySelector(':scope > ul.rp-list') || h('ul', {class: 'rp-list', 'aria-labelledby': 'rpH'});
+  reconcile(ul, list, function(r){ return r.id; }, function(r, o){ return memo(o, 'master', repSig(r), function(){ return repRow(r); }); });
+  setKids(sec, [h3, sec._form.el, list.length ? ul : null]);
+  return sec;
+}
+function repSheet(id, ret){
+  if (!D.rep.has(id)) return;
+  var body = h('div', {class: 'stack rp-sheet'}), openW = {v: false}, keepW = new Set();
+  function render(){
+    var r = D.rep.get(id);
+    if (!r || r.deleted_at){ body.replaceChildren(h('p', {class: 'muted', text: 'This repeating task was archived.'})); return; }
+    var keepFk = document.activeElement && body.contains(document.activeElement) && document.activeElement.dataset ? document.activeElement.dataset.fk : null;
+    var title = h('textarea', {id: 'rpTitle', rows: 1, placeholder: 'What needs doing?', 'data-fk': 'rptitle',
+      on: {input: function(e){ editField('repeat_tasks', id, 'task', e.target.value, e.target.value); }, blur: function(){ commitPendFor('repeat_tasks', id); invalidate('master'); }}});
+    title.value = r.task || '';
+    var note = h('textarea', {id: 'rpNote', rows: 2, placeholder: 'Add a note', 'data-fk': 'rpnote',
+      on: {input: function(e){ editField('repeat_tasks', id, 'notes', e.target.value, repLabel(D.rep.get(id))); }, blur: function(){ commitPendFor('repeat_tasks', id); }}});
+    note.value = r.notes || '';
+    var who = peopleChips({id: 'rpsWho', label: 'Who', open: openW.v, keep: keepW, onOpen: function(v){ openW.v = v; }, none: 'Choose who gets it.',
+      selected: function(){ return ((D.rep.get(id) || {}).person_ids || []).slice(); },
+      toggle: function(x, on){ var c = D.rep.get(id); if (!c) return; var a = (c.person_ids || []).filter(function(y){ return y !== x; }); if (on) a.push(x);
+        setFields('repeat_tasks', id, {person_ids: a}, repLabel(c)); invalidate('master'); }});
+    var when = repWhenFields('rps', r, function(v){ var c = D.rep.get(id); if (!c) return; setFields('repeat_tasks', id, v, repLabel(c)); invalidate('master'); render(); });
+    var nx = r.active === false ? '' : repNextLabel(r);
+    var act = h('label', {class: 'sw25', for: 'rpActive'},
+      h('input', {type: 'checkbox', id: 'rpActive', checked: r.active !== false, 'data-fk': 'rpactive', on: {change: function(e){ repSetActive(id, e.target.checked); render(); }}}),
+      h('span', {class: 'sw-t'}, h('b', {text: 'Active'}), nx ? h('span', {class: 'sub', text: nx.charAt(0).toUpperCase() + nx.slice(1)}) : null));
+    body.replaceChildren(
+      h('div', null, h('label', {class: 'field', for: 'rpTitle', text: 'Task'}), title),
+      h('div', null, h('label', {class: 'field', for: 'rpNote', text: 'Note'}), note),
+      who.el, when, act);
+    if (keepFk){ var el = body.querySelector('[data-fk="' + cssEsc(keepFk) + '"]'); if (el) el.focus({preventScroll: true}); }
+    autosizeSoon();
+  }
+  render();
+  openSheet({title: 'Repeating task', returnTo: ret, body: body, refresh: render,
+    onClose: function(){ commitPendFor('repeat_tasks', id); invalidate('master'); },
+    foot: [h('button', {type: 'button', class: 'primary', 'data-fk': 'rpdone', on: {click: closeSheet}}, 'Done')]});
+  $('#sheet').classList.add('wide');
+}
+
+/* ---------- I: "Change my password" (L133), person logins only. Team logins keep the admin's team password. ---------- */
+function canChangeMyPassword(){ return !!S.email && !!S.team && !S.viewAs && !isTeamLogin() && !isSharedAdmin(); }
+function myPasswordError(e){
+  var m = String(e && (e.message || e) || ''), c = String(e && e.code || '');
+  if (c === 'same_password' || /different from the old/i.test(m)) return 'That\u2019s your current password. Choose a new one.';
+  if (c === 'weak_password' || /weak|at least|characters/i.test(m)) return 'That password is too easy to guess. Use a longer one.';
+  if (c === 'reauthentication_needed' || /reauth/i.test(m)) return 'Sign out, sign in again, then change it.';
+  if (/fetch|network|offline/i.test(m) || !navigator.onLine) return 'You\u2019re offline. Try again when you\u2019re back online.';
+  if (/session|jwt|token/i.test(m)) return 'Your sign-in ran out. Sign in again, then change it.';
+  return 'Please try again.';
+}
+function myPasswordSheet(ret){
+  if (!canChangeMyPassword()) return;
+  var a = h('input', {type: 'password', id: 'mpNew', autocomplete: 'new-password', minlength: '8', 'data-fk': 'mpnew'});
+  var b = h('input', {type: 'password', id: 'mpNew2', autocomplete: 'new-password', 'data-fk': 'mpnew2'});
+  var tog = h('button', {type: 'button', class: 'pwtoggle', 'aria-controls': 'mpNew mpNew2', 'aria-pressed': 'false', 'aria-label': 'Show password', 'data-fk': 'mpshow', on: {click: function(){
+    var show = a.type === 'password'; a.type = b.type = show ? 'text' : 'password';
+    tog.textContent = show ? 'Hide' : 'Show'; tog.setAttribute('aria-pressed', String(show)); tog.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  }}}, 'Show');
+  var err = h('p', {class: 'err', role: 'alert', hidden: true});
+  var btn = h('button', {type: 'button', class: 'primary', 'data-fk': 'mpsave', on: {click: function(){ save(); }}}, 'Change password');
+  var busy = false;
+  async function save(){
+    if (busy) return;
+    err.hidden = true;
+    if (a.value.length < 8){ err.textContent = 'Use at least 8 characters.'; err.hidden = false; a.focus(); return; }
+    if (a.value !== b.value){ err.textContent = 'The two passwords don\u2019t match. Type the same password in both boxes.'; err.hidden = false; b.focus(); return; }
+    busy = true; btn.disabled = true; btn.textContent = 'Changing\u2026';
+    var r; try { r = await sb.auth.updateUser({password: a.value}); } catch (x){ r = {error: x}; }
+    busy = false; btn.disabled = false; btn.textContent = 'Change password';
+    if (r && r.error){ err.textContent = 'Your password wasn\u2019t changed. ' + myPasswordError(r.error); err.hidden = false; a.focus(); return; }
+    a.value = ''; b.value = '';
+    closeSheet();
+    toast('Password changed.');
+  }
+  var form = h('form', {class: 'stack mp-form', novalidate: true, on: {submit: function(e){ e.preventDefault(); save(); },
+      keydown: function(e){ if (e.key === 'Enter' && e.target.tagName === 'INPUT' && !composing(e)){ e.preventDefault(); save(); } }}},
+    h('div', null, h('label', {class: 'field', for: 'mpNew', text: 'New password (at least 8 characters)'}), h('div', {class: 'pwrow'}, a, tog)),
+    h('div', null, h('label', {class: 'field', for: 'mpNew2', text: 'Type it again'}), b),
+    err);
+  openSheet({title: 'Change my password', returnTo: ret, body: form, focus: '#mpNew', forceFocus: true,
+    foot: [h('button', {type: 'button', 'data-fk': 'mpcancel', on: {click: closeSheet}}, 'Cancel'), btn]});
+}
+
+
 /* remember whether the last thing used was the keyboard, so focus moved by the app (a sheet closing) still shows its ring */
 document.addEventListener('keydown', function(e){ if (e.key === 'Tab' || e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key.indexOf('Arrow') === 0) document.documentElement.setAttribute('data-kb', ''); }, true);
 document.addEventListener('pointerdown', function(){ document.documentElement.removeAttribute('data-kb'); }, true);
@@ -7264,29 +8089,38 @@ function isTeamLogin(){ return !isSharedAdmin() && new RegExp('@' + DOMAIN.repla
 /* v2.6.6: the PA experience = every login that isn't an admin of this team: team logins and the per-person PA/YC logins
    (their emails are outside the app domain, and they are editors, never admins) */
 function isPaLogin(){ return !!S.team && !isAdmin(); }
-/* v2.6.7: "View as" in Sandbox / QA. An admin sees what a PA's or YC's own login sees (first one on the team).
+/* v2.6.7: "View as" in Sandbox / QA. An admin sees what a PA's or YC's own login sees (v2.9.0: the one picked in the bar).
    Edits still save under her admin sign-in, which is why it's offered on the practice teams only. */
-function viewAsPick(kind){ var l = kind === 'yc' ? paPeople().filter(isYC) : paOnlyPeople(); return l.length ? l[0].id : null; }
+/* v2.9.0 (I, L69 / L102 "pinned to Amina"): which PA or YC is picked in the bar's person select; default = the last pick on
+   this device for this team, else the first */
+function viewAsList(kind){ return kind === 'yc' ? paPeople().filter(isYC) : paOnlyPeople(); }
+function viewAsPick(kind){
+  var l = viewAsList(kind); if (!l.length) return null;
+  var last = S.team ? lsGet('va:' + S.team + ':' + kind, null) : null;
+  return last && l.some(function(p){ return p.id === last; }) ? last : l[0].id;
+}
 /* v2.6.9: the calendar's person filter on this device. 'all' = Everyone picked on purpose; nothing saved = the default
    (a PA's or YC's own programs, everyone for admins) */
 function loadCalPerson(team){ var cp = lsGet('calp:' + team, null); S.calPerson = cp && cp !== 'all' ? cp : ''; S.calPersonSet = cp != null; }
-function setViewAs(kind){
-  var pid = kind ? viewAsPick(kind) : null;
+function setViewAs(kind, who){
+  var pid = kind ? (who && viewAsList(kind).some(function(p){ return p.id === who; }) ? who : viewAsPick(kind)) : null;
   if (kind && !pid) return;
+  if (kind && who && S.team) lsSet('va:' + S.team + ':' + kind, pid);   // v2.9.0: remembered per team on this device
   if ((S.viewAs || null) === pid) return;
+  var sameKind = !!(pid && S.viewAs && S.viewAsKind === kind);   // v2.9.0: switching person keeps the tab
   S.viewAs = pid; S.viewAsKind = pid ? kind : null;
   S.person = pid || (lsGet('me:' + S.team, null) || null);
   if (pid){ S.calPerson = ''; S.calPersonSet = false; } else loadCalPerson(S.team);   // v2.6.9: View as opens on her default calendar
   closeSheet();
   buildTabs(); invalidateAll();
-  go({tab: pid || !tabOk(S.tab) ? defaultTab() : S.tab}, true);
+  go({tab: sameKind && tabOk(S.tab) ? S.tab : pid || !tabOk(S.tab) ? defaultTab() : S.tab}, true);
   showTab(); renderHeader();
   announce(pid ? 'Viewing as ' + personName(pid) + (kind === 'yc' ? ', youth coordinator' : ', PA') : 'Admin view');
 }
 function renderViewAsBar(){
   var b = $('#vaBar'); if (!b) return;
   var on = canViewAs() && (!!viewAsPick('pa') || !!viewAsPick('yc'));
-  var key = on ? [S.team, S.viewAs, S.viewAsKind, viewAsPick('pa'), viewAsPick('yc')].join('|') : '';
+  var key = on ? [S.team, S.viewAs, S.viewAsKind, viewAsPick('pa'), viewAsPick('yc'), S.viewAs ? viewAsList(S.viewAsKind).map(function(p){ return p.id + ':' + p.name; }).join(',') : ''].join('|') : '';
   if (b._k === key) return; b._k = key;
   b.hidden = !on;
   if (!on){ b.replaceChildren(); return; }
@@ -7294,12 +8128,16 @@ function renderViewAsBar(){
   var btn = function(kind, label){
     var pid = kind === 'admin' ? 'x' : viewAsPick(kind);
     if (!pid) return null;
-    var txt = cur === kind && kind !== 'admin' ? label + ' \u00b7 ' + personName(pid) : label;
-    return h('button', {type: 'button', 'data-fk': 'va:' + kind, 'aria-pressed': String(cur === kind), text: txt,
+    return h('button', {type: 'button', 'data-fk': 'va:' + kind, 'aria-pressed': String(cur === kind), text: label,   // v2.9.0: the name is in the select now
       on: {click: function(){ setViewAs(kind === 'admin' ? null : kind); }}});
   };
+  // v2.9.0 (I): after PA or YC, a person select (PAs for PA, YCs for YC)
+  var who = S.viewAs ? h('select', {id: 'vaWho', 'data-fk': 'va:who', 'aria-label': S.viewAsKind === 'yc' ? 'Which youth coordinator' : 'Which PA',
+      on: {change: function(e){ setViewAs(S.viewAsKind, e.target.value); var w = $('#vaWho'); if (w) w.focus(); }}},
+    viewAsList(S.viewAsKind).map(function(p){ return h('option', {value: p.id, text: p.name, selected: p.id === S.viewAs}); })) : null;
   b.replaceChildren(h('span', {class: 'va-l', id: 'vaL', text: 'View as'}),
-    h('div', {class: 'va-seg', role: 'group', 'aria-labelledby': 'vaL'}, btn('admin', 'Admin'), btn('pa', 'PA'), btn('yc', 'YC')));
+    h('div', {class: 'va-seg', role: 'group', 'aria-labelledby': 'vaL'}, btn('admin', 'Admin'), btn('pa', 'PA'), btn('yc', 'YC')), who);
+  if (who) who.value = S.viewAs;
 }
 function applyTheme(){
   var a = ROOTS_HERB, ink = inkFor(a), r = document.documentElement.style;     // one Roots look for every team (v2.2: no team purple)
@@ -7552,6 +8390,7 @@ function openMenu(btn, phone){
   items.push({label: 'Export this week as CSV', icon: 'ext', fn: exportCsv});
   items.push({label: 'Print the board', icon: 'print', fn: function(){ if (S.tab !== 'board') go({tab: 'board'}); setTimeout(function(){ window.print(); }, 250); }});
   items.push('-');
+  if (canChangeMyPassword()) items.push({label: 'Change my password', icon: 'lock', fn: function(){ myPasswordSheet(btn); }});   // v2.9.0 (I, L133)
   items.push({label: 'Sign out', icon: 'out', fn: function(){ signOut(); }});
   menuSheet(phone ? 'More' : 'Menu', items, btn);
   var who = h('p', {class: 'small muted signed', text: 'Signed in as ' + (isTeamLogin() ? S.teamName + ' team' : isSharedAdmin() ? 'admin' : myLoginPerson() && !isAdmin() ? personName(myLoginPerson()) : (S.email || '')) + (isAdmin() ? ' (admin)' : '') + ' \u00b7 v' + BUILD});
@@ -7781,6 +8620,7 @@ function resetData(){
   S.sharedLoaded = false; S.sharedError = null; S.weekLoaded = null; S.monthLoaded = null; S.weekError = null; S.monthError = null; S.monthLoading = null;
   S.hist = null; S.histErr = null; S.histMore = false; S.histNames = {tasks: {}, shifts: {}, programs: {}}; S.person = null; S.buffer = []; S.noteOpen = null; S.copying = false;
   S.shiftMonths = new Set(); S.shiftLoading = new Set(); pvReset(); D.oh = new Map();
+  S.projMine = new Set(); S.projHist = null; S.ptAt = 0;   // v2.12.0
   poIds.clear(); S.tplOpen = new Set(); S.tplQuery = '';
   TABS.forEach(function(t){ var s = $('#v-' + t.id); if (s) s.replaceChildren(); });
 }
@@ -7884,7 +8724,9 @@ window.__rootspa = {S: S, D: D, Q: Q, sb: sb, go: go, version: BUILD,
      todayIso: todayIso, mondayOf: mondayOf, isoToDate: isoToDate, niceDate: niceDate, shiftShown: shiftShown, isCalRow: isCalRow, shiftPAs: shiftPAs,
      isPaLogin: isPaLogin, myLoginPerson: myLoginPerson, myId: myId, isYC: isYC, paPeople: paPeople, paOnlyPeople: paOnlyPeople, specialTemplate: specialTemplate, activeTemplates: activeTemplates, templateFor: templateFor,   // v2.6.6
      progDept: progDept, deptVal: deptVal, calPairs: calPairs, boardPrograms: boardPrograms,   // v2.7.2
-     repCommon: repCommon, repCommonIx: repCommonIx, openFor: function(pid){ return tasksFor(pid).filter(function(t){ return !personDone(t, pid); }).map(function(t){ return normTask(t.task); }); }}};   // v2.5b probe hooks (read-only)
+     repCommon: repCommon, repCommonIx: repCommonIx, openFor: function(pid){ return tasksFor(pid).filter(function(t){ return !personDone(t, pid); }).map(function(t){ return normTask(t.task); }) },
+     pvGroups: pvGroups, pvDayEl: pvDayEl, projName: projName, pvGroupMeta: pvGroupMeta, pvGroupCmp: pvGroupCmp,
+     projsFor: projsFor, isOverdue: isOverdue}};   // v2.12.0: per-person Project list + overdue rule (read-only probes)   // v2.10.0: My tasks day columns (read-only probes)
 })();
 
 </script>
