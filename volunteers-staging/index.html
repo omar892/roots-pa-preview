@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-build="1.0.0">
+<html lang="en" data-build="1.0.1">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Roots Volunteers</title>
 <meta name="description" content="Sign up to volunteer at Roots DFW.">
-<meta name="app-version" content="1.0.0">
+<meta name="app-version" content="1.0.1">
 <meta name="theme-color" content="#202f0e">
 <meta name="application-name" content="Roots Volunteers">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -577,8 +577,11 @@ button.slot:hover{background:var(--hover);color:var(--ink)}
 .tag.new{background:var(--warn-bg);color:var(--warn)}
 .toolbar{display:flex;gap:var(--sp2);align-items:center;flex-wrap:wrap;margin-bottom:var(--sp3)}
 .toolbar input[type=search]{flex:1 1 180px;min-width:0}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--radius-pill);background:var(--surface-raised);overflow:hidden}
-.seg button{border:none;border-radius:0;background:none;min-width:64px;color:var(--ink);font-weight:600}
+/* v1.0.1: same segmented control as the PA app (pill track, 4px inset, each segment its own pill),
+   so the selected fill never gets clipped by the track's rounded ends */
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--radius-pill);padding:4px;gap:4px;background:var(--surface-raised)}
+.seg button{border:none;border-radius:var(--radius-pill);min-height:36px;padding:0 16px;background:none;min-width:64px;color:var(--ink);font-weight:600}
+@media (pointer:coarse){.seg button{min-height:44px}}
 .seg button:hover{background:var(--hover);color:var(--ink)}
 .seg button[aria-pressed=true]{background:var(--action);color:var(--on-action)}
 .alert{padding:var(--sp3);display:grid;gap:2px}
@@ -613,7 +616,7 @@ dl.facts dd{margin:0;overflow-wrap:anywhere}
 .opts button[aria-current=true]{font-weight:700;background:var(--accent-soft)}
 .chk{display:flex;align-items:center;gap:12px;min-height:var(--tap);cursor:pointer;font-weight:600}
 .chk input{width:22px;height:22px;margin:0;accent-color:var(--accent-ink);flex:0 0 auto}
-.slotedit{border:1px solid var(--line);border-radius:var(--r-card);padding:var(--sp3);display:grid;gap:var(--sp2);background:var(--surface)}
+.slotedit{border:1px solid var(--line);border-radius:var(--r-inner);padding:var(--sp3);display:grid;gap:var(--sp2);background:var(--surface)}
 .slotedit .foot{display:flex;align-items:center;justify-content:space-between;gap:var(--sp2)}
 .rgroup+.rgroup{margin-top:var(--sp3)}
 .rrow{display:grid;gap:6px;padding:10px 0;border-top:1px solid var(--line2)}
@@ -750,7 +753,7 @@ var Data = (function(){
 /* ==========================================================================
    Roots Volunteers app core: helpers, sheet, toast, sign-in, shell, routing.
    ========================================================================== */
-var BUILD = '1.0.0';
+var BUILD = '1.0.1';
 (function(){
 'use strict';
 var TZ = 'America/Chicago';
