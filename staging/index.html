@@ -1859,7 +1859,7 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.12.1';   // v2.12.1: Anisha Nov 3 4:30pm (My tasks day columns at least 300px wide with a sideways scroll + edge arrows, full titles/notes/program lines, group header names never squeezed). Was 2.12.0: // v2.12.0: Anisha Oct 28 (My tasks keeps overdue tasks under their day with a red icon and a red "N overdue" on the group header, PAs see "N spots left" next to Sign up, the Project list is per person). Was 2.11.1:   // v2.11.1: Calendar month, Mine: when all of the person's sign-ups are before today the empty note and "See N that need a PA" show above the "Show N earlier days" link. Was 2.11.0:   // v2.11.0: Anisha Oct 27 (month +more in place, Common tasks pick list, admin My tasks trimmed, Add task on group headers, done tasks to the bottom). Was 2.10.0:   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
+var BUILD = '2.12.2';   // v2.12.2: Anisha Nov 3 7:23pm (task box field order: Task, Note, Program, Project, Who, Day, Watchers, in the Add task sheet and the open-task sheet). Was 2.12.1: // v2.12.1: Anisha Nov 3 4:30pm (My tasks day columns at least 300px wide with a sideways scroll + edge arrows, full titles/notes/program lines, group header names never squeezed). Was 2.12.0: // v2.12.0: Anisha Oct 28 (My tasks keeps overdue tasks under their day with a red icon and a red "N overdue" on the group header, PAs see "N spots left" next to Sign up, the Project list is per person). Was 2.11.1:   // v2.11.1: Calendar month, Mine: when all of the person's sign-ups are before today the empty note and "See N that need a PA" show above the "Show N earlier days" link. Was 2.11.0:   // v2.11.0: Anisha Oct 27 (month +more in place, Common tasks pick list, admin My tasks trimmed, Add task on group headers, done tasks to the bottom). Was 2.10.0:   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
 // was 2.7.2: // v2.7.2: departments are one shared filter (Calendar, Board, PA shifts), never a team; no team chips at sign-in
 // v2.7.1: Calendar filter is one dropdown (departments + Needs a PA); Board tab for PAs/YCs with Take it
 // v2.6.9:   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
@@ -4975,12 +4975,13 @@ function addTaskSheet(o){
     }}});
   }
   var form = h('form', {class: 'stack at25', novalidate: true, on: {submit: function(e){ e.preventDefault(); save(); }}},
+    // v2.12.2 (Anisha, Nov 3 7:23pm): field order Task, Note, Program, Project, Who, Day, Watchers (was Task, Who, Program, Project, Day, Note, Watchers)
     h('div', {class: 'pv-add at-text'}, h('label', {class: 'field', for: 'atText', text: 'Task'}), txt),
-    who.el,
+    h('div', null, h('label', {class: 'field', for: 'atNote', text: 'Note'}), note),
     h('div', null, h('label', {class: 'field', for: 'atProg', text: 'Program'}), prog, prog.hint),
     h('div', {class: 'at-proj'}, h('label', {class: 'field', for: 'atProj', text: 'Project'}), proj),
+    who.el,
     dayBox,
-    h('div', null, h('label', {class: 'field', for: 'atNote', text: 'Note'}), note),
     more.el, err);
   openSheet({title: pid ? 'Add a task for ' + personName(pid) : 'Add a task', returnTo: o.ret, body: form, focus: '#atText', forceFocus: !o.text,
     onClose: function(){ AT_LIVE = null; lsSet(sheetDraftKey(), null); },   // closed on purpose (Cancel, Esc, saved): drop the kept draft
@@ -5058,10 +5059,12 @@ function taskSheet(id, pid, ret){
     body.replaceChildren.apply(body, [
       h('div', null, h('label', {class: 'field', for: 'tdTitle', text: 'Task'}), title, flags.length ? h('p', {class: 'small muted td-flags', text: flags.join(' \u00b7 ')}) : null),
       h('div', null, h('label', {class: 'field', for: 'tdNote', text: 'Note'}), note),
-      who.el, wat.el,
+      // v2.12.2 (Anisha, Nov 3 7:23pm): same order as the Add task sheet: Task, Note, Program, Project, Who, Day, Watchers, estimate (was Who, Watchers, Program, Project, Day)
       h('div', null, h('label', {class: 'field', for: 'tdProg', text: 'Program'}), prog, prog.hint, board),
       h('div', {class: 'td-proj'}, h('label', {class: 'field', for: 'tdProj', text: 'Project'}), proj),
+      who.el,
       days,
+      wat.el,
       est].filter(Boolean));
     if (keepFk){ var el = body.querySelector('[data-fk="' + cssEsc(keepFk) + '"]'); if (el) el.focus({preventScroll: true}); }
     autosizeSoon();
