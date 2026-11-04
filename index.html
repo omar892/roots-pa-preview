@@ -1745,6 +1745,41 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 @media (min-width:768px) and (max-width:1023px){ .rtile.compact .cal__tag.su .tag-su{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap} .rtile.compact .cal__tag.su .tag-sp{margin-left:0} }
 .cal__tag .tag-sp{font-weight:500}
 
+/* ---------- v2.12.1 (Anisha, Nov 3 4:30pm): wider My tasks day columns, side scroll, full text ----------
+   "cramped when there's tasks for each of the 7 days ... make each task wider so even if it can't all fit on one page, they can scroll
+   left and right with their mouse ... see as much information as possible without opening the task (Confirm locations for Muhsen with.... is getting cut off)"
+   Column mode only (1100px and up, the same breakpoint as the day columns); the stacked phone/tablet view is unchanged.
+   --pvn is the number of day columns (d_board.js): with 2-3 days they still fill the width, with more the row scrolls inside its own box. */
+.pv-wkw{position:relative;min-width:0;max-width:100%}
+@media screen and (min-width:1100px){
+  #v-person .pv-wk{position:relative;grid-template-columns:repeat(var(--pvn,1),minmax(300px,1fr));overflow-x:auto;padding:4px;overscroll-behavior-x:contain}
+  /* an overflow box can't keep a sticky header on the page's scroll: the day header scrolls with the page in column mode */
+  #v-person .pv-wk .pv-dayh{position:static;margin:0}
+  .pv-wkw.is-scroll{padding:0 40px}   /* a gutter at each end for the arrows: they sit beside the day columns, never over a header, checkbox or title */
+  .pv-edge{position:absolute;top:4px;z-index:5;width:32px;height:32px;min-height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:999px;background:var(--white);border:1px solid var(--line);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+  .pv-edge:hover{background:var(--roots-white);color:var(--ink)}
+  .pv-edge .ic{width:18px;height:18px}
+  .pv-edge-l{left:4px}
+  .pv-edge-r{right:4px}
+  /* full information on the row: title up to 3 lines, note up to 4, program line wraps */
+  #v-person .pv-wk .rtask .rt-tx{-webkit-line-clamp:3}
+  #v-person .pv-wk .rtask .rt-note{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;white-space:normal;overflow:hidden;text-overflow:clip;overflow-wrap:anywhere}
+  #v-person .pv-wk .rtask .rt-open .rt-meta{white-space:normal;overflow:visible;text-overflow:clip;flex-wrap:wrap}
+  #v-person .pv-wk .rtask .rt-open .rt-meta .rt-where{white-space:normal;overflow:visible;text-overflow:clip}
+  #v-person .pv-day .pg-when{display:block;-webkit-line-clamp:none;overflow:visible}
+  /* the header's name keeps its words; the counts sit after it or wrap under it */
+  #v-person .pv-day .pg-head{flex-wrap:wrap;row-gap:2px}
+  #v-person .pv-day .pg-tx{flex:1 1 8em;min-width:min-content}
+  #v-person .pv-day .pg-name{overflow-wrap:break-word}
+}
+@media screen and (min-width:1100px) and (pointer:coarse){
+  .pv-wkw.is-scroll{padding:0 48px}   /* the 44px touch buttons fit in the gutter */
+  .pv-edge{width:44px;height:44px;min-height:44px}
+  #v-person .pv-wk .pv-dayh{min-height:44px;box-sizing:border-box}
+}
+@media (prefers-reduced-motion:reduce){ #v-person .pv-wk{scroll-behavior:auto} }
+@media print{ .pv-edge{display:none !important} }
+
 </style>
 </head>
 <body>
@@ -1824,7 +1859,7 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.12.0';   // v2.12.0: Anisha Oct 28 (My tasks keeps overdue tasks under their day with a red icon and a red "N overdue" on the group header, PAs see "N spots left" next to Sign up, the Project list is per person). Was 2.11.1:   // v2.11.1: Calendar month, Mine: when all of the person's sign-ups are before today the empty note and "See N that need a PA" show above the "Show N earlier days" link. Was 2.11.0:   // v2.11.0: Anisha Oct 27 (month +more in place, Common tasks pick list, admin My tasks trimmed, Add task on group headers, done tasks to the bottom). Was 2.10.0:   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
+var BUILD = '2.12.1';   // v2.12.1: Anisha Nov 3 4:30pm (My tasks day columns at least 300px wide with a sideways scroll + edge arrows, full titles/notes/program lines, group header names never squeezed). Was 2.12.0: // v2.12.0: Anisha Oct 28 (My tasks keeps overdue tasks under their day with a red icon and a red "N overdue" on the group header, PAs see "N spots left" next to Sign up, the Project list is per person). Was 2.11.1:   // v2.11.1: Calendar month, Mine: when all of the person's sign-ups are before today the empty note and "See N that need a PA" show above the "Show N earlier days" link. Was 2.11.0:   // v2.11.0: Anisha Oct 27 (month +more in place, Common tasks pick list, admin My tasks trimmed, Add task on group headers, done tasks to the bottom). Was 2.10.0:   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
 // was 2.7.2: // v2.7.2: departments are one shared filter (Calendar, Board, PA shifts), never a team; no team chips at sign-in
 // v2.7.1: Calendar filter is one dropdown (departments + Needs a PA); Board tab for PAs/YCs with Take it
 // v2.6.9:   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
@@ -5171,6 +5206,68 @@ function pvDayEl(d, pid){
   return h('li', {class: 'pv-day' + (iso === today ? ' is-today' : '') + (iso ? '' : ' pv-day-none'), 'data-date': iso || null, 'aria-labelledby': id},
     hd, h('ol', {class: 'pv-dayg'}, d.list.map(function(g){ return pvGroupEl(g, pid); })));
 }
+/* ---------- v2.12.1 (Anisha, Nov 3 4:30pm): the day columns scroll sideways ----------
+   "The task page feels a little cramped when there's tasks for each of the 7 days ... they can scroll left and right with their mouse."
+   Column mode (1100px and up): every day column is at least 300px (shape.css), the row scrolls inside its own box, the page never does.
+   A round arrow in a gutter at each edge (only while there is more that way, so it never covers a header or a task) steps one column. The row opens on today's column; a re-render
+   (realtime, ticking a task, folding a group, adding a task) keeps where she scrolled to; another person or week opens fresh. */
+var PVX = {key: '', left: 0};
+function pvTodayLeft(ol){
+  if (S.week !== thisWeek()) return 0;                               // a past or future week opens at the left
+  var t = todayIso(), cols = ol.querySelectorAll(':scope > li.pv-day[data-date]'), hit = null, i;
+  for (i = 0; i < cols.length; i++){ if (cols[i].getAttribute('data-date') >= t){ hit = cols[i]; break; } }   // today's column, else the first one after today
+  if (!hit) return 0;
+  return Math.max(0, hit.offsetLeft - (parseFloat(getComputedStyle(ol).paddingLeft) || 0));
+}
+function pvWrap(ol, key){
+  var wrap = h('div', {class: 'pv-wkw'}, ol), mq = window.matchMedia ? window.matchMedia('(min-width:1100px)') : null;
+  var first = PVX.key !== key, applied = false, bl = null, br = null;
+  function colMode(){ return !mq || mq.matches; }
+  function step(dir){
+    var c = ol.querySelector(':scope > li.pv-day'), w = c ? c.getBoundingClientRect().width : 300;
+    var gap = parseFloat(getComputedStyle(ol).columnGap) || 12;
+    var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    ol.scrollBy({left: dir * (w + gap), behavior: calm ? 'auto' : 'smooth'});
+  }
+  function mk(dir){
+    return h('button', {type: 'button', class: 'pv-edge pv-edge-' + (dir < 0 ? 'l' : 'r'), 'aria-label': dir < 0 ? 'Earlier days' : 'Later days', 'data-fk': 'pvedge:' + (dir < 0 ? 'l' : 'r'),
+      on: {click: function(){ step(dir); }}}, icon(dir < 0 ? 'chevL' : 'chevR', 'sm'));
+  }
+  function edge(dir, on){
+    var b = dir < 0 ? bl : br;
+    if (on && !b){ b = mk(dir); if (dir < 0) bl = b; else br = b; }
+    // both arrows come BEFORE the row in the page order, so Tab reaches them first instead of after every task in every column
+    if (on && !b.isConnected){ if (dir < 0) wrap.insertBefore(b, wrap.firstChild); else wrap.insertBefore(b, ol); }
+    if (!on && b && b.isConnected){
+      var had = document.activeElement === b, other = dir < 0 ? br : bl;
+      b.remove();
+      if (had){ if (other && other.isConnected) other.focus(); }   // never leave the keyboard on a button that just went away
+    }
+  }
+  function sync(){
+    // scrolls when the day columns need more than the whole box (the two gutters included), so adding the gutters can't flip it back
+    var col = colMode(), sc = col && ol.scrollWidth > wrap.clientWidth + 1;
+    wrap.classList.toggle('is-scroll', sc);
+    var max = ol.scrollWidth - ol.clientWidth, x = ol.scrollLeft;
+    edge(-1, sc && x > 1);
+    edge(1, sc && x < max - 1);
+  }
+  function apply(){
+    if (applied || !colMode() || !ol.clientWidth) return;               // wait for a laid-out row in column mode
+    applied = true; PVX.key = key;
+    ol.scrollLeft = first ? pvTodayLeft(ol) : PVX.left;                 // the browser clamps it to the end
+    PVX.left = ol.scrollLeft;
+  }
+  ol.addEventListener('scroll', function(){ if (applied && colMode()) PVX.left = ol.scrollLeft; sync(); }, {passive: true});
+  wrap._pvWire = function(){
+    sync(); apply(); sync();   // sync first: the gutters change the row's width before the scroll position is set
+    if (window.ResizeObserver){
+      var ro = new ResizeObserver(function(){ if (!wrap.isConnected){ ro.disconnect(); return; } sync(); apply(); sync(); });
+      ro.observe(ol);
+    }
+  };
+  return wrap;
+}
 function pvGroupName(g){
   if (g.kind === 'misc') return '(Misc.)';
   if (g.kind === 'proj') return g.pname || 'Project';
@@ -5297,6 +5394,8 @@ RENDER.person = function(){
   var wkOk = !hasShifts() || shiftsReady(monthsOfRange(S.week, addDays(S.week, 6)));
   var days = pvGroups(pid, null, wkOk);
   var box = days.length ? h('ol', {class: 'pv-groups pv-days pv-wk', 'aria-labelledby': 'pvTasksH'}, days.map(function(d){ return pvDayEl(d, pid); })) : null;
+  if (box){ box.style.setProperty('--pvn', String(days.length)); box = pvWrap(box, [S.team, pid, S.week].join('|')); }
+  else PVX.key = '';   // no day row (an empty week): the next week or person that has one opens fresh   // v2.12.1: scroll box + edge arrows around the day row
   var openN = ts.filter(function(t){ return !personDone(t, pid); }).length;
   var tasksH = h('h2', {class: 'pv-h', id: 'pvTasksH'}, tw ? 'This week' : weekLabel(S.week),
     openN ? h('span', {class: 'muted', text: openN + ' open'}) : null);
@@ -5334,6 +5433,7 @@ RENDER.person = function(){
         x.done ? h('span', {class: 'mk full'}, icon('check'), 'Done') : null);
     })) : h('p', {class: 'muted small', text: 'Nothing yet.'})) : null;
   setKids(sec, [top, addf, staffView && !adminMt ? watchSec : null, tasksH, adminMt ? null : estLine(pid, S.week), box, quiet, ntw, staffView && !adminMt ? null : watchSec]);
+  if (box && box._pvWire) box._pvWire();   // v2.12.1: once it is in the page: open on today's column or keep the scroll, then show the arrows that apply
 };
 
 
