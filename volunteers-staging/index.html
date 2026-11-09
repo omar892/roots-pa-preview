@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-build="1.0.1">
+<html lang="en" data-build="1.0.2">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Roots Volunteers</title>
 <meta name="description" content="Sign up to volunteer at Roots DFW.">
-<meta name="app-version" content="1.0.1">
+<meta name="app-version" content="1.0.2">
 <meta name="theme-color" content="#202f0e">
 <meta name="application-name" content="Roots Volunteers">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -481,7 +481,8 @@ html:not(.booted) #login{display:none}
 ::selection{background:var(--roots-tea);color:var(--roots-green)}
 input,textarea,select{caret-color:var(--roots-herb)}
 .slot .st,.ev-when,.rowbtn .t,.rowbtn .meta,.meta,.bday .d,.alert .meta{font-variant-numeric:tabular-nums}
-.skel{height:150px;margin-bottom:16px;border-radius:var(--r-card)}
+.skel{height:150px;margin-bottom:16px;border-radius:var(--r-card);background-size:200% 100%;animation:sh 1.2s infinite linear}   /* PA staging 291-292 (v1.0.2 F-11) */
+@keyframes sh{from{background-position:200% 0}to{background-position:-200% 0}}
 ul,ol{list-style:none;margin:0;padding:0}
 li{list-style:none}
 /* PA staging 392-401: touch target is 40px with a mouse on desktop, 44px on touch */
@@ -549,7 +550,11 @@ button.slot:hover{background:var(--hover);color:var(--ink)}
 .who{display:flex;align-items:center;flex-wrap:wrap;gap:0 4px;margin:0 0 var(--sp3);font-size:var(--fs-s)}
 .who b{font-weight:700;overflow-wrap:anywhere}
 .who button.link{min-height:44px}
-.empty h2{font-size:var(--fs-l)}
+/* PA staging 288-290, outside the lifted ranges until v1.0.2 (F-01). Background, border and radius come from the lifted PA rules. */
+.empty{padding:var(--sp4);max-width:560px;margin:var(--sp3) auto;text-align:center}
+.empty h2{font-size:var(--fs-l);margin-bottom:var(--sp2)}
+.empty h2:last-child{margin-bottom:0}   /* v1.0.2: our empty cards are often just a heading; PA's always have text under it. Keeps top and bottom padding equal. */
+.empty .acts{display:grid;gap:var(--sp2);margin-top:var(--sp3)}
 .loaderr{display:flex;gap:var(--sp2);align-items:center;justify-content:space-between;flex-wrap:wrap}
 
 /* ---------- my sign-ups ---------- */
@@ -562,10 +567,10 @@ button.slot:hover{background:var(--hover);color:var(--ink)}
 /* ---------- lead lists ---------- */
 .rows{list-style:none;margin:0;padding:0;background:var(--surface-raised);border:1px solid var(--line2);border-radius:var(--r-card);box-shadow:var(--shadow);overflow:hidden}
 .rows>li+li{border-top:1px solid var(--line2)}
-.rowbtn{display:grid;grid-template-columns:60px minmax(0,1fr) auto;gap:var(--sp2);align-items:center;width:100%;min-height:60px;padding:8px var(--sp3);border:none;border-radius:0;background:none;text-align:left;font-size:var(--fs);font-weight:500;color:var(--ink)}
+.rowbtn{display:grid;grid-template-columns:68px minmax(0,1fr) auto;gap:var(--sp2);align-items:center;width:100%;min-height:60px;padding:8px var(--sp3);border:none;border-radius:0;background:none;text-align:left;font-size:var(--fs);font-weight:500;color:var(--ink)}
 .rowbtn:hover{background:var(--hover);color:var(--ink)}
 .rowbtn.v{grid-template-columns:minmax(0,1fr) 20px}
-.rowbtn .t{font-size:var(--fs-s);font-weight:700;color:var(--muted)}
+.rowbtn .t{font-size:var(--fs-s);font-weight:700;color:var(--muted);min-width:68px;white-space:nowrap}
 .rowbtn .mn{min-width:0}
 .rowbtn b{display:block;font-weight:650;overflow-wrap:anywhere}
 .rowbtn .meta{display:block}
@@ -574,7 +579,8 @@ button.slot:hover{background:var(--hover);color:var(--ink)}
 .rowbtn .st-open{color:var(--ok);font-weight:700}
 .rowbtn.gone b{text-decoration:line-through;color:var(--muted)}
 .tag{display:inline-flex;align-items:center;min-height:22px;padding:0 8px;border-radius:var(--r-tag);font-size:12px;font-weight:700;background:var(--accent-soft);color:var(--ok);vertical-align:middle}
-.tag.new{background:var(--warn-bg);color:var(--warn)}
+.tag.new,.tag.need{background:var(--warn-bg);color:var(--warn)}
+.cov{margin:0 0 var(--sp3);font-size:var(--fs-s);font-weight:700;color:var(--warn)}
 .toolbar{display:flex;gap:var(--sp2);align-items:center;flex-wrap:wrap;margin-bottom:var(--sp3)}
 .toolbar input[type=search]{flex:1 1 180px;min-width:0}
 /* v1.0.1: same segmented control as the PA app (pill track, 4px inset, each segment its own pill),
@@ -641,6 +647,10 @@ details.cancelled[open]>summary .ic{transform:rotate(180deg)}
   input[type=text],input[type=password],input[type=email],input[type=search],input[type=tel],input[type=number],input[type=url],textarea,select{font-size:16px;min-height:44px}
   .rrow a{min-height:44px}
 }
+/* v1.0.2 F-12: rows sit inside a rounded card with overflow:hidden, so the 5px ring (3px + 2px offset) was clipped on the sides. Ring goes inside the row. */
+.rows .rowbtn:focus-visible,li.ev .slot:focus-visible,html[data-kb] .rows .rowbtn:focus,html[data-kb] li.ev .slot:focus{outline-offset:-3px !important}
+/* v1.0.2 F-05: quiet text link under the facts on the confirmation sheet */
+button.undo{justify-self:start;margin-left:calc(-1 * var(--sp2))}
 @media (forced-colors:active){.slot,.rowbtn{border:1px solid CanvasText}}
 @media print{.hdr .tabs,.btabs,#toasts,.skip{display:none !important}}
 
@@ -753,7 +763,7 @@ var Data = (function(){
 /* ==========================================================================
    Roots Volunteers app core: helpers, sheet, toast, sign-in, shell, routing.
    ========================================================================== */
-var BUILD = '1.0.1';
+var BUILD = '1.0.2';
 (function(){
 'use strict';
 var TZ = 'America/Chicago';
@@ -832,8 +842,8 @@ function stamp(ts, withDay){
 }
 function agesText(min, max){
   if (min == null && max == null) return '';
-  if (min != null && max != null) return 'ages ' + (min === max ? min : min + '-' + max);
-  return min != null ? 'ages ' + min + '+' : 'ages up to ' + max;
+  if (min != null && max != null) return 'Volunteers ages ' + (min === max ? min : min + '-' + max);
+  return min != null ? 'Volunteers ages ' + min + '+' : 'Volunteers up to ' + max;
 }
 function genderText(g){ return g === 'brother' ? 'Brothers' : g === 'sister' ? 'Sisters' : ''; }
 function slotMeta(s){ return [genderText(s.gender), agesText(s.age_min, s.age_max)].filter(Boolean).join(' \u00b7 '); }
@@ -908,6 +918,10 @@ function showLogin(msg){
   document.title = 'Sign in \u00b7 Roots Volunteers';
   var e = $('#signinErr'); if (msg){ e.textContent = msg; e.hidden = false; } else e.hidden = true;
   document.documentElement.classList.add('booted');
+  /* v1.0.2 F-07: the text-message link can carry ?u=<username>; the volunteer then types only the password */
+  var um = $('#signinUser'), u = '';
+  try { u = (new URLSearchParams(location.search).get('u') || '').trim(); } catch (x){}
+  if (!S.uUsed && u && /^[a-z0-9._@+-]{1,80}$/i.test(u) && !um.value){ S.uUsed = true; um.value = u; $('#signinPw').focus({preventScroll: true}); }   /* once per page load: after a sign-out on a shared phone the next person starts blank */
 }
 function toLogin(msg){
   S.session = null; S.depts = []; S.dept = ''; S.events = null;
@@ -1008,7 +1022,7 @@ function route(){
   VIEWS[tab.id](tok);
 }
 window.addEventListener('hashchange', function(){ if (S.session){ closeSheet(); route(); window.scrollTo(0, 0); } });
-document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'visible' && S.session && !$('#sheet').open && Date.now() - S.loadedAt > 90000) route(); });
+document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'visible' && S.session && !$('#sheet').open && Date.now() - S.loadedAt > 30000) route(); });
 function mainWith(nodes){ var m = $('#main'); m.replaceChildren(); add(m, nodes); }
 function emptyCard(title, text, action){
   return h('div', {class: 'empty'}, h('h2', {text: title}), text ? h('p', {class: 'muted', text: text}) : null, action ? h('div', {class: 'acts'}, action) : null);
@@ -1048,7 +1062,7 @@ function deptPill(ev){
 function slotRow(ev, s){
   var meta = slotMeta(s), open = s.open_count > 0;
   var main = h('span', {class: 's-main'}, h('b', {text: s.label}), meta ? h('span', {class: 'meta', text: meta}) : null);
-  if (S.mineSlots && S.mineSlots[s.slot_id]) return h('li', null, h('div', {class: 'slot mine-slot', role: 'group', 'aria-label': s.label + (meta ? ', ' + meta : '') + ', you are signed up'}, main, h('span', {class: 'st'}, icon('check', 'sm'), 'You\u2019re signed up')));
+  if (S.mineSlots && S.mineSlots[s.slot_id]) return h('li', null, h('button', {type: 'button', class: 'slot mine-slot', 'data-mine-slot': s.slot_id, 'aria-label': s.label + (meta ? ', ' + meta : '') + ', you are signed up', on: {click: function(){ openHeld(ev, s); }}}, main, h('span', {class: 'st'}, icon('check', 'sm'), 'You\u2019re signed up')));
   if (!open) return h('li', null, h('div', {class: 'slot full', role: 'group', 'aria-label': s.label + (meta ? ', ' + meta : '') + ', full'}, main, h('span', {class: 'st', text: 'Full'})));
   return h('li', null, h('button', {type: 'button', class: 'slot', 'data-slot': s.slot_id, on: {click: function(){ pickSlot(ev, s); }}}, main, h('span', {class: 'st', text: s.open_count + ' of ' + s.cap + ' open'}, icon('chevR', 'sm'))));
 }
@@ -1097,6 +1111,26 @@ function pickSlot(ev, s){
   var me = getMe();
   if (me.name && me.phone){ doSignup(ev, s, me, null); return; }
   signupSheet(ev, s, me);
+}
+/* v1.0.2 F-05: a spot the volunteer already holds opens the same confirmation sheet (Add to calendar + cancel link) */
+function openHeld(ev, s){
+  if (S.busy) return;
+  var id = S.mineSlots && S.mineSlots[s.slot_id];
+  if (!id) return;
+  confirmSheet(ev, s, {signup_id: id, already: false, program: ev.program, date: ev.date, time_text: ev.time_text, location: ev.location, arrive_time: ev.arrive_time, details: ev.details, slot_label: s.label});
+}
+function undoSignup(ev, s, r, btn){
+  if (S.busy) return;
+  var hrs = curDept().late_cancel_hours || 48, start = ev.start_at ? new Date(ev.start_at).getTime() : 0, late = start > Date.now() && start - Date.now() < hrs * 3600000;
+  if (late){   /* cancelling now notifies the lead: same sheet and warning as My sign-ups */
+    cancelSheet({signup_id: r.signup_id, program: r.program || ev.program, date: r.date || ev.date, start_time: ev.start_time, time_text: ev.time_text || r.time_text, slot_label: r.slot_label || s.label, slot_gender: s.gender, slot_age_min: s.age_min, slot_age_max: s.age_max, late_if_cancelled: true});
+    return;
+  }
+  S.busy = true; btn.disabled = true;
+  Data.cancel(r.signup_id, getMe().phone).then(function(res){
+    closeSheet();
+    toast(res && res.late ? 'Cancelled. Your program lead was notified.' : 'Cancelled.');
+  }).catch(function(e){ closeSheet(); failToast(e); }).then(function(){ S.busy = false; if (location.hash === '#/open') refreshOpen(); else route(); });
 }
 function ctxBlock(ev, s){
   var when = [dayLong(ev.date), timeRange(ev)].filter(Boolean).join(' \u00b7 ');
@@ -1166,7 +1200,8 @@ function confirmSheet(ev, s, r){
   var foot = [
     h('button', {type: 'button', on: {click: function(){ downloadIcs(ev, s, r); }}}, icon('download', 'sm'), 'Add to calendar'),
     h('button', {type: 'button', class: 'primary', on: {click: closeSheet}}, 'Done')];
-  openSheet({title: r.already ? 'You\u2019re already signed up' : 'You\u2019re signed up', body: [h('dl', {class: 'facts'}, rows)], foot: foot, focusTitle: true});
+  var undo = r.signup_id && !(ev.start_at && new Date(ev.start_at).getTime() <= Date.now()) ? h('button', {type: 'button', class: 'link undo', id: 'undoGo', on: {click: function(){ undoSignup(ev, s, r, this); }}}, 'Not this one? Cancel') : null;
+  openSheet({title: r.already ? 'You\u2019re already signed up' : 'You\u2019re signed up', body: [h('dl', {class: 'facts'}, rows), undo], foot: foot, focusTitle: true});
   announce(r.already ? 'You are already signed up.' : 'You are signed up.');
 }
 
@@ -1231,6 +1266,12 @@ function lookupForm(){
     err, h('button', {type: 'submit', class: 'primary', text: 'Show my sign-ups'}));
   mainWith([h('h2', {class: 'sr-only', text: 'My sign-ups'}), form]);
 }
+/* v1.0.2 F-06: same .ics as the confirmation sheet. My sign-ups rows carry no end time, so take it from the open list when that event is on it (else the file defaults to 1 hour). */
+async function mineIcs(r){
+  var ev = (S.events || []).filter(function(e){ return e.shift_id === r.shift_id; })[0];
+  if (!ev){ try { ev = ((await Data.eventsList(S.dept, r.date, r.date)) || []).filter(function(e){ return e.shift_id === r.shift_id; })[0]; } catch (x){ ev = null; } }
+  downloadIcs(Object.assign({}, r, {end_time: ev && ev.end_time || ''}), {label: r.slot_label}, r);
+}
 function mineCard(r){
   var when = [dayShort(r.date), timeRange(r)].filter(Boolean).join(' \u00b7 ');
   var slot = [r.slot_label, slotMeta({gender: r.slot_gender, age_min: r.slot_age_min, age_max: r.slot_age_max})].filter(Boolean).join(' \u00b7 ');
@@ -1241,7 +1282,7 @@ function mineCard(r){
       slot ? h('p', {class: 'meta', style: 'margin:0', text: slot}) : null,
       r.location ? h('p', {class: 'meta', style: 'margin:0', text: r.location}) : null,
       r.arrive_time ? h('p', {class: 'meta', style: 'margin:0', text: 'Arrive ' + r.arrive_time}) : null),
-    r.can_cancel ? h('div', {class: 'acts'}, h('button', {type: 'button', 'data-cancel': r.signup_id, on: {click: function(){ cancelSheet(r); }}}, 'Cancel sign-up')) : null);
+    r.can_cancel ? h('div', {class: 'acts'}, h('button', {type: 'button', 'data-ics': r.signup_id, on: {click: function(){ mineIcs(r); }}}, 'Add to calendar'), h('button', {type: 'button', 'data-cancel': r.signup_id, on: {click: function(){ cancelSheet(r); }}}, 'Cancel sign-up')) : null);
 }
 function renderMine(rows){
   var out = [h('h2', {class: 'sr-only', text: 'My sign-ups'}), whoLine()];
@@ -1280,15 +1321,27 @@ function filledOf(ev){
   (ev.slots || []).forEach(function(s){ cap += s.cap; taken += s.taken; });
   return {cap: cap, taken: taken};
 }
+/* v1.0.2 F-04: places still open on an upcoming, open, cancelled-not event that has spots set; null when the question doesn't apply */
+function needOf(ev){
+  if (ev.gone || !ev.open || ev.date < todayIso() || (ev.start_at && new Date(ev.start_at).getTime() <= Date.now())) return null;   /* an event that already started has nothing left to fill: it keeps today's "Open" */
+  var cap = 0, left = 0;
+  (ev.slots || []).forEach(function(s){ cap += s.cap; left += Math.max(s.cap - s.taken, 0); });
+  return cap > 0 ? left : null;
+}
 function evStatus(ev){
   if (ev.gone) return {t: 'Cancelled', c: 'gone'};
-  if (ev.open) return {t: 'Open', c: 'st-open'};
+  if (ev.open){
+    var n = needOf(ev);
+    if (n != null) return n > 0 ? {t: 'Needs ' + n, c: 'tag need'} : {t: 'Full', c: 'tag'};
+    return {t: 'Open', c: 'st-open'};
+  }
   return {t: ev.configured ? 'Closed' : 'Not set up', c: ''};
 }
+function weekEnd(iso){ var dow = parseIso(iso).dow; return addDays(iso, dow === 0 ? 0 : 7 - dow); }   /* Sunday of this Monday-Sunday week */
 function leadRow(ev){
   var f = filledOf(ev), st = evStatus(ev);
   var sub = [ev.location, f.cap ? f.taken + ' of ' + f.cap + ' filled' : ''].filter(Boolean).join(' \u00b7 ');
-  return h('li', null, h('button', {type: 'button', class: 'rowbtn' + (ev.gone ? ' gone' : ''), 'data-shift': ev.shift_id, on: {click: function(){ eventSheet(ev); }}},
+  return h('li', null, h('button', {type: 'button', class: 'rowbtn' + (ev.gone ? ' gone' : ''), 'data-shift': ev.shift_id, on: {click: function(){ openEvent(ev); }}},
     h('span', {class: 't', text: pretty12(ev.start_time) || ''}),
     h('span', {class: 'mn'}, h('b', {text: ev.program}), h('span', {class: 'meta', text: sub}), ev.shift_dept && String(S.dept).replace(/^sbx_/, '') === 'community' ? h('span', {class: 'meta', text: ev.shift_dept}) : null),
     h('span', {class: 'go'}, h('span', {class: st.c, text: st.t}))));
@@ -1296,6 +1349,8 @@ function leadRow(ev){
 function renderLeadEvents(){
   var today = todayIso(), evs = sortEvents(LEAD.events), past = evs.filter(function(e){ return e.date < today; }), rest = evs.filter(function(e){ return e.date >= today; });
   var out = [h('h2', {class: 'sr-only', text: 'Events'})];
+  var wk = weekEnd(today), short = rest.filter(function(e){ return e.date <= wk && needOf(e) > 0; }).length;
+  if (short > 0) out.push(h('p', {class: 'cov', text: short === 1 ? '1 event this week still needs people' : short + ' events this week still need people'}));
   if (past.length){
     out.push(h('button', {type: 'button', class: 'fold link', id: 'pastBtn', 'aria-expanded': LEAD.showPast ? 'true' : 'false', on: {click: function(){ LEAD.showPast = !LEAD.showPast; renderLeadEvents(); }}}, (LEAD.showPast ? 'Hide earlier events' : 'Earlier events (' + past.length + ')')));
   }
@@ -1322,6 +1377,28 @@ async function reloadLeadEvents(){
 }
 
 /* ----- event sheet ----- */
+/* v1.0.2 F-02: the list can be minutes old, so fetch the event row and its roster first; the default pane and the Sign-ups (N) count then come from fresh data.
+   If the fetch fails the sheet still opens on the row we have. */
+async function openEvent(ev){
+  if (LEAD.opening) return;
+  LEAD.opening = true;
+  var fresh = ev, rows = null;
+  try {
+    var got = await Promise.race([Promise.all([Data.eventsList(S.dept, ev.date, ev.date), Data.eventRoster(ev.shift_id)]), new Promise(function(_, no){ setTimeout(function(){ no(new Error('slow')); }, 6000); })]);
+    var row = (got[0] || []).filter(function(x){ return x.shift_id === ev.shift_id; })[0];
+    if (row){
+      var i = LEAD.events.findIndex(function(x){ return x.shift_id === ev.shift_id; });
+      if (i >= 0 && JSON.stringify(LEAD.events[i]) !== JSON.stringify(row)){ LEAD.events[i] = row; fresh = row; if (location.hash === '#/events'){ renderLeadEvents(); var b = $('.rowbtn[data-shift="' + ev.shift_id + '"]'); if (b) b.focus({preventScroll: true}); } }
+      else fresh = row;
+    }
+    rows = got[1] || [];
+  } catch (e){
+    if (e && e.hint === 'auth'){ LEAD.opening = false; failToast(e); return; }
+    rows = null;
+  }
+  LEAD.opening = false;
+  eventSheet(fresh, rows);
+}
 var GENDERS = [['any', 'Anyone'], ['brother', 'Brothers'], ['sister', 'Sisters']];
 function slotEditor(s, idx){
   var uid = 'se' + idx + '_' + Math.random().toString(36).slice(2, 6);
@@ -1355,7 +1432,7 @@ function readSlots(listEl){
   });
   return {slots: out, bad: bad};
 }
-function eventSheet(ev){
+function eventSheet(ev, rows0){
   var f = filledOf(ev), started = ev.date <= todayIso();
   var sum = [dayLong(ev.date), timeRange(ev)].filter(Boolean).join(' \u00b7 ');
   var pane = {spots: null, who: null}, tab = f.taken ? 'who' : 'spots';
@@ -1408,7 +1485,7 @@ function eventSheet(ev){
   }
   openSheet({title: ev.program, wide: true, body: [h('p', {class: 'meta', style: 'margin:0', text: [sum, ev.location].filter(Boolean).join(' \u00b7 ')}), seg, pane.who, pane.spots], foot: [saveBtn]});
   show(tab);
-  loadRoster(ev, pane.who, started);
+  if (rows0) drawRoster(ev, pane.who, rows0, started); else loadRoster(ev, pane.who, started);
 }
 async function loadRoster(ev, host, started){
   var rows;
