@@ -1780,6 +1780,25 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 @media (prefers-reduced-motion:reduce){ #v-person .pv-wk{scroll-behavior:auto} }
 @media print{ .pv-edge{display:none !important} }
 
+/* ---------- v2.13.0 (Anisha, Nov 11 4:34pm): My tasks Today / This week + move to this week ----------
+   The heading row holds the heading, the Today | This week switch and (on a past week) "Move N open tasks to this week".
+   Today is one column of today's groups (no day header: the heading says Today), then the "from earlier" lines under it. */
+.pv-hrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin:var(--sp4) 0 var(--sp2)}
+.pv-hrow .pv-h{margin:0}
+.pv-seg button{padding:0 14px;font-size:14px}
+.pv-moveall{min-height:36px;font-size:14px;font-weight:600;padding:0 14px}
+#v-person .pv-wk.pv-solo{grid-template-columns:minmax(0,1fr);max-width:720px;overflow:visible;padding:0}
+#v-person .pv-solo .pv-day{gap:0}
+.pv-earlier{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin:0 0 var(--sp3)}
+.pv-more{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 6px;margin-left:-6px;border:none;border-radius:var(--r-inner,8px);background:transparent;color:var(--muted);font-size:14px;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.pv-more:hover{background:var(--hover);color:var(--ink)}
+.pv-more-od,.pv-more-od:hover{color:var(--err)}
+.pv-more .ic{width:16px;height:16px}
+.pvm-list{margin:0;padding-left:20px}
+.pvm-list li{margin:2px 0}
+@media (pointer:coarse){ .pv-more,.pv-moveall{min-height:44px} }
+@media (forced-colors:active){ .pv-more-od,.pv-more-od:hover{color:LinkText} }
+
 </style>
 </head>
 <body>
@@ -1859,7 +1878,7 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.12.2';   // v2.12.2: Anisha Nov 3 7:23pm (task box field order: Task, Note, Program, Project, Who, Day, Watchers, in the Add task sheet and the open-task sheet). Was 2.12.1: // v2.12.1: Anisha Nov 3 4:30pm (My tasks day columns at least 300px wide with a sideways scroll + edge arrows, full titles/notes/program lines, group header names never squeezed). Was 2.12.0: // v2.12.0: Anisha Oct 28 (My tasks keeps overdue tasks under their day with a red icon and a red "N overdue" on the group header, PAs see "N spots left" next to Sign up, the Project list is per person). Was 2.11.1:   // v2.11.1: Calendar month, Mine: when all of the person's sign-ups are before today the empty note and "See N that need a PA" show above the "Show N earlier days" link. Was 2.11.0:   // v2.11.0: Anisha Oct 27 (month +more in place, Common tasks pick list, admin My tasks trimmed, Add task on group headers, done tasks to the bottom). Was 2.10.0:   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
+var BUILD = '2.13.0';   // v2.13.0 (Anisha, Nov 11 4:34pm): My tasks Today / This week switch (Today first) and moving a task to the week you're in (open-task sheet week switch + "Move N open tasks to this week" on a past week). Was 2.12.2: // v2.12.2: Anisha Nov 3 7:23pm (task box field order: Task, Note, Program, Project, Who, Day, Watchers, in the Add task sheet and the open-task sheet). Was 2.12.1: // v2.12.1: Anisha Nov 3 4:30pm (My tasks day columns at least 300px wide with a sideways scroll + edge arrows, full titles/notes/program lines, group header names never squeezed). Was 2.12.0: // v2.12.0: Anisha Oct 28 (My tasks keeps overdue tasks under their day with a red icon and a red "N overdue" on the group header, PAs see "N spots left" next to Sign up, the Project list is per person). Was 2.11.1:   // v2.11.1: Calendar month, Mine: when all of the person's sign-ups are before today the empty note and "See N that need a PA" show above the "Show N earlier days" link. Was 2.11.0:   // v2.11.0: Anisha Oct 27 (month +more in place, Common tasks pick list, admin My tasks trimmed, Add task on group headers, done tasks to the bottom). Was 2.10.0:   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
 // was 2.7.2: // v2.7.2: departments are one shared filter (Calendar, Board, PA shifts), never a team; no team chips at sign-in
 // v2.7.1: Calendar filter is one dropdown (departments + Needs a PA); Board tab for PAs/YCs with Take it
 // v2.6.9:   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
@@ -4785,10 +4804,11 @@ function projSelect(id, cur, onChange, getPeople){
    could only be given next week's days ("isn't showing any dates for this week, only next"). The week is now
    passed in, named on the legend, and switchable from a small segmented control. Two options always
    (This week / Next week); a third only when the sheet was opened from another week. */
-function dayChips(id, cur, onPick, week, onWeek, lock){
+function dayChips(id, cur, onPick, week, onWeek, lock, mv){
   var base = thisWeek(), nxt = addDays(base, 7);
   var weeks = lock ? [week || base] : [base, nxt];
   if (!lock && week && weeks.indexOf(week) < 0) weeks.push(week);
+  if (mv && !lock) weeks.sort();   // v2.13.0: the open-task sheet lists the task's own week, This week, Next week in calendar order
   var sel = weeks.indexOf(week) >= 0 ? week : base;
   var curDay = cur || '';
   var legend = h('legend');
@@ -4815,7 +4835,9 @@ function dayChips(id, cur, onPick, week, onWeek, lock){
   function setWeek(w){
     // the chosen day is a weekday, so it stays chosen in the new week (its date moves with the week)
     var a = document.activeElement, back = a && chips.contains(a) ? a.value : null;
-    sel = w; if (onWeek) onWeek(w); draw(back);
+    sel = w; var landed = onWeek ? onWeek(w) : null;
+    if (typeof landed === 'string') curDay = landed;   // v2.13.0: moving the task may change its day (a day that already passed becomes today)
+    draw(back);
     announce('Days for ' + wkName(w) + ': ' + shortDate(w) + ' \u2013 ' + shortDate(addDays(w, 6)));
   }
   draw();
@@ -5009,10 +5031,69 @@ function moveTaskTo(id, v){
     invalidate('board', 'person', 'cal'); refreshSheet();
   }}});
 }
+/* ---------- v2.13.0 (Anisha, Nov 11 4:34pm): move tasks to the week you're in ----------
+   "i have some tasks leftover from last week that i want to shift over to this week, but theres no option to shift it to this week,
+   just different days last week."  A task lives in a program row and programs.week decides its week, tasks.due is a weekday.
+   - a personal task whose own personal program holds only it: that program's week changes;
+   - any other task (a personal program with more tasks, or a task under a calendar/Board program): it moves to a NEW personal
+     program in the target week (project, people, watchers and note stay on the task); an emptied personal program is archived.
+   Every move hands back a record that undoMove() reverses exactly (week/program/sort/day). */
+function moveDueFor(due, wk){
+  var i = DAYS.indexOf(due); if (i < 0) return '';                         // "No day" stays No day
+  if (wk === thisWeek() && i < todayIdx()) return DAYS[todayIdx()];         // a day that already passed this week becomes today
+  return due;
+}
+function moveTaskToWeek(id, wk, due){
+  var t = D.tasks.get(id); if (!t || t.deleted_at) return null;
+  var from = D.programs.get(t.program_id), label = taskLabel(t);
+  var rec = {id: id, label: label, toWeek: wk, fromWeek: from ? from.week : S.week, fromSnap: from ? Object.assign({}, from) : null,
+    taskPrev: {program_id: t.program_id, sort: t.sort, due: t.due}, mode: '', newProg: '', archivedFrom: false};
+  var lone = !!(from && from.personal && !from.deleted_at && !tasksOf(from.id).filter(function(x){ return x.id !== id; }).length);
+  var patch = {};
+  if (lone){ rec.mode = 'week'; setFields('programs', from.id, {week: wk}, progLabel(from)); }
+  else {
+    var np = newPersonalProgram(label, wk);
+    rec.mode = 'new'; rec.newProg = np.id;
+    patch.program_id = np.id; patch.sort = nextSort(tasksOf(np.id));
+  }
+  if ((t.due || '') !== (due || '')) patch.due = due || '';
+  if (Object.keys(patch).length) setFields('tasks', id, patch, label);
+  if (rec.mode === 'new' && from && from.personal && !from.deleted_at && !tasksOf(from.id).length){ setFields('programs', from.id, {deleted_at: nowIso()}, progLabel(from)); rec.archivedFrom = true; }
+  pvStale(true); invalidate('board', 'person', 'cal');
+  return rec;
+}
+/* a row this device may have dropped (another week's program leaves memory when its week is not the one on screen): read it back first */
+async function ensureRows(table, ids){
+  var map = T[table].map(), miss = ids.filter(function(x){ return x && !map.has(x); });
+  if (!miss.length) return;
+  try {
+    var r = await sb.from(table).select('*').in('id', miss);
+    (r.data || []).forEach(function(row){ var k = keyOf(table, row); if (!map.has(k)) map.set(k, Object.assign({}, row)); });
+    IX = null;
+  } catch (e){}
+}
+async function undoMove(rec){
+  var pre = rec.taskPrev, sn = rec.fromSnap;
+  await ensureRows('tasks', [rec.id]);
+  await ensureRows('programs', [sn && sn.id, rec.newProg]);
+  if (!D.tasks.has(rec.id)) return;
+  if (rec.mode === 'week'){
+    if (sn && D.programs.has(sn.id)) setFields('programs', sn.id, {week: rec.fromWeek}, rec.label);
+    setFields('tasks', rec.id, {due: pre.due}, rec.label);
+  } else {
+    if (rec.archivedFrom && sn && D.programs.has(sn.id)) setFields('programs', sn.id, {deleted_at: null}, rec.label);
+    setFields('tasks', rec.id, {program_id: pre.program_id, sort: pre.sort, due: pre.due}, rec.label);
+    var np = rec.newProg && D.programs.get(rec.newProg);
+    if (np && !np.deleted_at && !tasksOf(np.id).length) setFields('programs', np.id, {deleted_at: nowIso()}, rec.label);
+  }
+  pvStale(true); invalidate('board', 'person', 'cal');
+}
+function moveWeekName(w){ return w === thisWeek() ? 'this week' : w === addDays(thisWeek(), 7) ? 'next week' : 'the week of ' + shortDate(w); }
 function taskSheet(id, pid, ret){
   var t = D.tasks.get(id); if (!t) return;
   var body = h('div', {class: 'stack td25'}), open = {who: false, w: false}, keepWho = new Set(), keepW = new Set();
   var tsMe = isPaLogin() ? myLoginPerson() : myStaffPerson();   // v2.9.0 (F)
+  var t0p = D.programs.get(t.program_id), twk = t0p && t0p.week ? t0p.week : S.week;   // v2.13.0: the week this task is in now (follows a move)
   function render(){
     var cur = D.tasks.get(id);
     if (!cur || cur.deleted_at){ body.replaceChildren(h('p', {class: 'muted', text: 'This task was archived.'})); return; }
@@ -5047,7 +5128,18 @@ function taskSheet(id, pid, ret){
     // v2.12.0 (Anisha, Oct 28): the task's people plus whoever has the sheet open
     var proj = projSelect('tdProj', cur.project_id || '', function(v){ setTaskProject(id, v); }, function(){
       var m = projMeId(); return assigneesOf(id).map(function(x){ return x.person_id; }).concat(m ? [m] : []); });
-    var days = dayChips('tdDay', cur.due, function(d){ setTaskDue(id, d); invalidate('cal'); }, S.week, null, true);
+    // v2.13.0 (Anisha, Nov 11 4:34pm): the week switch is unlocked. Picking a week moves the task there (it keeps its day unless that day already
+    // passed this week, then it becomes today); picking a day then sets the day in that week. A repeating task keeps its own week (it repeats by itself).
+    var days = dayChips('tdDay', cur.due, function(d){ setTaskDue(id, d); invalidate('cal'); }, twk, function(w){
+      var c = D.tasks.get(id); if (!c) return;
+      var nd = moveDueFor(c.due, w), rec = moveTaskToWeek(id, w, nd); if (!rec) return;
+      twk = w;
+      toast('Moved to ' + moveWeekName(w).replace(/^the /, '') + (nd ? ', ' + dayName(nd) : '') + '.', {action: {label: 'Undo', fn: function(){
+        undoMove(rec).then(function(){ twk = rec.fromWeek; refreshSheet(); announce('Took back the move of ' + quote(rec.label)); });
+      }}});
+      announce('Moved ' + quote(rec.label) + ' to ' + moveWeekName(w));
+      return nd;
+    }, isRecurring(cur), true);
     var e = estOn() && isAdmin() ? estOf(id) : null;
     var est = estOn() && isAdmin() ? h('div', {class: 'td-est'}, h('span', {class: 'field', text: 'Time estimate'}),
       h('span', {class: 'grow', text: e ? (e.source === 'admin' ? '' : 'About ') + minsWords(e.minutes) : 'Not set'}),
@@ -5198,9 +5290,9 @@ function pvGroups(pid, skip, wkOk){
   return Array.from(days.values()).sort(function(a, b){ return (a.date || '9').localeCompare(b.date || '9'); });
 }
 /* one day column: the day label, then its folded program headers */
-function pvDayEl(d, pid){
-  var today = todayIso(), iso = d.date, id = 'pvd_' + (iso || 'nodate');
-  var hd = iso
+function pvDayEl(d, pid, solo){
+  var today = todayIso(), iso = d.date, id = solo ? 'pvTasksH' : 'pvd_' + (iso || 'nodate');   // v2.13.0: solo = the Today view, the heading above is the day's name
+  var hd = solo ? null : iso
     ? h('h3', {class: 'pv-dayh', id: id},
         h('b', {class: 'pv-dayn', text: WEEKDAY_NAMES[isoToDate(iso).getDay()].slice(0, 3)}),
         h('span', {class: 'pv-dayd', text: shortDate(iso)}),
@@ -5335,6 +5427,54 @@ function pvGroupEl(g, pid){
     'data-date': g.date || null, 'data-k': g.k}, h('h3', {class: 'pg-h'}, head, addB), body);
 }
 
+/* ---------- v2.13.0 (Anisha, Nov 11 4:34pm): My tasks, Today / This week ----------
+   "add a button toggle that shows (today, this week) with Today being the default ... today would show just the tasks for the day that they're on".
+   Today = today's day only (same groups, rows and "+ Add task"), then one red line for what is overdue from earlier this week and one muted line
+   for open tasks with no day; both open This week. This week = the day columns as before. The switch only applies to the current week; another
+   week always shows its full week. The choice is kept per device (localStorage "pvmode"); PVM.v is this session's pick (the bulk move lands on
+   This week for the session without changing the kept choice). */
+var PVM = {v: null};
+function pvMode(){ return PVM.v || (lsGet('pvmode', 'today') === 'week' ? 'week' : 'today'); }
+function pvModeSet(m, keep){ PVM.v = m; if (keep !== false) lsSet('pvmode', m); }
+function pvModeSeg(tw, mode){
+  var seg = h('div', {class: 'seg pv-seg', role: 'group', 'aria-label': 'Show'});
+  [['today', 'Today'], ['week', 'This week']].forEach(function(x){
+    seg.append(h('button', {type: 'button', 'aria-pressed': tw && mode === x[0] ? 'true' : 'false', 'data-fk': 'pvmode:' + x[0], on: {click: function(){
+      pvModeSet(x[0]);
+      if (S.week !== thisWeek()) go({week: thisWeek()});          // from another week: back to this week, in the picked view
+      else if (x[0] !== mode){ invalidate('person'); announce(x[0] === 'today' ? 'Showing today' : 'Showing this week'); }
+    }}}, x[1]));
+  });
+  return seg;
+}
+/* the person's open tasks that "Move to this week" can take from the week on screen: open for her, not repeating */
+function pvMovable(pid){ return tasksFor(pid).filter(function(t){ return !personDone(t, pid) && !isRecurring(t); }); }
+function pvMoveAll(pid){
+  var list = pvMovable(pid), wk = thisWeek(), from = S.week, recs = [];
+  list.forEach(function(t){ var r = moveTaskToWeek(t.id, wk, moveDueFor(t.due, wk)); if (r) recs.push(r); });
+  if (!recs.length) return;
+  var n = recs.length;
+  toast('Moved ' + n + ' task' + (n === 1 ? '' : 's') + ' to this week.', {timeout: 12000, action: {label: 'Undo', fn: async function(){
+    for (var i = recs.length - 1; i >= 0; i--) await undoMove(recs[i]);
+    announce('Took back the move of ' + n + ' task' + (n === 1 ? '' : 's'));
+  }}});
+  announce('Moved ' + n + ' task' + (n === 1 ? '' : 's') + ' to this week');
+  pvModeSet('week', false);                                        // land where they are: this session shows the whole week, the kept choice stays
+  whenSaved(function(){ if (S.tab === 'person' && S.week === from) go({week: wk}); });
+}
+function pvMoveSheet(pid, ret){
+  var list = pvMovable(pid), n = list.length; if (!n) return;
+  var mine = pid === (isPaLogin() ? myLoginPerson() : myStaffPerson());
+  var titles = list.slice(0, 8).map(function(t){ return h('li', {text: taskLabel(t) + (t.due ? ' \u00b7 ' + dayName(t.due) : '')}); });
+  var body = h('div', {class: 'stack pvm'},
+    h('p', null, 'Move ' + (mine ? 'your ' : personName(pid) + '\u2019s ') + n + ' open task' + (n === 1 ? '' : 's') + ' from the week of ' + shortDate(S.week) + ' to this week (' + weekRange(thisWeek()) + ')?'),
+    h('ul', {class: 'pvm-list'}, titles, n > 8 ? h('li', {class: 'muted', text: '+ ' + (n - 8) + ' more'}) : null),
+    h('p', {class: 'small muted', text: 'Each keeps its day. A day that already passed this week becomes today. Done and repeating tasks stay where they are.'}));
+  openSheet({title: 'Move to this week', returnTo: ret, body: body, focus: '[data-fk="pvmgo"]',
+    foot: [h('button', {type: 'button', 'data-fk': 'pvmcancel', on: {click: closeSheet}}, 'Cancel'),
+      h('button', {type: 'button', class: 'primary', 'data-fk': 'pvmgo', on: {click: function(){ closeSheet(); pvMoveAll(pid); }}}, 'Move ' + n + ' task' + (n === 1 ? '' : 's'))]});
+}
+
 RENDER.person = function(){
   var sec = $('#v-person');
   if (S.weekLoaded !== S.week || !S.sharedLoaded){
@@ -5396,13 +5536,34 @@ RENDER.person = function(){
   //    In-office and setup lines stay on the Calendar.
   var wkOk = !hasShifts() || shiftsReady(monthsOfRange(S.week, addDays(S.week, 6)));
   var days = pvGroups(pid, null, wkOk);
-  var box = days.length ? h('ol', {class: 'pv-groups pv-days pv-wk', 'aria-labelledby': 'pvTasksH'}, days.map(function(d){ return pvDayEl(d, pid); })) : null;
-  if (box){ box.style.setProperty('--pvn', String(days.length)); box = pvWrap(box, [S.team, pid, S.week].join('|')); }
-  else PVX.key = '';   // no day row (an empty week): the next week or person that has one opens fresh   // v2.12.1: scroll box + edge arrows around the day row
-  var openN = ts.filter(function(t){ return !personDone(t, pid); }).length;
-  var tasksH = h('h2', {class: 'pv-h', id: 'pvTasksH'}, tw ? 'This week' : weekLabel(S.week),
+  // v2.13.0 (Anisha, Nov 11 4:34pm): Today / This week. Today shows today's day only; any other week shows its whole week.
+  var mode = tw ? pvMode() : 'week', todayD = null, box, earlier = null;
+  var openOf = function(d){ var n = 0; d.list.forEach(function(g){ n += g.tasks.filter(function(t){ return !personDone(t, pid); }).length; }); return n; };
+  if (mode === 'today'){
+    PVX.key = '';   // back on This week the row opens on today's column again
+    todayD = days.filter(function(d){ return d.date === todayIso(); })[0] || null;
+    box = todayD ? h('ol', {class: 'pv-groups pv-days pv-wk pv-solo', 'aria-labelledby': 'pvTasksH'}, pvDayEl(todayD, pid, true)) : null;
+    var openAll = ts.filter(function(t){ return !personDone(t, pid); }), nOd = openAll.filter(isOverdue).length, nNone = 0;
+    days.forEach(function(d){ if (!d.date) nNone += openOf(d); });
+    var toWeek = function(){ pvModeSet('week'); invalidate('person'); announce('Showing this week'); refocusMore('pvmode:week'); };
+    var lines = [];
+    if (nOd) lines.push(h('button', {type: 'button', class: 'pv-more pv-more-od', 'data-fk': 'pvodl', on: {click: toWeek}}, icon('warn', 'sm'), nOd + ' overdue from earlier'));
+    if (nNone) lines.push(h('button', {type: 'button', class: 'pv-more', 'data-fk': 'pvnodayl', on: {click: toWeek}}, nNone + ' with no day'));
+    earlier = lines.length ? h('div', {class: 'pv-earlier'}, lines) : null;
+  } else {
+    box = days.length ? h('ol', {class: 'pv-groups pv-days pv-wk', 'aria-labelledby': 'pvTasksH'}, days.map(function(d){ return pvDayEl(d, pid); })) : null;
+    if (box){ box.style.setProperty('--pvn', String(days.length)); box = pvWrap(box, [S.team, pid, S.week].join('|')); }
+    else PVX.key = '';   // no day row (an empty week): the next week or person that has one opens fresh   // v2.12.1: scroll box + edge arrows around the day row
+  }
+  var openN = mode === 'today' ? (todayD ? openOf(todayD) : 0) : ts.filter(function(t){ return !personDone(t, pid); }).length;
+  var tasksH = h('h2', {class: 'pv-h', id: 'pvTasksH'}, tw ? (mode === 'today' ? 'Today' : 'This week') : weekLabel(S.week),
     openN ? h('span', {class: 'muted', text: openN + ' open'}) : null);
-  var quiet = !box ? h('p', {class: 'muted pv-quiet', text: 'Nothing on ' + personName(pid) + '\u2019s week yet.' + (wkOk ? '' : ' Loading the calendar\u2026')}) : null;   // v2.12.0: overdue tasks stay in the day groups, so an empty week is simply empty
+  // v2.13.0: the switch sits with the heading; on a past week the heading row also offers to bring its open tasks to this week
+  var mv = S.week < thisWeek() ? pvMovable(pid) : [];
+  var mvBtn = mv.length ? h('button', {type: 'button', class: 'pv-moveall', 'data-fk': 'pvmoveall', 'aria-haspopup': 'dialog',
+    on: {click: function(e){ pvMoveSheet(pid, e.currentTarget); }}}, 'Move ' + mv.length + ' open task' + (mv.length === 1 ? '' : 's') + ' to this week') : null;
+  var hrow = h('div', {class: 'pv-hrow'}, tasksH, pvModeSeg(tw, mode), mvBtn);
+  var quiet = !box ? h('p', {class: 'muted pv-quiet', text: mode === 'today' ? 'Nothing due today.' + (wkOk ? '' : ' Loading the calendar\u2026') : 'Nothing on ' + personName(pid) + '\u2019s week yet.' + (wkOk ? '' : ' Loading the calendar\u2026')}) : null;   // v2.12.0: overdue tasks stay in the day groups, so an empty week is simply empty
   var noneEl = null;
 
   // 3. programs for the next two weeks: one line each, their tasks under it only when there are any
@@ -5435,7 +5596,7 @@ RENDER.person = function(){
         x.live ? h('button', {type: 'button', class: 'grow w-open', 'data-fk': 'pwm:' + x.t.id, 'aria-haspopup': 'dialog', on: {click: function(e){ taskSheet(x.t.id, pid, e.currentTarget); }}}, txt) : h('span', {class: 'grow', text: txt}),
         x.done ? h('span', {class: 'mk full'}, icon('check'), 'Done') : null);
     })) : h('p', {class: 'muted small', text: 'Nothing yet.'})) : null;
-  setKids(sec, [top, addf, staffView && !adminMt ? watchSec : null, tasksH, adminMt ? null : estLine(pid, S.week), box, quiet, ntw, staffView && !adminMt ? null : watchSec]);
+  setKids(sec, [top, addf, staffView && !adminMt ? watchSec : null, hrow, adminMt ? null : estLine(pid, S.week), box, quiet, earlier, ntw, staffView && !adminMt ? null : watchSec]);
   if (box && box._pvWire) box._pvWire();   // v2.12.1: once it is in the page: open on today's column or keep the scroll, then show the arrows that apply
 };
 
