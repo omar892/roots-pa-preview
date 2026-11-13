@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-build="1.0.0">
+<html lang="en" data-build="1.1.0">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Roots Hub</title>
 <meta name="description" content="Find the artifacts Roots DFW staff use.">
-<meta name="app-version" content="1.0.0">
+<meta name="app-version" content="1.1.0">
 <meta name="theme-color" content="#202f0e">
 <meta name="application-name" content="Roots Hub">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -660,6 +660,34 @@ dl.facts dd{margin:0;overflow-wrap:anywhere}
   .chips button,.seg button{min-height:44px}
   .seg button{font-size:var(--fs-s)}
 }
+/* ---------- v1.1: viewer for hub copies (tokens only; header look is the existing .hdr) ---------- */
+html.viewing,html.viewing body{overflow:hidden}
+html.viewing #toasts{bottom:calc(16px + env(safe-area-inset-bottom))}
+.viewer{position:fixed;top:0;left:0;right:0;height:100vh;height:100dvh;z-index:40;display:flex;flex-direction:column;background:var(--bg);overscroll-behavior:contain}
+.viewer[hidden]{display:none}
+.vbar{position:relative;flex:0 0 auto}
+.vbar .hdr1{flex-wrap:nowrap;min-height:56px}
+.vtitle{flex:1 1 auto;min-width:0;display:grid;gap:2px;margin-left:2px}
+.vtitle h1{margin:0;font-size:16px;font-weight:700;line-height:1.25;color:var(--roots-white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vmeta{margin:0;display:flex;align-items:center;gap:8px;min-width:0;font-size:var(--fs-s);color:var(--roots-tea);white-space:nowrap;overflow:hidden}
+.vmeta:empty{display:none}
+.vmeta .kindrow{flex:0 0 auto}
+.vmeta .vver{overflow:hidden;text-overflow:ellipsis;min-width:0;font-variant-numeric:tabular-nums}
+.vacts{display:flex;align-items:center;gap:var(--sp2);flex:0 0 auto}
+.hdr .vbtn{padding:0 18px;background:transparent;border-color:var(--roots-tea);color:var(--roots-white)}
+.hdr .vbtn:hover{background:var(--wash-10);border-color:var(--roots-white);color:var(--white)}
+.vbody{position:relative;flex:1 1 auto;min-height:0;background:var(--surface-raised)}
+.vframe{position:absolute;top:0;left:0;width:100%;height:calc(100% - env(safe-area-inset-bottom));border:0;display:block;background:var(--white)}
+.vload{position:absolute;top:0;left:0;right:0;bottom:0;padding:var(--sp3);background:var(--bg);overflow:hidden}
+.vmsg{height:100%;overflow:auto;padding:var(--sp3);background:var(--bg)}
+.art-note{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden}
+@media (min-width:768px){.vtitle h1{font-size:18px}}
+@media (max-width:767px){
+  .hdr .vbtn{width:var(--tap);min-width:var(--tap);padding:0;border-radius:50%}
+  .vbtn .lbl{display:none}
+  .vacts{gap:6px}
+}
+@media print{.viewer{display:none !important}}
 @media (forced-colors:active){.art,.dr{border:1px solid CanvasText}}
 @media print{.btabs,#toasts,.skip{display:none !important}}
 
@@ -702,6 +730,16 @@ dl.facts dd{margin:0;overflow-wrap:anywhere}
   </header>
   <main id="main" tabindex="-1"></main>
   <nav class="btabs" id="btabs" aria-label="Sections"></nav>
+  <section id="viewer" class="viewer" hidden aria-labelledby="vTitle">
+    <header class="hdr vbar">
+      <div class="hdr1">
+        <button type="button" class="icon" id="vBack" aria-label="Back to hub"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+        <div class="vtitle"><h1 id="vTitle"></h1><p class="vmeta" id="vMeta"></p></div>
+        <div class="vacts" id="vActs"></div>
+      </div>
+    </header>
+    <div class="vbody" id="vBody"></div>
+  </section>
 </div>
 
 <dialog id="sheet" class="sheet" aria-labelledby="sheetTitle"></dialog>
@@ -728,7 +766,8 @@ var Data = (function(){
     HUB_NOT_FOUND: 'That item isn\u2019t there anymore.',
     HUB_NOT_LIVE: 'Approve it first, then it can go on the shelf.',
     HUB_SHELF_FULL: 'The shelf is full (6). Unfeature one first.',
-    HUB_DUPLICATE: 'Another copy of that link is already in the hub.'
+    HUB_DUPLICATE: 'Another copy of that link is already in the hub.',
+    HUB_NO_VERSION: 'That version isn\u2019t there anymore.'
   };
   function client(){
     if (sb) return sb;
@@ -745,6 +784,13 @@ var Data = (function(){
     if (/failed to fetch|networkerror|load failed|network request failed|fetch/i.test(msg)) return mkErr('network', 'Can\u2019t reach the server. Check your connection and try again.', 0);
     if (status === 401 || /jwt|not authenticated|invalid claim/i.test(msg)) return mkErr('auth', 'Please sign in again.', 401);
     return mkErr('', 'Something went wrong. Try again.', status);
+  }
+  /* Storage errors have their own shape (status in error.status / originalError.status, no HUB_ codes). */
+  function fromStorage(error){
+    var msg = String(error && error.message || ''), st = Number(error && (error.status || error.statusCode || error.originalError && error.originalError.status) || 0);
+    if (/failed to fetch|networkerror|load failed|network request failed/i.test(msg)) return mkErr('network', 'Can\u2019t reach the server. Check your connection and try again.', 0);
+    if (st === 401 || /jwt|not authenticated|invalid claim/i.test(msg)) return mkErr('auth', 'Please sign in again.', 401);
+    return mkErr('copy', 'We couldn\u2019t load this copy.', st);
   }
   async function rpc(name, args){
     var clean = {};
@@ -787,6 +833,20 @@ var Data = (function(){
     remove: function(id){ return rpc('hub_remove', {p_id: id}); },
     restore: function(id){ return rpc('hub_restore', {p_id: id}); },
     removed: function(space){ return rpc('hub_removed', {p_space: space}); },
+    /* v1.1: hub-owned copies. versions() = hub_versions rows newest first (RLS = same visibility as the artifact); copy() downloads the file as the signed-in user. */
+    async versions(id){
+      var r;
+      try { r = await client().from('hub_versions').select('artifact_id,version,space,path,bytes,sha256,source_url,captured_at,note').eq('artifact_id', id).order('version', {ascending: false}); } catch (x){ throw fromPg(x, 0); }
+      if (r.error) throw fromPg(r.error, r.status);
+      return r.data || [];
+    },
+    async copy(path){
+      var r;
+      try { r = await client().storage.from('hub-copies').download(path); } catch (x){ throw fromStorage(x); }
+      if (r.error) throw fromStorage(r.error);
+      return await r.data.text();
+    },
+    setVersion: function(id, version){ return rpc('hub_set_version', {p_id: id, p_version: version}); },
     open: function(id){ try { rpc('hub_open', {p_id: id}).catch(function(){}); } catch (x){} },
     subscribe: function(space, cb){
       var ch = null;
@@ -801,7 +861,7 @@ var Data = (function(){
 /* ==========================================================================
    Roots Hub app core: helpers, sheet, toast, sign-in, shell, boot.
    ========================================================================== */
-var BUILD = '1.0.0';
+var BUILD = '1.1.0';
 (function(){
 'use strict';
 var TZ = 'America/Chicago';
@@ -837,6 +897,8 @@ var ICONS = {
   x: 'M18 6L6 18M6 6l12 12', chevD: 'M6 9l6 6 6-6', plus: 'M12 5v14M5 12h14',
   home: 'M3 11l9-8 9 8M5 10v10h14V10',
   more: 'M12 12h.01M19 12h.01M5 12h.01',
+  back: 'M19 12H5M12 19l-7-7 7-7',
+  history: 'M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l4 2',
   ext: 'M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3',
   claude: 'M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 16l.7 1.8L21.5 18.5l-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z',
   sheet: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM3 9h18M3 15h18M9 3v18',
@@ -925,6 +987,7 @@ $('#sheet').addEventListener('click', function(e){ if (e.target === this) closeS
 function skel(n){ var f = document.createDocumentFragment(); for (var i = 0; i < (n || 3); i++) f.appendChild(h('div', {class: 'skel', 'aria-hidden': 'true'})); return h('div', {role: 'status', 'aria-label': 'Loading'}, f); }
 function loadErr(e, retry){
   if (e && e.hint === 'auth'){ toLogin('Please sign in again.'); return; }
+  if (V.id){ viewerLoadFailed(e, retry); return; }
   $('#main').replaceChildren(h('div', {class: 'loaderr', role: 'alert'}, h('span', {text: (e && e.message) || 'Something went wrong. Try again.'}), h('button', {type: 'button', on: {click: retry}}, 'Try again')));
 }
 function failToast(e){
@@ -948,7 +1011,7 @@ function toLogin(msg){
   S.session = null; S.rows = null; S.role = ''; S.q = ''; S.coll = 'all'; S.tok++;
   if (S.unsub){ try { S.unsub(); } catch (x){} S.unsub = null; }
   clearTimeout(S.timer);
-  closeSheet(); Data.signOut();
+  hideViewer(); closeSheet(); Data.signOut();
   $('#signinPw').value = ''; $('#q').value = '';
   showLogin(msg);
 }
@@ -1063,13 +1126,14 @@ function startHome(){
   m.replaceChildren(h('div', {id: 'strip'}), h('div', {id: 'shelf'}), h('div', {id: 'controls'}), h('div', {id: 'results'}, skel(3)), h('div', {id: 'foot'}));
   S.rows = null;
   refresh(true);
+  routeSync();   /* a reload on #/a/<id> shows the viewer's loading state at once instead of flashing the home page */
   if (S.unsub){ try { S.unsub(); } catch (x){} }
   S.unsub = Data.subscribe(SPACE, function(p){
     if (p && openOnly(p.new)) return;   /* someone else opened a card: nothing visible changed, skip the refetch */
     clearTimeout(S.timer); S.timer = setTimeout(function(){ if (S.session) refresh(); }, 400);
   });
 }
-var SAME_KEYS = ['title', 'summary', 'url', 'kind', 'collection', 'owner_name', 'status', 'featured', 'feature_rank', 'thumb_url', 'deleted_at', 'approved_at', 'submit_note'];
+var SAME_KEYS = ['title', 'summary', 'url', 'kind', 'collection', 'owner_name', 'status', 'featured', 'feature_rank', 'thumb_url', 'deleted_at', 'approved_at', 'submit_note', 'copy_status', 'current_version', 'copy_note'];
 function openOnly(n){
   var row = n && (S.rows || []).filter(function(x){ return x.id === n.id; })[0];
   if (!row || !SAME_KEYS.every(function(k){ return String(row[k] == null ? '' : row[k]) === String(n[k] == null ? '' : n[k]); }) || JSON.stringify(row.tags || []) !== JSON.stringify(n.tags || [])) return false;
@@ -1084,6 +1148,7 @@ async function refresh(first){
     S.rows = rows || []; S.loadedAt = Date.now();
     if (S.coll !== 'all' && !collectionCounts().some(function(c){ return c.name === S.coll; })) S.coll = 'all';
     renderAll();
+    routeSync();
   } catch (e){
     if (tok !== S.tok) return;
     if (first || !S.rows) loadErr(e, function(){ startHome(); });
@@ -1098,6 +1163,7 @@ function kindBadge(kind){
   var k = KIND[kind] || KIND.link;
   return h('span', {class: 'kind'}, icon(k.icon, 'sm'), h('span', {text: k.label}));
 }
+function hasCopy(r){ return r.copy_status === 'copied' && r.current_version != null; }
 function card(r, big){
   var kind = KIND[r.kind] ? r.kind : 'link';
   var top;
@@ -1107,15 +1173,19 @@ function card(r, big){
     img.addEventListener('error', function(){ var li = img.closest('li'); if (li) li.replaceWith(card(Object.assign({}, r, {thumb_url: null}), big)); });
   } else top = h('div', {class: 'art-band k-' + kind, 'aria-hidden': 'true'}, icon((KIND[kind] || KIND.link).icon));
   var line = [r.collection, r.owner_name].filter(Boolean).join(' \u00b7 ');
-  var a = h('a', {class: 'art-link', href: safeHref(r.url), target: '_blank', rel: 'noopener noreferrer', 'data-open': r.id},
+  /* v1.1: a hub copy opens in the in-hub viewer (hash route, same tab); everything else opens the link in a new tab as in v1 */
+  var inHub = hasCopy(r);
+  var a = h('a', inHub ? {class: 'art-link', href: '#/a/' + r.id, 'data-open': r.id, 'data-view': r.id}
+                       : {class: 'art-link', href: safeHref(r.url), target: '_blank', rel: 'noopener noreferrer', 'data-open': r.id},
     top,
     h('div', {class: 'art-body'},
       h('span', {class: 'kindrow k-' + kind}, kindBadge(kind)),
       h('h3', {text: r.title}),
       r.summary ? h('p', {class: 'art-sum', text: r.summary}) : null,
       line ? h('p', {class: 'meta art-line', text: line}) : null,
-      h('p', {class: 'meta art-upd', text: 'Updated ' + relDate(shownDate(r))})),
-    h('span', {class: 'sr-only', text: 'Opens in a new tab'}));
+      h('p', {class: 'meta art-upd', text: 'Updated ' + relDate(shownDate(r))}),
+      canCurate() && r.copy_status === 'link_only' && r.copy_note ? h('p', {class: 'meta art-note', text: r.copy_note}) : null),
+    h('span', {class: 'sr-only', text: inHub ? 'Opens in the hub' : 'Opens in a new tab'}));
   var li = h('li', {class: 'art card' + (big ? ' big' : ''), 'data-id': r.id}, a);
   if (canCurate()) li.appendChild(h('button', {type: 'button', class: 'icon art-menu', 'aria-label': 'More actions for ' + r.title, 'aria-haspopup': 'dialog', on: {click: function(){ menuSheet(r); }}}, icon('more', 'dots')));
   return li;
@@ -1192,7 +1262,7 @@ $('#q').addEventListener('input', function(){
 $('#q').addEventListener('keydown', function(e){ if (e.key === 'Escape' && this.value){ e.preventDefault(); e.stopPropagation(); S.q = ''; this.value = ''; renderShelf(); renderGrid(); } });
 $('#searchForm').addEventListener('submit', function(e){ e.preventDefault(); });
 document.addEventListener('keydown', function(e){
-  if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey || !S.session || $('#sheet').open) return;
+  if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey || !S.session || $('#sheet').open || V.id) return;
   var t = e.target, tag = t && t.tagName;
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
   e.preventDefault(); $('#q').focus(); $('#q').select();
@@ -1455,6 +1525,213 @@ async function removedSheet(){
     body.appendChild(ul);
   }
   draw();
+}
+
+/* ==========================================================================
+   Viewer (v1.1): a hub-owned copy of an artifact opens full screen inside the hub, in a sandboxed frame.
+   Route: #/a/<id> (Back, Escape and reload all work). The copy is untrusted HTML: it runs in an iframe whose sandbox list has no same-origin token, so it gets
+   an opaque origin and cannot read the hub's session, storage or DOM. Never add that token to SANDBOX (build.py fails the build if it appears).
+   Curators also get a Versions sheet (roll back or forward with Undo).
+   ========================================================================== */
+var SANDBOX = 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals allow-downloads';
+var V = {id: null, last: null, barId: null, pending: false, tok: 0, scroll: 0, inApp: false, ver: null, versions: null};
+window.__hub.viewer = V;   /* read-only handle for the test suites */
+var ROUTE = /^#\/a\/([0-9a-f-]{8,64})$/i;
+
+function routeId(){ var m = ROUTE.exec(location.hash); return m ? m[1].toLowerCase() : null; }
+function rowById(id){ return (S.rows || []).filter(function(x){ return x.id === id; })[0] || null; }
+function dateLabel(ts){
+  var d = new Date(ts); if (isNaN(d.getTime())) return '';
+  var p = ctIso(d).split('-');
+  return MON[+p[1] - 1] + ' ' + (+p[2]) + (p[0] !== ctIso(new Date()).slice(0, 4) ? ', ' + p[0] : '');
+}
+function fmtBytes(n){
+  n = Number(n) || 0;
+  if (n < 1024) return n + ' B';
+  if (n < 1048576) return Math.max(1, Math.round(n / 1024)) + ' KB';
+  return (Math.round(n / 104857.6) / 10) + ' MB';
+}
+
+/* ---------- route ---------- */
+function routeSync(){
+  if (!S.session) return;
+  var id = routeId();
+  if (!id){ hideViewer(); return; }
+  if (V.id === id && !(V.pending && S.rows != null)) return;
+  showViewer(id);
+}
+window.addEventListener('hashchange', function(){
+  if (!S.session) return;
+  if (routeId() && !V.id) V.inApp = true;   /* entered by a click or a typed link while the hub was open: a history entry exists to go back to */
+  routeSync();
+});
+function goBack(){
+  if (!V.id) return;
+  if (V.inApp){ history.back(); return; }
+  history.replaceState(null, '', location.pathname + location.search);   /* opened by a reload or a shared link: there is no hub entry behind us, so just drop the hash */
+  routeSync();
+}
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape' || !V.id || e.defaultPrevented || $('#sheet').open) return;
+  e.preventDefault(); goBack();
+});
+$('#vBack').addEventListener('click', goBack);
+
+function setViewing(on){
+  document.documentElement.classList.toggle('viewing', on);
+  ['hdr', 'main', 'btabs'].forEach(function(i){ var el = document.getElementById(i); if (el) el.inert = on; });
+  $('#viewer').hidden = !on;
+}
+function hideViewer(){
+  if (!V.id) return;
+  V.tok++; V.id = null; V.barId = null; V.pending = false; V.ver = null; V.versions = null;
+  var prevScroll = V.scroll;
+  closeSheet();
+  setViewing(false);
+  $('#vBody').replaceChildren();   /* removes the frame, which stops the copy */
+  $('#vActs').replaceChildren(); $('#vMeta').replaceChildren(); $('#vTitle').textContent = '';
+  document.title = 'Roots Hub';
+  window.scrollTo(0, prevScroll);
+  var last = V.last; V.last = null;
+  var a = last && ($('.shelf li.art[data-id="' + last + '"] a.art-link') || $('#results li.art[data-id="' + last + '"] a.art-link'));
+  if (a){ try { a.focus({preventScroll: true}); } catch (x){} }
+}
+
+/* ---------- open ---------- */
+function showViewer(id){
+  var entering = !V.id;
+  if (entering){ V.scroll = window.scrollY || 0; setViewing(true); }
+  var tok = ++V.tok;
+  V.id = id; V.last = id; V.ver = null; V.versions = null;
+  if (S.rows == null){   /* reload on a viewer link: rows are still loading */
+    V.pending = true; renderBar(null); setBody(loadingNode()); if (entering) $('#vBack').focus({preventScroll: true}); return;
+  }
+  V.pending = false;
+  var r = rowById(id);
+  if (!entering && r && V.barId === id) setMeta(); else renderBar(r);   /* a version switch keeps the bar (and the Versions button the sheet returns focus to) */
+  if (entering) $('#vBack').focus({preventScroll: true});
+  if (!r){ vMessage('That item isn\u2019t here', 'It may have been removed, or this login can\u2019t see it.', [backBtn()]); return; }
+  announce('Opened ' + r.title);
+  if (!hasCopy(r)){ vMessage('No copy in the hub yet', 'Open the original to see it.', [origLink(r, 'btn primary'), backBtn()]); return; }
+  loadCopy(tok);
+}
+function backBtn(){ return h('button', {type: 'button', on: {click: goBack}}, 'Back to hub'); }
+function origLink(r, cls){
+  return h('a', {class: cls, href: safeHref(r.url), target: '_blank', rel: 'noopener noreferrer'}, 'Open original', h('span', {class: 'sr-only', text: ' (opens in a new tab)'}));
+}
+function renderBar(r){
+  V.barId = r ? r.id : null;
+  $('#vTitle').textContent = r ? r.title : 'Opening\u2026';
+  document.title = (r ? r.title : 'Opening') + ' \u00b7 Roots Hub';
+  var acts = $('#vActs'); acts.replaceChildren();
+  if (r){
+    /* the visible word is hidden on phones (icon only); aria-label keeps the name on every width */
+    acts.appendChild(h('a', {class: 'btn vbtn', id: 'vOrig', href: safeHref(r.url), target: '_blank', rel: 'noopener noreferrer', 'aria-label': 'Open original (opens in a new tab)'}, icon('ext', 'sm'), h('span', {class: 'lbl', text: 'Open original'})));
+    if (canCurate() && hasCopy(r)) acts.appendChild(h('button', {type: 'button', class: 'vbtn', id: 'vVersions', 'aria-label': 'Versions', on: {click: versionsSheet}}, icon('history', 'sm'), h('span', {class: 'lbl', text: 'Versions'})));
+  }
+  setMeta();
+}
+function setMeta(){
+  var r = V.id && rowById(V.id), m = $('#vMeta'); m.replaceChildren();
+  if (!r) return;
+  var kind = KIND[r.kind] ? r.kind : 'link';
+  m.appendChild(h('span', {class: 'kindrow k-' + kind}, kindBadge(kind)));
+  if (hasCopy(r)) m.appendChild(h('span', {class: 'vver', id: 'vVer', text: 'Version ' + (V.ver ? V.ver.version : r.current_version) + (V.ver && V.ver.captured_at ? ' \u00b7 ' + relDate(V.ver.captured_at) : '')}));
+}
+
+/* ---------- body: loading, error, frame ---------- */
+function setBody(node){ $('#vBody').replaceChildren(node); }
+function loadingNode(){ var w = h('div', {class: 'vload'}, skel(2)); return w; }
+function vMessage(title, text, actions){ setBody(h('div', {class: 'vmsg'}, emptyCard(title, text, actions))); }
+function copyFailed(e){
+  var r = rowById(V.id);
+  vMessage('Couldn\u2019t open this copy', e && e.hint === 'network' ? e.message : 'Check your connection and try again, or open the original.',
+    [h('button', {type: 'button', class: 'primary', id: 'vRetry', on: {click: function(){ showViewer(V.id); }}}, 'Try again'), r ? origLink(r, 'btn') : null, backBtn()]);
+}
+async function loadCopy(tok){
+  var id = V.id;
+  setBody(loadingNode());
+  try {
+    var vers = await Data.versions(id);
+    if (tok !== V.tok) return;
+    V.versions = vers;
+    var r = rowById(id), cur = r && vers.filter(function(x){ return x.version === r.current_version; })[0];
+    if (!cur) throw Object.assign(new Error('We couldn\u2019t load this copy.'), {hint: 'copy'});
+    var html = await Data.copy(cur.path);
+    if (tok !== V.tok) return;
+    V.ver = cur; setMeta();
+    mountFrame(r, html, tok);
+  } catch (e){
+    if (tok !== V.tok) return;
+    if (e && e.hint === 'auth'){ toLogin('Please sign in again.'); return; }
+    copyFailed(e);
+  }
+}
+function mountFrame(r, html, tok){
+  var f = h('iframe', {class: 'vframe', title: r.title + ' (copy)', sandbox: SANDBOX, referrerpolicy: 'no-referrer'});
+  if (/same-origin/.test(f.getAttribute('sandbox'))) throw new Error('The viewer frame must never allow same-origin.');
+  var shade = loadingNode();
+  function done(){ if (tok === V.tok && shade.parentNode) shade.remove(); }
+  f.addEventListener('load', done);
+  setTimeout(done, 3500);   /* a slow remote font or script inside the copy must not keep the skeleton up */
+  f.srcdoc = html;
+  $('#vBody').replaceChildren(f, shade);
+}
+/* a failed row load while the viewer is waiting for it: say so inside the viewer, with a way out */
+function viewerLoadFailed(e, retry){
+  if (!V.id) return;
+  V.pending = false; renderBar(null);
+  vMessage('Couldn\u2019t open this', (e && e.message) || 'Something went wrong. Try again.', [h('button', {type: 'button', class: 'primary', on: {click: function(){ retry(); }}}, 'Try again'), backBtn()]);
+}
+
+/* ---------- versions (curator) ---------- */
+async function versionsSheet(){
+  var r = V.id && rowById(V.id);
+  if (!r || !canCurate()) return;
+  var body = h('div', {class: 'stack', id: 'verBody'}, skel(1));
+  openSheet({title: 'Versions', body: [body], foot: []});
+  var rows;
+  try { rows = await Data.versions(r.id); }
+  catch (e){ if (e && e.hint === 'auth'){ failToast(e); return; } body.replaceChildren(h('p', {class: 'err', role: 'alert', text: e.message || 'Something went wrong. Try again.'})); return; }
+  V.versions = rows;
+  function draw(){
+    var now = rowById(V.id) || r;
+    body.replaceChildren();
+    if (!rows.length){ body.appendChild(h('p', {class: 'muted', style: 'margin:0', text: 'No saved versions yet.'})); return; }
+    var ul = h('ul', {class: 'opts rm-list', id: 'verList'});
+    rows.forEach(function(v){
+      var cur = v.version === now.current_version;
+      ul.appendChild(h('li', {class: 'rm-row ver-row', 'data-ver': v.version},
+        h('span', {class: 'rm-main'}, h('b', {text: 'v' + v.version}),
+          h('span', {class: 'meta', text: 'Captured ' + dateLabel(v.captured_at) + ' \u00b7 ' + fmtBytes(v.bytes)}),
+          v.note ? h('span', {class: 'meta', text: v.note}) : null),
+        cur ? h('span', {class: 'tag', text: 'Showing'})
+            : h('button', {type: 'button', 'data-show': v.version, 'aria-label': 'Show this version (v' + v.version + ')', on: {click: function(){ showVersion(v.version, this); }}}, 'Show this version')));
+    });
+    body.appendChild(ul);
+  }
+  draw();
+}
+async function showVersion(n, btn){
+  var r = rowById(V.id); if (!r || S.busy) return;
+  var prev = r.current_version;
+  if (n === prev) return;
+  S.busy = true; if (btn){ btn.disabled = true; btn.textContent = 'Switching\u2026'; }
+  try { await Data.setVersion(r.id, n); }
+  catch (e){ S.busy = false; if (btn){ btn.disabled = false; btn.textContent = 'Show this version'; } failToast(e); return; }
+  S.busy = false;
+  r.current_version = n; r.copy_status = 'copied';
+  closeSheet();
+  showViewer(r.id);   /* reload the frame with the new version */
+  toast('Now showing version ' + n, {ms: 8000, action: {label: 'Undo', fn: function(){ undoVersion(prev); }}});
+}
+async function undoVersion(prev){
+  var r = rowById(V.id); if (!r || prev == null) return;
+  try { await Data.setVersion(r.id, prev); }
+  catch (e){ failToast(e); return; }
+  r.current_version = prev;
+  showViewer(r.id);
+  toast('Now showing version ' + prev);
 }
 
 boot();
