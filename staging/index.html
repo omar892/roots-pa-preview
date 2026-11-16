@@ -1799,6 +1799,27 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 @media (pointer:coarse){ .pv-more,.pv-moveall{min-height:44px} }
 @media (forced-colors:active){ .pv-more-od,.pv-more-od:hover{color:LinkText} }
 
+/* ---------- v2.14.0 (Anisha, Nov 16 9:38am): search My tasks ----------
+   The box sits in the heading row after the Today | This week switch (next to it on a wide screen, phone: its own full-width line under them). Fields are already 44px tall.
+   The round clear button is ours (the browser's own x is hidden so there is one, 44px, on every device). */
+.pv-srch{position:relative;display:flex;align-items:center;flex:1 1 260px;min-width:200px;max-width:440px}
+.pv-srch .pv-sin{width:100%;padding-left:38px;padding-right:44px;-webkit-appearance:none;appearance:none}
+.pv-sin::-webkit-search-cancel-button,.pv-sin::-webkit-search-decoration,.pv-sin::-webkit-search-results-button,.pv-sin::-webkit-search-results-decoration{-webkit-appearance:none;appearance:none;display:none}
+.pv-sico{position:absolute;left:12px;top:50%;transform:translateY(-50%);display:inline-flex;color:var(--muted);pointer-events:none}
+.pv-sico .ic{width:18px;height:18px}
+.pv-srch .pv-sclr{position:absolute;right:0;top:50%;transform:translateY(-50%);width:44px;min-width:44px;height:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.pv-srch .pv-sclr[hidden]{display:none}
+.pv-srch .pv-sclr .ic{width:18px;height:18px}
+@media (max-width:767px){ .pv-srch{flex:1 1 100%;min-width:0;max-width:none;margin-left:0} }
+@media (pointer:coarse),(max-width:767px){ .pv-srch .pv-sin{min-height:44px;font-size:16px} }   /* 44px to touch; 16px so iOS does not zoom the page on focus */
+.pv-res{max-width:720px;min-width:0}
+.pv-rw{margin:0 0 var(--sp4)}
+.pv-rwh{display:flex;align-items:baseline;gap:8px;margin:0 0 var(--sp1);font-size:15px;font-weight:700;color:var(--ink)}
+.pv-rwh .muted{font-size:var(--fs-s);font-weight:500}
+.pv-rl{margin:0;padding:0;list-style:none}
+.pv-nores,.pv-srching{margin:var(--sp3) 0}
+@media (pointer:coarse){ .pv-srmore{min-height:44px} }
+
 </style>
 </head>
 <body>
@@ -1878,7 +1899,7 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.13.0';   // v2.13.0 (Anisha, Nov 11 4:34pm): My tasks Today / This week switch (Today first) and moving a task to the week you're in (open-task sheet week switch + "Move N open tasks to this week" on a past week). Was 2.12.2: // v2.12.2: Anisha Nov 3 7:23pm (task box field order: Task, Note, Program, Project, Who, Day, Watchers, in the Add task sheet and the open-task sheet). Was 2.12.1: // v2.12.1: Anisha Nov 3 4:30pm (My tasks day columns at least 300px wide with a sideways scroll + edge arrows, full titles/notes/program lines, group header names never squeezed). Was 2.12.0: // v2.12.0: Anisha Oct 28 (My tasks keeps overdue tasks under their day with a red icon and a red "N overdue" on the group header, PAs see "N spots left" next to Sign up, the Project list is per person). Was 2.11.1:   // v2.11.1: Calendar month, Mine: when all of the person's sign-ups are before today the empty note and "See N that need a PA" show above the "Show N earlier days" link. Was 2.11.0:   // v2.11.0: Anisha Oct 27 (month +more in place, Common tasks pick list, admin My tasks trimmed, Add task on group headers, done tasks to the bottom). Was 2.10.0:   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
+var BUILD = '2.14.0';   // v2.14.0 (Anisha, Nov 16 9:38am): My tasks search bar ("search any current or past tasks": every week, done and open, title / note / program / project, results grouped by week newest first). Was 2.13.0: // v2.13.0 (Anisha, Nov 11 4:34pm): My tasks Today / This week switch (Today first) and moving a task to the week you're in (open-task sheet week switch + "Move N open tasks to this week" on a past week). Was 2.12.2: // v2.12.2: Anisha Nov 3 7:23pm (task box field order: Task, Note, Program, Project, Who, Day, Watchers, in the Add task sheet and the open-task sheet). Was 2.12.1: // v2.12.1: Anisha Nov 3 4:30pm (My tasks day columns at least 300px wide with a sideways scroll + edge arrows, full titles/notes/program lines, group header names never squeezed). Was 2.12.0: // v2.12.0: Anisha Oct 28 (My tasks keeps overdue tasks under their day with a red icon and a red "N overdue" on the group header, PAs see "N spots left" next to Sign up, the Project list is per person). Was 2.11.1:   // v2.11.1: Calendar month, Mine: when all of the person's sign-ups are before today the empty note and "See N that need a PA" show above the "Show N earlier days" link. Was 2.11.0:   // v2.11.0: Anisha Oct 27 (month +more in place, Common tasks pick list, admin My tasks trimmed, Add task on group headers, done tasks to the bottom). Was 2.10.0:   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
 // was 2.7.2: // v2.7.2: departments are one shared filter (Calendar, Board, PA shifts), never a team; no team chips at sign-in
 // v2.7.1: Calendar filter is one dropdown (departments + Needs a PA); Board tab for PAs/YCs with Take it
 // v2.6.9:   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
@@ -2231,12 +2252,12 @@ function nextSort(list){ var m = -10; list.forEach(function(x){ if ((x.sort || 0
 function isAdmin(){ return S.role === 'admin' && !S.viewAs; }   // v2.6.7: an admin viewing as a PA/YC sees her screens
 function canViewAs(){ return S.role === 'admin' && STAGING_TEAMS.indexOf(S.team) >= 0; }   // practice teams only, never real data
 function hasShifts(){ return !NO_SHIFT_TEAMS[S.team]; }
-function isOverdue(t){
+function isOverdue(t, wk){   // v2.14.0: wk = the week the task is in when it is not the week on screen (search results); default S.week as before
   if (taskDone(t)) return false;
   var di = DAYS.indexOf(t.due); if (di < 0) return false;
-  var tw = thisWeek();
-  if (S.week < tw) return true;
-  if (S.week === tw) return di < todayIdx();
+  var tw = thisWeek(), w = typeof wk === 'string' && wk ? wk : S.week;   // (filter(isOverdue) passes an index as 2nd arg)
+  if (w < tw) return true;
+  if (w === tw) return di < todayIdx();
   return false;
 }
 function isDueToday(t){ return S.week === thisWeek() && DAYS.indexOf(t.due) === todayIdx(); }
@@ -2349,6 +2370,7 @@ function upsertRow(table, row, prev, label){
 
 function enqueue(op){
   if (op.table === 'tasks' || op.table === 'task_people' || op.table === 'projects') ptStale(true);   // v2.12.0: read again once this has saved
+  else if (op.table === 'programs' || op.table === 'task_watchers') srchStale(true);   // v2.14.0: a program's name or week, a watcher: the My tasks search reads again
   for (var i = Q.items.length - 1; i >= 0; i--){
     var o = Q.items[i];
     // An op that has been sent once may already be on the server even if we never heard back.
@@ -2842,6 +2864,7 @@ async function loadWeek(quiet){
   }
   res[1].data.forEach(function(n){ var k = n.team + '|' + n.week; if (!isPendingField('week_notes', k, 'notes')) D.notes.set(k, n); });
   S.weekLoaded = week; S.weekError = null; IX = null;
+  srchKeep(week);   // v2.14.0: another week's tasks opened from a search result stay in memory while their sheet is open
   applyQueueToState(); replayBuffer();
   invalidate('board', 'person', 'notes', 'header');
   pvStale();
@@ -2968,6 +2991,7 @@ function subscribe(){
 }
 function onRemote(t, p){
   if (t === 'tasks' || t === 'task_people' || t === 'projects') ptStale(false);   // v2.12.0: the per-person Project list reads again
+  else if (t === 'programs' || t === 'task_watchers') srchStale(false);   // v2.14.0
   if (S.loading > 0){ S.buffer.push([t, p]); return; }
   var ev = p.eventType, row = ev === 'DELETE' ? p.old : p.new;
   if (!row) return;
@@ -3501,6 +3525,7 @@ async function ptHistory(){
 }
 /* a task, assignee or project changed somewhere: read again soon (debounced); after one of ours, once it has saved */
 function ptStale(afterSave){
+  srchStale(afterSave);   // v2.14.0: the My tasks search reads again too (only once it has been used)
   clearTimeout(PTB.timer);
   PTB.timer = setTimeout(function(){ if (afterSave) whenSaved(ptRefresh); else ptRefresh(); }, afterSave ? 800 : 1500);
 }
@@ -5436,10 +5461,11 @@ function pvGroupEl(g, pid){
 var PVM = {v: null};
 function pvMode(){ return PVM.v || (lsGet('pvmode', 'today') === 'week' ? 'week' : 'today'); }
 function pvModeSet(m, keep){ PVM.v = m; if (keep !== false) lsSet('pvmode', m); }
-function pvModeSeg(tw, mode){
+function pvModeSeg(tw, mode, srch){
   var seg = h('div', {class: 'seg pv-seg', role: 'group', 'aria-label': 'Show'});
   [['today', 'Today'], ['week', 'This week']].forEach(function(x){
-    seg.append(h('button', {type: 'button', 'aria-pressed': tw && mode === x[0] ? 'true' : 'false', 'data-fk': 'pvmode:' + x[0], on: {click: function(){
+    seg.append(h('button', {type: 'button', 'aria-pressed': !srch && tw && mode === x[0] ? 'true' : 'false', 'data-fk': 'pvmode:' + x[0], on: {click: function(){
+      if (SRCH.q) srchClear(false);   // v2.14.0: picking Today / This week leaves the search
       pvModeSet(x[0]);
       if (S.week !== thisWeek()) go({week: thisWeek()});          // from another week: back to this week, in the picked view
       else if (x[0] !== mode){ invalidate('person'); announce(x[0] === 'today' ? 'Showing today' : 'Showing this week'); }
@@ -5473,6 +5499,220 @@ function pvMoveSheet(pid, ret){
   openSheet({title: 'Move to this week', returnTo: ret, body: body, focus: '[data-fk="pvmgo"]',
     foot: [h('button', {type: 'button', 'data-fk': 'pvmcancel', on: {click: closeSheet}}, 'Cancel'),
       h('button', {type: 'button', class: 'primary', 'data-fk': 'pvmgo', on: {click: function(){ closeSheet(); pvMoveAll(pid); }}}, 'Move ' + n + ' task' + (n === 1 ? '' : 's'))]});
+}
+
+/* ---------- v2.14.0 (Anisha, Nov 16 9:38am): search My tasks ----------
+   "Can you add a search bar to the \"My Tasks\" page so I can search any current or past tasks".
+   A search box sits with the heading row. From 2 characters (after a 250ms pause) the day / group list is replaced by the results: every task of the
+   person shown (assignee, the same rule My tasks uses), in EVERY week, done and open, whose title, note, program or project name holds every word typed
+   (case and accent insensitive), grouped by week, newest first. Clearing the box (x, Escape, or emptying it) puts back the view it was on: nothing
+   about Today / This week / the week on screen changes while searching.
+   Data: the app only holds S.week, so the first search reads that person's tasks of all weeks once (existing client + RLS, read only, paged under
+   the 1000-row server cap), kept for the session and read again after saves and realtime changes (like D.ptasks). A result is drawn with taskLine
+   from the live local copy when there is one, so a tick or edit shows at once; a task of another week is put into D.* only when it is shown
+   (put-if-absent), and opening one reads its whole program first so Move / Archive see the same rows they would on that week. */
+var SRCH = {q: '', applied: '', rows: null, pid: null, busy: false, again: false, dirty: false, lazy: false, say: false, err: null, seq: 0,
+  timer: null, stTimer: null, row: null, form: null, inp: null, clr: null, shown: 150, hyd: new Set(), sib: new Map(), opening: false};
+SRCH.cfg = {min: 2, page: 500, show: 150};   // min characters, rows per read (PostgREST cuts a read at 1000), rows drawn before "Show more" (the probes lower the last two)
+function srchNorm(s){
+  var x = String(s == null ? '' : s);
+  try { x = x.normalize('NFD'); } catch (e){}
+  return x.replace(/[\u0300-\u036f]/g, '').replace(/[\u2018\u2019\u02bc]/g, "'").replace(/[\u201c\u201d]/g, '"').toLowerCase().replace(/\s+/g, ' ').trim();
+}
+function srchOn(){ return !!SRCH.applied; }
+function srchKey(){ return S.team + '|' + SRCH.pid; }
+function srchReset(){
+  clearTimeout(SRCH.timer); clearTimeout(SRCH.stTimer);
+  SRCH.q = ''; SRCH.applied = ''; SRCH.rows = null; SRCH.pid = null; SRCH.dirty = false; SRCH.lazy = false; SRCH.say = false; SRCH.err = null; SRCH.again = false;
+  SRCH.seq++; SRCH.shown = SRCH.cfg.show; SRCH.hyd = new Set(); SRCH.sib = new Map(); SRCH.opening = false; SRCH_HC.clear();
+  if (SRCH.inp) SRCH.inp.value = '';
+  if (SRCH.clr) SRCH.clr.hidden = true;
+}
+/* the whole-person read: tasks she is an assignee of, with the program (week, name, personal flag), every assignee and watcher (the task sheet shows them) */
+async function srchLoad(){
+  var team = S.team, pid = SRCH.pid;
+  if (!team || !pid || !S.session) return;
+  if (SRCH.busy){ SRCH.again = true; return; }
+  SRCH.busy = true; SRCH.again = false; SRCH.dirty = false; SRCH.err = null;
+  var key = team + '|' + pid, seq = ++SRCH.seq, rows = new Map(), err = null;
+  try {
+    for (var from = 0; from < 50000; from += SRCH.cfg.page){   // PostgREST caps one read at 1000 rows: page under it, stop on a short page
+      var r = await sb.from('tasks').select('*, programs!inner(*), mine:task_people!inner(person_id), task_people(*), task_watchers(*)')
+        .eq('team', team).is('deleted_at', null).is('programs.deleted_at', null).eq('mine.person_id', pid).order('id').range(from, from + SRCH.cfg.page - 1);
+      if (r.error){ err = r.error; break; }
+      var data = r.data || [];
+      data.forEach(function(x){
+        var p = x.programs, tp = x.task_people || [], tw = x.task_watchers || [];
+        delete x.programs; delete x.mine; delete x.task_people; delete x.task_watchers;
+        if (p && validIso(p.week)) rows.set(x.id, {t: x, p: p, tp: tp, tw: tw});
+      });
+      if (data.length < SRCH.cfg.page) break;
+    }
+  } catch (e){ err = e; }
+  SRCH.busy = false;
+  if (seq !== SRCH.seq || key !== srchKey()){ if (srchOn() && S.tab === 'person'){ SRCH.rows = null; SRCH.again = false; invalidate('person'); } return; }   // another person / a reset while it was reading: render starts the right read
+  if (err){ SRCH.err = err; invalidate('person'); return; }
+  SRCH.rows = rows; SRCH.err = null;
+  invalidate('person');
+  if ((SRCH.dirty || SRCH.again) && srchOn()){ SRCH.again = false; srchStale(false); }
+}
+/* a task, program, assignee or watcher changed: read again soon (debounced); after one of ours, once it has saved. Only once a search has been read. */
+function srchStale(afterSave){
+  if (!SRCH.rows && !SRCH.busy) return;
+  SRCH.dirty = true;
+  clearTimeout(SRCH.stTimer);
+  SRCH.stTimer = setTimeout(function(){
+    var go = function(){ if (srchOn() && S.tab === 'person') srchLoad(); else SRCH.lazy = true; };   // not looking at it: read when it comes back
+    if (afterSave) whenSaved(go); else go();
+  }, afterSave ? 800 : 1500);
+}
+/* put one cached task into the local state, only what is missing (never over a row the app already holds) */
+function srchPut(rec, week){
+  var p = rec.p, t = rec.t; if (!p || !t) return;
+  var w = week || (S.weekLoaded === S.week ? S.week : null);
+  if (w && p.week === w) return;   // the week the app loaded in full: it is the truth, a task missing there is gone
+  if (!D.programs.has(p.id)) D.programs.set(p.id, Object.assign({}, p));
+  if (!D.tasks.has(t.id)){
+    D.tasks.set(t.id, Object.assign({}, t));
+    (rec.tp || []).forEach(function(x){ var k = keyOf('task_people', x); if (!D.tp.has(k)) D.tp.set(k, Object.assign({}, x)); });
+    (rec.tw || []).forEach(function(x){ var k = keyOf('task_watchers', x); if (!D.tw.has(k)) D.tw.set(k, Object.assign({}, x)); });
+    IX = null;
+  }
+  SRCH.hyd.add(t.id);
+}
+/* a quiet refresh of the week on screen drops other weeks' tasks from memory: put back the ones opened from a result */
+function srchKeep(week){
+  if (!SRCH.hyd.size) return;
+  SRCH.hyd.forEach(function(id){ var rec = SRCH.sib.get(id) || (SRCH.rows && SRCH.rows.get(id)); if (rec) srchPut(rec, week); });
+}
+function srchPick(id, pid){
+  var d = D.tasks.get(id), rec = SRCH.rows ? SRCH.rows.get(id) || null : null, t, p;
+  if (d){
+    if (!D.tp.has(id + '|' + pid)) return null;   // not (or no longer) hers
+    t = d; p = D.programs.get(d.program_id) || (rec && rec.p && rec.p.id === d.program_id ? rec.p : null);
+  } else if (rec){
+    if (rec.p.week === S.week && S.weekLoaded === S.week) return null;   // the loaded week is the truth
+    t = rec.t; p = rec.p;
+  } else return null;
+  if (!t || t.deleted_at || !p || p.deleted_at || !validIso(p.week)) return null;
+  return {t: t, p: p, rec: rec};
+}
+var SRCH_HC = new Map();   // task id -> {r: the raw text, n: its normalized form}: a redraw only normalizes what changed
+function srchHay(t, p){
+  var raw = (t.task || '') + '\n' + (t.notes || '') + '\n' + (p.name || '') + '\n' + projName(t), c = SRCH_HC.get(t.id);
+  if (c && c.r === raw) return c.n;
+  var n = srchNorm(raw); SRCH_HC.set(t.id, {r: raw, n: n});
+  return n;
+}
+function srchItems(pid){
+  var terms = srchNorm(SRCH.applied).split(' ').filter(Boolean), seen = new Set(), out = [];
+  var test = function(id){
+    if (seen.has(id)) return; seen.add(id);
+    var x = srchPick(id, pid); if (!x) return;
+    var hay = srchHay(x.t, x.p);
+    if (terms.every(function(w){ return hay.indexOf(w) >= 0; })) out.push(x);
+  };
+  if (SRCH.rows) SRCH.rows.forEach(function(rec, id){ test(id); });
+  tasksFor(pid).forEach(function(t){ test(t.id); });   // a task added since the last read
+  var di = function(x){ var i = DAYS.indexOf(x.t.due); return i < 0 ? 7 : i; };
+  out.sort(function(a, b){
+    return a.p.week < b.p.week ? 1 : a.p.week > b.p.week ? -1 : di(a) - di(b) || (a.t.sort || 0) - (b.t.sort || 0) || String(a.t.task || '').localeCompare(String(b.t.task || ''));
+  });
+  return out;
+}
+/* tapping a result: the week on screen opens at once; another week's task reads its whole program first (siblings, assignees, watchers) */
+async function srchOpen(t, pid, el){
+  var cur = D.tasks.get(t.id), p = cur && D.programs.get(cur.program_id);
+  if (cur && p && p.week === S.week && S.weekLoaded === S.week){ taskSheet(t.id, pid, el); return; }
+  if (SRCH.opening) return;
+  SRCH.opening = true;
+  var team = S.team, ok = false, gone = false, progId = p ? p.id : t.program_id;
+  try {
+    var r = await sb.from('programs').select('*, tasks(*, task_people(*), task_watchers(*))').eq('id', progId).eq('team', team).is('deleted_at', null).is('tasks.deleted_at', null);
+    if (!r.error){
+      if (r.data && r.data.length){
+        var prog = Object.assign({}, r.data[0]), ts = prog.tasks || []; delete prog.tasks;
+        var mg = function(table, row){ var k = keyOf(table, row), m = T[table].map(); if (m.has(k)) mergeRow(table, k, row); else m.set(k, Object.assign({}, row)); };
+        mg('programs', prog);
+        ts.forEach(function(x){
+          var tp = x.task_people || [], tw = x.task_watchers || [], tk = Object.assign({}, x); delete tk.task_people; delete tk.task_watchers;
+          mg('tasks', tk); tp.forEach(function(y){ mg('task_people', y); }); tw.forEach(function(y){ mg('task_watchers', y); });
+          SRCH.sib.set(tk.id, {t: tk, p: prog, tp: tp, tw: tw}); SRCH.hyd.add(tk.id);
+        });
+        IX = null; ok = true;
+      } else gone = true;
+    }
+  } catch (e){}
+  SRCH.opening = false;
+  if (team !== S.team) return;
+  var now = D.tasks.get(t.id);
+  if (ok && now && !now.deleted_at){ taskSheet(t.id, pid, el); return; }
+  if (gone || ok){ toast('That task is no longer there.'); srchStale(false); invalidate('person'); return; }
+  toast('Couldn\u2019t open that task. Check your connection and try again.', {kind: 'error'});
+}
+/* the box: one element for the whole session (a re-render never rebuilds the field you are typing in) */
+function srchTyped(){
+  var v = SRCH.inp.value; SRCH.q = v; SRCH.clr.hidden = !v;
+  clearTimeout(SRCH.timer);
+  if (srchNorm(v).length < SRCH.cfg.min){ if (SRCH.applied) srchApply(); else if (v.trim()) announce('Type at least 2 characters to search'); return; }
+  SRCH.timer = setTimeout(srchApply, 250);
+}
+function srchApply(){
+  clearTimeout(SRCH.timer);
+  var was = SRCH.applied, n = srchNorm(SRCH.q);
+  SRCH.applied = n.length >= SRCH.cfg.min ? SRCH.q.trim() : '';
+  if (SRCH.applied !== was){
+    SRCH.shown = SRCH.cfg.show; SRCH.say = !!SRCH.applied; SRCH.err = null;
+    if (SRCH.applied && SRCH.dirty) SRCH.lazy = true;
+    if (!SRCH.applied && was) announce('Search cleared');
+  }
+  invalidate('person');
+}
+function srchClear(focus){
+  if (!SRCH.inp) return;
+  SRCH.inp.value = ''; srchTyped();
+  if (focus) SRCH.inp.focus();
+}
+function srchForm(){
+  if (SRCH.form) return SRCH.form;
+  var inp = h('input', {type: 'search', id: 'pvSearch', class: 'pv-sin', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false', enterkeyhint: 'search',
+    placeholder: 'Search tasks', 'aria-label': 'Search tasks', 'data-fk': 'pvsearch',
+    on: {input: srchTyped, keydown: function(e){ if (e.key === 'Escape' && inp.value && !composing(e)){ e.preventDefault(); e.stopPropagation(); srchClear(false); } }}});
+  var clr = h('button', {type: 'button', class: 'icon pv-sclr', 'aria-label': 'Clear search', 'data-fk': 'pvsclr', hidden: true, on: {click: function(){ srchClear(true); }}}, icon('x', 'sm'));
+  SRCH.inp = inp; SRCH.clr = clr;
+  SRCH.form = h('form', {class: 'pv-srch', role: 'search', novalidate: true, on: {submit: function(e){ e.preventDefault(); srchApply(); }}},
+    h('span', {class: 'pv-sico', 'aria-hidden': 'true'}, icon('search', 'sm')), inp, clr);
+  return SRCH.form;
+}
+/* the person on screen changed, or this is the first render of a search: make sure her read is under way */
+function srchSync(pid){
+  if (SRCH.pid !== pid){ SRCH.pid = pid; SRCH.rows = null; SRCH.err = null; SRCH.dirty = false; SRCH.shown = SRCH.cfg.show; SRCH.say = srchOn(); }
+  if (!srchOn() || SRCH.busy) return;
+  if (!SRCH.rows && !SRCH.err) srchLoad();
+  else if (SRCH.lazy){ SRCH.lazy = false; srchLoad(); }
+}
+/* the results block: {title, el} */
+function srchResults(pid){
+  var q = SRCH.applied;
+  if (SRCH.err && !SRCH.rows) return {title: 'Search', el: h('div', {class: 'pv-res'}, loadError(SRCH.err, function(){ SRCH.err = null; srchLoad(); invalidate('person'); }))};
+  if (!SRCH.rows) return {title: 'Searching\u2026', el: h('p', {class: 'muted pv-quiet pv-srching', role: 'status', text: 'Searching\u2026'})};
+  var all = srchItems(pid), n = all.length, shown = all.slice(0, SRCH.shown), title = n === 1 ? '1 result' : n + ' results';
+  if (SRCH.say){ SRCH.say = false; announce(title); }
+  if (!n) return {title: title, el: h('p', {class: 'muted pv-quiet pv-nores', text: 'No tasks match ' + '\u201c' + q + '\u201d.'})};
+  shown.forEach(function(x){ if (x.rec) srchPut(x.rec); });   // another week's rows are drawn from memory like any other
+  var groups = [], by = new Map();
+  shown.forEach(function(x){
+    var t = D.tasks.get(x.t.id) || x.t, p = D.programs.get(t.program_id) || x.p, g = by.get(p.week);
+    if (!g){ g = {w: p.week, rows: []}; by.set(p.week, g); groups.push(g); }
+    g.rows.push(taskLine(t, pid, 'sr', {day: true, odIcon: true, wk: p.week, open: srchOpen}));
+  });
+  var more = n > shown.length ? h('button', {type: 'button', class: 'pv-more pv-srmore', 'data-fk': 'srmore', on: {click: function(){ SRCH.shown += SRCH.cfg.show; invalidate('person'); }}}, 'Show ' + Math.min(SRCH.cfg.show, n - shown.length) + ' more of ' + (n - shown.length)) : null;
+  return {title: title, el: h('div', {class: 'pv-res'}, groups.map(function(g){
+    var id = 'pvr_' + g.w, tw = g.w === thisWeek();
+    return h('section', {class: 'pv-rw', 'aria-labelledby': id},
+      h('h3', {class: 'pv-rwh', id: id}, tw ? 'This week' : weekLabel(g.w), tw ? h('span', {class: 'muted', text: weekRange(g.w)}) : null),
+      h('ul', {class: 'rtasks pg-tasks pv-rl'}, g.rows));
+  }), more)};
 }
 
 RENDER.person = function(){
@@ -5516,6 +5756,7 @@ RENDER.person = function(){
   }
   if (PV.stale && !PV.busy) pvLoad();
   if (hasShifts()) ensureShifts();
+  srchSync(pid);   // v2.14.0: the search read for this person (only once the box has been used)
   var ts = tasksFor(pid), tw = S.week === thisWeek(), staffView = isStaffPerson(D.people.get(pid));
   // the add field: Enter adds at once (today, no program); "Add task" opens the sheet for the details
   var addf = sec.querySelector(':scope > form.addtask');
@@ -5555,14 +5796,19 @@ RENDER.person = function(){
     if (box){ box.style.setProperty('--pvn', String(days.length)); box = pvWrap(box, [S.team, pid, S.week].join('|')); }
     else PVX.key = '';   // no day row (an empty week): the next week or person that has one opens fresh   // v2.12.1: scroll box + edge arrows around the day row
   }
+  // v2.14.0 (Anisha, Nov 16 9:38am): while the search box has text, the results take the place of the day / group list (and its "from earlier" lines)
+  var sr = srchOn() ? srchResults(pid) : null;
+  if (sr){ box = null; earlier = null; }
   var openN = mode === 'today' ? (todayD ? openOf(todayD) : 0) : ts.filter(function(t){ return !personDone(t, pid); }).length;
-  var tasksH = h('h2', {class: 'pv-h', id: 'pvTasksH'}, tw ? (mode === 'today' ? 'Today' : 'This week') : weekLabel(S.week),
-    openN ? h('span', {class: 'muted', text: openN + ' open'}) : null);
+  var tasksH = h('h2', {class: 'pv-h', id: 'pvTasksH'}, sr ? sr.title : tw ? (mode === 'today' ? 'Today' : 'This week') : weekLabel(S.week),
+    !sr && openN ? h('span', {class: 'muted', text: openN + ' open'}) : null);
   // v2.13.0: the switch sits with the heading; on a past week the heading row also offers to bring its open tasks to this week
   var mv = S.week < thisWeek() ? pvMovable(pid) : [];
   var mvBtn = mv.length ? h('button', {type: 'button', class: 'pv-moveall', 'data-fk': 'pvmoveall', 'aria-haspopup': 'dialog',
     on: {click: function(e){ pvMoveSheet(pid, e.currentTarget); }}}, 'Move ' + mv.length + ' open task' + (mv.length === 1 ? '' : 's') + ' to this week') : null;
-  var hrow = h('div', {class: 'pv-hrow'}, tasksH, pvModeSeg(tw, mode), mvBtn);
+  // v2.14.0: one heading row for the session, so the search field in it keeps its focus and text through every redraw (setKids moves nothing that stays)
+  var hrow = SRCH.row || (SRCH.row = h('div', {class: 'pv-hrow'}));
+  setKids(hrow, [tasksH, pvModeSeg(tw, mode, !!sr), sr ? null : mvBtn, srchForm()]);
   var quiet = !box ? h('p', {class: 'muted pv-quiet', text: mode === 'today' ? 'Nothing due today.' + (wkOk ? '' : ' Loading the calendar\u2026') : 'Nothing on ' + personName(pid) + '\u2019s week yet.' + (wkOk ? '' : ' Loading the calendar\u2026')}) : null;   // v2.12.0: overdue tasks stay in the day groups, so an empty week is simply empty
   var noneEl = null;
 
@@ -5596,7 +5842,7 @@ RENDER.person = function(){
         x.live ? h('button', {type: 'button', class: 'grow w-open', 'data-fk': 'pwm:' + x.t.id, 'aria-haspopup': 'dialog', on: {click: function(e){ taskSheet(x.t.id, pid, e.currentTarget); }}}, txt) : h('span', {class: 'grow', text: txt}),
         x.done ? h('span', {class: 'mk full'}, icon('check'), 'Done') : null);
     })) : h('p', {class: 'muted small', text: 'Nothing yet.'})) : null;
-  setKids(sec, [top, addf, staffView && !adminMt ? watchSec : null, hrow, adminMt ? null : estLine(pid, S.week), box, quiet, earlier, ntw, staffView && !adminMt ? null : watchSec]);
+  setKids(sec, [top, addf, staffView && !adminMt ? watchSec : null, hrow, adminMt || sr ? null : estLine(pid, S.week), sr ? sr.el : box, sr ? null : quiet, earlier, ntw, staffView && !adminMt ? null : watchSec]);
   if (box && box._pvWire) box._pvWire();   // v2.12.1: once it is in the page: open on today's column or keep the scroll, then show the arrows that apply
 };
 
@@ -7415,7 +7661,7 @@ function taskLine(t, pid, fk, opts){
   if (opts.day && t.due) meta.push(meta.length ? ' \u00b7 ' : null, h('span', {text: dayName(t.due)}));
   var mk = [], od = null;
   // v2.12.0 (Anisha, Oct 28): My tasks rows show a red warning icon only (the group header says "N overdue"); Board and Calendar rows keep the "Overdue" tag
-  if (!on && isOverdue(t)){
+  if (!on && isOverdue(t, opts.wk)){   // v2.14.0: opts.wk = the task's own week (search results)
     if (opts.odIcon) od = h('span', {class: 'rt-od', title: 'Overdue'}, icon('warn'), h('span', {class: 'sr-only', text: 'Overdue'}));
     else mk.push(h('span', {class: 'mk overdue'}, icon('warn'), 'Overdue'));
   }
@@ -7426,7 +7672,7 @@ function taskLine(t, pid, fk, opts){
   return h('li', {class: 'rtask v25' + (on ? ' done' : ''), 'data-id': t.id},
     h('label', {class: 'rt-cb'}, h('input', {type: 'checkbox', checked: on, 'data-fk': fk + 'd:' + t.id, 'aria-label': personName(pid) + '\u2019s part done: ' + lbl,
       on: {change: function(e){ setPersonDone(t.id, pid, e.target.checked); }}}), h('span', {class: 'rt-box', 'aria-hidden': 'true'})),   // v2.6.3 (F-09): the input fills the 44px label; this draws the box
-    h('button', {type: 'button', class: 'rt-open', 'data-fk': fk + 'o:' + t.id, 'aria-haspopup': 'dialog', on: {click: function(e){ taskSheet(t.id, pid, e.currentTarget); }}},
+    h('button', {type: 'button', class: 'rt-open', 'data-fk': fk + 'o:' + t.id, 'aria-haspopup': 'dialog', on: {click: function(e){ if (opts.open) opts.open(t, pid, e.currentTarget); else taskSheet(t.id, pid, e.currentTarget); }}},   // v2.14.0: opts.open = search results read the task's week first
       h('span', {class: 'rt-tx', text: lbl}),
       note ? h('span', {class: 'rt-note'}, h('span', {class: 'sr-only', text: 'Note: '}), note) : null,
       h('span', {class: 'rt-meta'}, meta, mk.map(function(x){ return [' ', x]; }))),
@@ -8785,6 +9031,7 @@ function resetData(){
   S.hist = null; S.histErr = null; S.histMore = false; S.histNames = {tasks: {}, shifts: {}, programs: {}}; S.person = null; S.buffer = []; S.noteOpen = null; S.copying = false;
   S.shiftMonths = new Set(); S.shiftLoading = new Set(); pvReset(); D.oh = new Map();
   S.projMine = new Set(); S.projHist = null; S.ptAt = 0;   // v2.12.0
+  srchReset();   // v2.14.0
   poIds.clear(); S.tplOpen = new Set(); S.tplQuery = '';
   TABS.forEach(function(t){ var s = $('#v-' + t.id); if (s) s.replaceChildren(); });
 }
@@ -8890,7 +9137,7 @@ window.__rootspa = {S: S, D: D, Q: Q, sb: sb, go: go, version: BUILD,
      progDept: progDept, deptVal: deptVal, calPairs: calPairs, boardPrograms: boardPrograms,   // v2.7.2
      repCommon: repCommon, repCommonIx: repCommonIx, openFor: function(pid){ return tasksFor(pid).filter(function(t){ return !personDone(t, pid); }).map(function(t){ return normTask(t.task); }) },
      pvGroups: pvGroups, pvDayEl: pvDayEl, projName: projName, pvGroupMeta: pvGroupMeta, pvGroupCmp: pvGroupCmp,
-     projsFor: projsFor, isOverdue: isOverdue}};   // v2.12.0: per-person Project list + overdue rule (read-only probes)   // v2.10.0: My tasks day columns (read-only probes)
+     projsFor: projsFor, isOverdue: isOverdue, srch: SRCH}};   // v2.12.0: per-person Project list + overdue rule (read-only probes)   // v2.10.0: My tasks day columns (read-only probes)
 })();
 
 </script>
