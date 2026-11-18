@@ -1899,7 +1899,7 @@ li.shift:active:not(:has(:is(button,a,label,input,select,summary):active)){box-s
 var SB_URL = 'https://husvyqcfewhgwexhpakw.supabase.co';
 var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c3Z5cWNmZXdoZ3dleGhwYWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA1NjQsImV4cCI6MjEwNzU4NjU2NH0.PnLN8iAcVTiq5QvCCYK9mnUMnLsql-E7gkfgd83WL2I';
 var DOMAIN = 'roots-pa.cornerthree.ai';
-var BUILD = '2.14.0';   // v2.14.0 (Anisha, Nov 16 9:38am): My tasks search bar ("search any current or past tasks": every week, done and open, title / note / program / project, results grouped by week newest first). Was 2.13.0: // v2.13.0 (Anisha, Nov 11 4:34pm): My tasks Today / This week switch (Today first) and moving a task to the week you're in (open-task sheet week switch + "Move N open tasks to this week" on a past week). Was 2.12.2: // v2.12.2: Anisha Nov 3 7:23pm (task box field order: Task, Note, Program, Project, Who, Day, Watchers, in the Add task sheet and the open-task sheet). Was 2.12.1: // v2.12.1: Anisha Nov 3 4:30pm (My tasks day columns at least 300px wide with a sideways scroll + edge arrows, full titles/notes/program lines, group header names never squeezed). Was 2.12.0: // v2.12.0: Anisha Oct 28 (My tasks keeps overdue tasks under their day with a red icon and a red "N overdue" on the group header, PAs see "N spots left" next to Sign up, the Project list is per person). Was 2.11.1:   // v2.11.1: Calendar month, Mine: when all of the person's sign-ups are before today the empty note and "See N that need a PA" show above the "Show N earlier days" link. Was 2.11.0:   // v2.11.0: Anisha Oct 27 (month +more in place, Common tasks pick list, admin My tasks trimmed, Add task on group headers, done tasks to the bottom). Was 2.10.0:   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
+var BUILD = '2.14.1';   // v2.14.1 (Anisha, Nov 17: a weekly repeating task she added did not show on My tasks until Po's next hourly run): saving a repeating task (or changing its who / day, or turning it back on) puts its dated tasks on the lists straight away, same shape + source as Po, so Po skips them; the toast says it is on the list. Was 2.14.0: // v2.14.0 (Anisha, Nov 16 9:38am): My tasks search bar ("search any current or past tasks": every week, done and open, title / note / program / project, results grouped by week newest first). Was 2.13.0: // v2.13.0 (Anisha, Nov 11 4:34pm): My tasks Today / This week switch (Today first) and moving a task to the week you're in (open-task sheet week switch + "Move N open tasks to this week" on a past week). Was 2.12.2: // v2.12.2: Anisha Nov 3 7:23pm (task box field order: Task, Note, Program, Project, Who, Day, Watchers, in the Add task sheet and the open-task sheet). Was 2.12.1: // v2.12.1: Anisha Nov 3 4:30pm (My tasks day columns at least 300px wide with a sideways scroll + edge arrows, full titles/notes/program lines, group header names never squeezed). Was 2.12.0: // v2.12.0: Anisha Oct 28 (My tasks keeps overdue tasks under their day with a red icon and a red "N overdue" on the group header, PAs see "N spots left" next to Sign up, the Project list is per person). Was 2.11.1:   // v2.11.1: Calendar month, Mine: when all of the person's sign-ups are before today the empty note and "See N that need a PA" show above the "Show N earlier days" link. Was 2.11.0:   // v2.11.0: Anisha Oct 27 (month +more in place, Common tasks pick list, admin My tasks trimmed, Add task on group headers, done tasks to the bottom). Was 2.10.0:   // v2.9.0: before-go-live items (Oct 23 call: arrival time, watchers for PAs, program lead sign-up, repeating tasks, own password, View as picker). Was 2.8.0: v2.8.0: PA trial feedback (Oct 23 call): week ranges + week dropdown, My tasks by program, sign-up assigns tasks, PA board Mine + folded cards
 // was 2.7.2: // v2.7.2: departments are one shared filter (Calendar, Board, PA shifts), never a team; no team chips at sign-in
 // v2.7.1: Calendar filter is one dropdown (departments + Needs a PA); Board tab for PAs/YCs with Take it
 // v2.6.9:   // v2.6.9: Community team shown as "Roots DFW"; a PA/YC calendar opens on her own programs ("Mine"); the picked filter stays in view
@@ -8353,6 +8353,7 @@ function repSetActive(id, on){
   var r = D.rep.get(id); if (!r) return;
   setFields('repeat_tasks', id, {active: !!on}, repLabel(r)); invalidate('master');
   announce(quote(repLabel(r)) + (on ? ' is on again' : ' is paused'));
+  if (on) repNowAfterEdit(id, null, 0);   // v2.14.1
 }
 function repMenu(id, btn){
   var r = D.rep.get(id); if (!r) return;
@@ -8366,6 +8367,138 @@ function repRow(r){
       h('span', {class: 'rp-t', text: lbl}), h('span', {class: 'rp-m', text: meta})),
     h('button', {type: 'button', class: 'icon', 'aria-label': 'More for ' + lbl, 'data-fk': 'rpm:' + r.id, on: {click: function(e){ repMenu(r.id, e.currentTarget); }}}, icon('more')));
 }
+/* v2.14.1 (Anisha, Nov 17: a weekly repeating task she added did not show on the person's My tasks until Po's hourly run): saving a repeating task,
+   changing its who / day, or turning it back on puts its dated tasks on the people's lists straight away. Same window, dates, shape and source as Po's
+   po_repeat_tasks.py: today .. the Sunday after next, one task per date (tasks.source 'po:repeat:<rule id>:<date>', due that weekday) on its own personal
+   card in that date's week, one task_people row per person. Po checks the source before it makes one, so it finds these there and skips them; a unique
+   index on (team, source) (schema_v2_11.sql) stops a same-second double. Direct writes (a task for another week is not in this week's memory), one run
+   at a time per rule, the same refresh a remote change gets. Failed = nothing half-made (cards archived) and Po still adds it on its next run. */
+function repWindow(today){ today = today || todayIso(); var k = isoToDate(today).getDay(); return [today, addDays(today, 6 - (k === 0 ? 6 : k - 1) + 7)]; }
+function repDatesIn(r, a, b){
+  var out = [], freq = String((r && r.freq) || 'weekly').toLowerCase(), wd = String((r && r.weekday) || '').toLowerCase(), md = +(r && r.month_day) || 0;
+  for (var d = a; d <= b; d = addDays(d, 1)){
+    var dt = isoToDate(d);
+    if (freq === 'weekly'){ if (wd && wd === DAYS[dt.getDay() === 0 ? 6 : dt.getDay() - 1].toLowerCase()) out.push(d); }
+    else if (freq === 'monthly' && md){ var last = new Date(dt.getFullYear(), dt.getMonth() + 1, 0).getDate(); if (dt.getDate() === Math.min(md, last)) out.push(d); }
+  }
+  return out;
+}
+var REPNOW = new Map();   // rule id -> the run in progress
+function repMakeNow(id, opts){
+  var run = (REPNOW.get(id) || Promise.resolve()).catch(function(){}).then(function(){ return repMakeRun(id, opts || {}); });
+  REPNOW.set(id, run);
+  run.catch(function(){}).then(function(){ if (REPNOW.get(id) === run) REPNOW.delete(id); });
+  return run;
+}
+async function repMakeRun(id, opts){
+  var out = {made: [], topped: [], pids: [], failed: false, gone: false, error: null};
+  // the rule itself is still on its way to the server (a new one): give it a moment, so tasks never exist for a rule that did not save
+  for (var w = 0; w < 40 && hasPendingInsert('repeat_tasks', id); w++) await new Promise(function(res){ setTimeout(res, 200); });
+  if (hasPendingInsert('repeat_tasks', id)){ out.failed = true; return out; }   // offline / not saved yet: Po adds them once it has
+  var r = D.rep.get(id), team = S.team;
+  if (!r){ out.gone = true; return out; }   // the save was refused and taken back (the app said so already)
+  if (r.deleted_at || r.active === false || !(r.task || '').trim()) return out;
+  var who = livePeople(r.person_ids); if (!who.length) return out;
+  var win = repWindow(), dates = repDatesIn(r, win[0], win[1]); if (!dates.length) return out;
+  var text = r.task.trim(), notes = (r.notes || '').trim();
+  var srcOf = function(d){ return 'po:repeat:' + id + ':' + d; };
+  try {
+    for (var attempt = 0; attempt < 2; attempt++){
+      if (team !== S.team) return out;
+      var ex = await sb.from('tasks').select('id,source,deleted_at,task_people(person_id)').eq('team', team).in('source', dates.map(srcOf));
+      if (ex.error) throw ex.error;
+      var have = new Map(); (ex.data || []).forEach(function(t){ have.set(t.source, t); });
+      // a person added to the rule joins the dates that already exist (Po never touches a date once it exists)
+      var adds = (opts.adds || []).filter(function(x){ return who.indexOf(x) >= 0; });
+      if (attempt === 0 && adds.length){
+        var tp = [], tops = new Set();
+        have.forEach(function(t, src){ if (t.deleted_at) return; adds.forEach(function(a){
+          if (!(t.task_people || []).some(function(x){ return x.person_id === a; })){ tp.push({task_id: t.id, person_id: a, team: team, done: false}); tops.add(src.slice(-10)); if (out.pids.indexOf(a) < 0) out.pids.push(a); } }); });
+        if (tp.length){
+          var up = await sb.from('task_people').upsert(tp, {onConflict: 'task_id,person_id', ignoreDuplicates: true});
+          if (up.error) throw up.error;
+          out.topped = Array.from(tops);
+        } else out.pids = [];
+      }
+      var fresh = dates.filter(function(d){ return !have.has(srcOf(d)); });
+      if (!fresh.length) break;
+      var weeks = Array.from(new Set(fresh.map(function(d){ return mondayOf(isoToDate(d)); })));
+      var pr = await sb.from('programs').select('week,sort').eq('team', team).in('week', weeks);
+      if (pr.error) throw pr.error;
+      var top = {}; (pr.data || []).forEach(function(p){ top[p.week] = Math.max(top[p.week] || 0, p.sort || 0); });
+      var progs = [], tasks = [], people = [];
+      fresh.forEach(function(d){
+        var wk = mondayOf(isoToDate(d)); top[wk] = (top[wk] || 0) + 10;
+        var pg = {id: newId('prog_'), team: team, week: wk, name: '', template_id: null, custom_name: false, force_pick: false, personal: true, date: '', locations: [], offsite: '', lead_ids: [], sort: top[wk]};
+        var t = {id: newId('t_'), team: team, program_id: pg.id, task: text, notes: notes, due: DAYS[(isoToDate(d).getDay() + 6) % 7], sort: 0, source: srcOf(d)};
+        progs.push(pg); tasks.push(t);
+        who.forEach(function(x){ people.push({task_id: t.id, person_id: x, team: team}); });
+      });
+      var a1 = await sb.from('programs').insert(progs);
+      if (a1.error) throw a1.error;
+      var archive = async function(table, ids){ try { await sb.from(table).update({deleted_at: nowIso()}).in('id', ids).is('deleted_at', null); } catch (e){} };
+      var a2 = await sb.from('tasks').insert(tasks);
+      if (a2.error){
+        await archive('programs', progs.map(function(x){ return x.id; }));
+        if (a2.error.code === '23505' && attempt === 0) continue;   // Po (or another tab) made one a moment ago: look again, skip it
+        throw a2.error;
+      }
+      var a3 = await sb.from('task_people').insert(people);
+      if (a3.error){
+        await archive('tasks', tasks.map(function(x){ return x.id; })); await archive('programs', progs.map(function(x){ return x.id; }));
+        throw a3.error;
+      }
+      fresh.forEach(function(d, i){ out.made.push({date: d, task: tasks[i].id, prog: progs[i].id}); });
+      who.forEach(function(x){ if (out.pids.indexOf(x) < 0) out.pids.push(x); });
+      break;
+    }
+  } catch (e){ out.failed = true; out.error = e; console.warn('[repeating task] could not make its tasks now', e); }
+  if (team === S.team && (out.made.length || out.topped.length)){
+    ptStale(true); scheduleResync(); invalidate('person', 'board', 'cal', 'pas');
+  }
+  return out;
+}
+/* the sentence for a toast: On Zaynab\u2019s list today. / On Zaynab\u2019s and Noorah\u2019s lists from Mon, Nov 23. / On 3 lists from ... ('' when nothing was put on a list) */
+function repOnList(res){
+  var first = res.made.length ? res.made[0].date : (res.topped.slice().sort()[0] || '');
+  var names = (res.pids || []).map(repFirst).filter(Boolean);
+  if (!first || !names.length) return '';
+  var who = names.length === 1 ? names[0] + '\u2019s list' : names.length === 2 ? names[0] + '\u2019s and ' + names[1] + '\u2019s lists' : names.length + ' lists';
+  return 'On ' + who + (first === todayIso() ? ' today.' : ' from ' + niceDate(first) + '.');
+}
+/* the dated tasks just made go back with Undo (the cards too); a task someone already ticked or changed is theirs, so only untouched ones are archived */
+async function repUndoMade(res){
+  var ids = res.made.map(function(m){ return m.task; }), pids = res.made.map(function(m){ return m.prog; });
+  try {
+    if (ids.length){ await sb.from('tasks').update({deleted_at: nowIso()}).in('id', ids).is('deleted_at', null).eq('done', false); }
+    if (pids.length){
+      var left = await sb.from('tasks').select('program_id').in('program_id', pids).is('deleted_at', null);
+      var keep = new Set((left.data || []).map(function(x){ return x.program_id; }));
+      var gone = pids.filter(function(x){ return !keep.has(x); });
+      if (gone.length) await sb.from('programs').update({deleted_at: nowIso()}).in('id', gone).is('deleted_at', null);
+    }
+  } catch (e){ console.warn('[repeating task] undo', e); }
+  ptStale(true); scheduleResync(); invalidate('person', 'board', 'cal', 'pas');
+}
+/* after an edit of a rule: make what is missing and say so when something landed on a list. Waits a moment (1.2 s) so a quick run of changes
+   (a day picked twice, two people ticked) makes only the final state's tasks; closing the sheet does not wait. */
+var REPPEND = new Map();
+function repNowAfterEdit(id, opts, wait){
+  var q = REPPEND.get(id); if (!q){ q = {adds: new Set(), timer: 0}; REPPEND.set(id, q); }
+  if (opts && opts.add) q.adds.add(opts.add);
+  clearTimeout(q.timer);
+  q.timer = setTimeout(function(){ repFlushNow(id); }, wait == null ? 1200 : wait);
+}
+function repFlushNow(id){
+  var q = REPPEND.get(id); if (!q) return Promise.resolve(null);
+  clearTimeout(q.timer); REPPEND.delete(id);
+  return repMakeNow(id, {adds: Array.from(q.adds)}).then(function(res){
+    if (res.failed){ toast('Couldn\u2019t put it on their list yet. Po will add it soon.', {kind: 'error'}); return res; }
+    var msg = repOnList(res); if (msg){ toast(msg); announce(msg); }
+    return res;
+  });
+}
+var REPFREQ = new Set();   // rules whose Repeats (weekly / monthly) was just switched: wait for the day to be picked (or the sheet to close)
 function repAddForm(){
   var st = {who: []};
   var err = h('p', {class: 'err', role: 'alert', hidden: true});
@@ -8384,10 +8517,17 @@ function repAddForm(){
     var r = insertRow('repeat_tasks', {id: newId('rp_'), team: S.team, task: text, notes: '', person_ids: ids, freq: w.freq, weekday: w.weekday, month_day: w.month_day, active: true,
       sort: nextSort(Array.from(D.rep.values()).filter(function(x){ return !x.deleted_at; }))}, text);
     txt.value = ''; st.who = []; who.draw(); invalidate('master');
-    toast('Added ' + quote(text) + '. ' + repWhen(r) + ', ' + repNextLabel(r) + '.', {action: {label: 'Undo', fn: function(){
-      if (D.rep.has(r.id) && !D.rep.get(r.id).deleted_at){ setFields('repeat_tasks', r.id, {deleted_at: nowIso()}, text); invalidate('master'); announce('Took back ' + quote(text)); }
-    }}});
     txt.focus();
+    // v2.14.1: its tasks go on the people's lists now (not on Po's next hourly run); the toast says what really happened
+    repMakeNow(r.id).then(function(res){
+      if (res.gone) return;   // its save was refused and undone: the error toast already said so, nothing to add
+      var on = res.failed ? '' : repOnList(res);
+      var tail = res.failed ? 'Couldn\u2019t put it on their list yet. Po will add it soon.' : on || (repWhen(r) + ', ' + repNextLabel(r) + '.');
+      toast('Added ' + quote(text) + '. ' + (on ? repWhen(r) + '. ' : '') + tail, {kind: res.failed ? 'error' : null, action: {label: 'Undo', fn: function(){
+        if (D.rep.has(r.id) && !D.rep.get(r.id).deleted_at){ setFields('repeat_tasks', r.id, {deleted_at: nowIso()}, text); invalidate('master'); announce('Took back ' + quote(text)); }
+        if (res.made.length) repUndoMade(res);
+      }}});
+    });
   }
   var form = h('form', {class: 'rp-add', novalidate: true, on: {submit: function(e){ e.preventDefault(); save(); }}},
     txt, who.el, h('div', {class: 'rp-addrow'}, when, h('button', {type: 'submit', class: 'primary', 'data-fk': 'rpadd'}, icon('plus'), 'Add')), err);
@@ -8420,8 +8560,9 @@ function repSheet(id, ret){
     var who = peopleChips({id: 'rpsWho', label: 'Who', open: openW.v, keep: keepW, onOpen: function(v){ openW.v = v; }, none: 'Choose who gets it.',
       selected: function(){ return ((D.rep.get(id) || {}).person_ids || []).slice(); },
       toggle: function(x, on){ var c = D.rep.get(id); if (!c) return; var a = (c.person_ids || []).filter(function(y){ return y !== x; }); if (on) a.push(x);
-        setFields('repeat_tasks', id, {person_ids: a}, repLabel(c)); invalidate('master'); }});
-    var when = repWhenFields('rps', r, function(v){ var c = D.rep.get(id); if (!c) return; setFields('repeat_tasks', id, v, repLabel(c)); invalidate('master'); render(); });
+        setFields('repeat_tasks', id, {person_ids: a}, repLabel(c)); invalidate('master'); if (on) repNowAfterEdit(id, {add: x}); }});
+    var when = repWhenFields('rps', r, function(v){ var c = D.rep.get(id); if (!c) return; var was = c.freq; setFields('repeat_tasks', id, v, repLabel(c)); invalidate('master'); render();
+      if ((v.freq || 'weekly') !== (was || 'weekly')) REPFREQ.add(id); else { REPFREQ.delete(id); repNowAfterEdit(id); } });
     var nx = r.active === false ? '' : repNextLabel(r);
     var act = h('label', {class: 'sw25', for: 'rpActive'},
       h('input', {type: 'checkbox', id: 'rpActive', checked: r.active !== false, 'data-fk': 'rpactive', on: {change: function(e){ repSetActive(id, e.target.checked); render(); }}}),
@@ -8435,7 +8576,7 @@ function repSheet(id, ret){
   }
   render();
   openSheet({title: 'Repeating task', returnTo: ret, body: body, refresh: render,
-    onClose: function(){ commitPendFor('repeat_tasks', id); invalidate('master'); },
+    onClose: function(){ commitPendFor('repeat_tasks', id); invalidate('master'); if (REPFREQ.delete(id)) repNowAfterEdit(id, null, 0); else if (REPPEND.has(id)) repFlushNow(id); },
     foot: [h('button', {type: 'button', class: 'primary', 'data-fk': 'rpdone', on: {click: closeSheet}}, 'Done')]});
   $('#sheet').classList.add('wide');
 }
@@ -9137,7 +9278,8 @@ window.__rootspa = {S: S, D: D, Q: Q, sb: sb, go: go, version: BUILD,
      progDept: progDept, deptVal: deptVal, calPairs: calPairs, boardPrograms: boardPrograms,   // v2.7.2
      repCommon: repCommon, repCommonIx: repCommonIx, openFor: function(pid){ return tasksFor(pid).filter(function(t){ return !personDone(t, pid); }).map(function(t){ return normTask(t.task); }) },
      pvGroups: pvGroups, pvDayEl: pvDayEl, projName: projName, pvGroupMeta: pvGroupMeta, pvGroupCmp: pvGroupCmp,
-     projsFor: projsFor, isOverdue: isOverdue, srch: SRCH}};   // v2.12.0: per-person Project list + overdue rule (read-only probes)   // v2.10.0: My tasks day columns (read-only probes)
+     projsFor: projsFor, isOverdue: isOverdue, srch: SRCH,
+     repMakeNow: repMakeNow, repDatesIn: repDatesIn, repWindow: repWindow, repOnList: repOnList}};   // v2.14.1: repeating tasks made now (probes)   // v2.12.0: per-person Project list + overdue rule (read-only probes)   // v2.10.0: My tasks day columns (read-only probes)
 })();
 
 </script>
